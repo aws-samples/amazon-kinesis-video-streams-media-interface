@@ -1,0 +1,42 @@
+From 710b954567f6ac81a208890f11d12febf6096211 Mon Sep 17 00:00:00 2001
+From: "Alex.Li" <zhiqinli@amazon.com>
+Date: Fri, 15 Oct 2021 06:38:10 +0000
+Subject: [PATCH] ram optimization: reduce rolling buffer and jitter buffer
+
+Signed-off-by: Alex.Li <zhiqinli@amazon.com>
+---
+ .../com/amazonaws/kinesis/video/webrtcclient/Include.h        | 2 +-
+ src/source/PeerConnection/Rtp.h                               | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/include/com/amazonaws/kinesis/video/webrtcclient/Include.h b/src/include/com/amazonaws/kinesis/video/webrtcclient/Include.h
+index a63e17b82..ef9b6870d 100644
+--- a/src/include/com/amazonaws/kinesis/video/webrtcclient/Include.h
++++ b/src/include/com/amazonaws/kinesis/video/webrtcclient/Include.h
+@@ -601,7 +601,7 @@ extern "C" {
+ /**
+  * Default jitter buffer tolerated latency, frame will be dropped if it is out of window
+  */
+-#define DEFAULT_JITTER_BUFFER_MAX_LATENCY (2000L * HUNDREDS_OF_NANOS_IN_A_MILLISECOND)
++#define DEFAULT_JITTER_BUFFER_MAX_LATENCY (1000L * HUNDREDS_OF_NANOS_IN_A_MILLISECOND)
+ /*!@} */
+ 
+ /**
+diff --git a/src/source/PeerConnection/Rtp.h b/src/source/PeerConnection/Rtp.h
+index d9104d73e..dcf54c9ac 100644
+--- a/src/source/PeerConnection/Rtp.h
++++ b/src/source/PeerConnection/Rtp.h
+@@ -10,8 +10,8 @@ extern "C" {
+ // Default MTU comes from libwebrtc
+ // https://groups.google.com/forum/#!topic/discuss-webrtc/gH5ysR3SoZI
+ #define DEFAULT_MTU_SIZE                           1200
+-#define DEFAULT_ROLLING_BUFFER_DURATION_IN_SECONDS 3
+-#define HIGHEST_EXPECTED_BIT_RATE                  (10 * 1024 * 1024)
++#define DEFAULT_ROLLING_BUFFER_DURATION_IN_SECONDS 1
++#define HIGHEST_EXPECTED_BIT_RATE                  (5 * 1024 * 1024)
+ #define DEFAULT_SEQ_NUM_BUFFER_SIZE                1000
+ #define DEFAULT_VALID_INDEX_BUFFER_SIZE            1000
+ #define DEFAULT_PEER_FRAME_BUFFER_SIZE             (5 * 1024)
+-- 
+2.25.1
+
