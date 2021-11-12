@@ -33,6 +33,7 @@ if(BOARD STREQUAL "T31")
 endif()
 
 option(BUILD_WEBRTC_SAMPLES "Build webrtc samples" ON)
+option(BUILD_KVS_SAMPLES "Build KVS Producer samples" OFF)
 
 set(INCS_DIR ${CMAKE_CURRENT_LIST_DIR}/include/)
 set(INCS
@@ -81,4 +82,7 @@ set(SAMPLES_DIR ${CMAKE_CURRENT_LIST_DIR}/samples/)
 set(AWS_SDK_DIR ${SAMPLES_DIR}/aws-sdk/)
 if(BUILD_WEBRTC_SAMPLES)
     add_subdirectory(${SAMPLES_DIR}/webrtc)
+endif()
+if(BUILD_KVS_SAMPLES)
+    add_subdirectory(${SAMPLES_DIR}/kvs)
 endif()
