@@ -8,14 +8,19 @@
 
 - T31
 
-## Getting Started with out-of-box KVS WebRTC sample
+## Getting started with out-of-box KVS WebRTC sample
 
 1. Generate AWS credentials by using this [script](https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c/blob/master/scripts/generate-iot-credential.sh)
 2. Copy SoC SDK dependencies into *3rdparty/$BOARD/*. See [3rdparty/README.md](3rdparty/README.md).
-3. Build the code: `cd amazon-kinesis-video-streams-audio-video-interface; mkdir build; cd build; cmake ..; make`.
-4. Upload built artifacts at *amazon-kinesis-video-streams-audio-video-interface/build* to your board.
+3. Clone and build the code:
+```
+git clone https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface.git
+cd amazon-kinesis-video-streams-media-interface
+mkdir build; cd build; cmake ..
+make
+```
+4. Upload built artifacts(i.e kvswebrtcmaster-static) at *amazon-kinesis-video-streams-media-interface/build/samples/webrtc/* to your board.
 5. Setup AWS credentials in enjoinment variables. The sample is using AWS IoT certificates by default:
-
 ```bash
 export AWS_KVS_LOG_LEVEL=2
 export AWS_DEFAULT_REGION=us-east-1
@@ -26,12 +31,36 @@ export AWS_IOT_CORE_CERT=your_camera_certificate.pem
 export AWS_IOT_CORE_PRIVATE_KEY=your_camera_private.key
 export AWS_IOT_CORE_ROLE_ALIAS=your_camera_role_alias
 ```
+6. Execute sample on your board: `./kvswebrtcmaster-static`
+7. Check WebRTC live stream via AWS console or [AWS WebRTC test page]()
 
-6. Execute sample: `./kvswebrtcmaster-static`
+## Getting started with out-of-box KVS Producer sample
+
+1. Copy SoC SDK dependencies into *3rdparty/$BOARD/*. See [3rdparty/README.md](3rdparty/README.md).
+2. Clone and build the code:
+```
+git clone https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface.git
+cd amazon-kinesis-video-streams-media-interface
+mkdir build; cd build; cmake .. -DBUILD_KVS_SAMPLES=ON
+make
+```
+3. Upload built artifacts(i.e kvsproducer-static) at *amazon-kinesis-video-streams-media-interface/build/samples/kvs/* to your board.
+4. Setup AWS credentials in enjoinment variables. The sample is using AWS access key/secret key by default:
+```
+export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
+export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_KVS_HOST=kinesisvideo.us-east-1.amazonaws.com
+```
+5. Execute sample on your board: `./kvsproducer-static $YOUR_STREAM_NAME`
+6. Check DASH live stream via [AWS KVS test page](https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/)
+7. Download video clips via AWS console.
+
+> In current stage, browser doesn't support G.711 via HLS/DASH. To verify audio content in G.711 formats, user must download video clips.
 
 ## Platform Implementation Guide
 
-To adapt other platforms SDKs with amazon-kinesis-video-streams-capturer, you need to implement interfaces in *include/com/amazonaws/kinesis/video/capturer/VideoCapturer.h*, *include/com/amazonaws/kinesis/video/capturer/AudioCapturer.h* and *include/com/amazonaws/kinesis/video/player/AudioPlayer.h*:
+To adapt other platforms SDKs with **Amazon Kinesis Video Streams Media Interface**, you need to implement interfaces in *include/com/amazonaws/kinesis/video/capturer/VideoCapturer.h*, *include/com/amazonaws/kinesis/video/capturer/AudioCapturer.h* and *include/com/amazonaws/kinesis/video/player/AudioPlayer.h*:
 
 - [VideoCapturer.h](include/com/amazonaws/kinesis/video/capturer/VideoCapturer.h): abstract interfaces defined for video capturer sensor/encoder.
 - [AudioCapturer.h](include/com/amazonaws/kinesis/video/capturer/AudioCapturer.h): abstract interfaces defined for audio capturer sensor/encoder.
