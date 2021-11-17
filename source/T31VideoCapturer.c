@@ -293,7 +293,7 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
             offset += encodeStream.pack[i].length;
         }
         *pFrameSize = uPacketLen;
-        *pTimestamp = IMP_System_GetTimeStamp() * HUNDREDS_OF_NANOS_IN_A_MICROSECOND;
+        *pTimestamp = IMP_System_GetTimeStamp();
     }
 
     IMP_Encoder_ReleaseStream(t31Handle->channelNum, &encodeStream);

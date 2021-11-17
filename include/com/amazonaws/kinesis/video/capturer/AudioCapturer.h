@@ -97,7 +97,7 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle);
  * @param[in] handle Handle of AudioCapturer.
  * @param[in,out] pFrameDataBuffer Target frame data buffer.
  * @param[in] frameDataBufferSize Frame data buffer size.
- * @param[out] pTimestamp Frame timestamp.
+ * @param[out] pTimestamp Frame timestamp in microseconds(usec).
  * @param[out] pFrameSize Frame data size in bytes.
  * @return int 0 or error code.
  */

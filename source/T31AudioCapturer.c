@@ -285,14 +285,14 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
         } else {
             memcpy(pFrameDataBuffer, (void*) encodeStream.stream, encodeStream.len);
             *pFrameSize = encodeStream.len;
-            *pTimestamp = IMP_System_GetTimeStamp() * HUNDREDS_OF_NANOS_IN_A_MICROSECOND;
+            *pTimestamp = IMP_System_GetTimeStamp();
         }
 
         IMP_AENC_ReleaseStream(T31_MIC_ENC_CHN_ID, &encodeStream);
     } else {
         memcpy(pFrameDataBuffer, (void*) rawFrame.virAddr, rawFrame.len);
         *pFrameSize = rawFrame.len;
-        *pTimestamp = IMP_System_GetTimeStamp() * HUNDREDS_OF_NANOS_IN_A_MICROSECOND;
+        *pTimestamp = IMP_System_GetTimeStamp();
     }
 
     IMP_AI_ReleaseFrame(T31_MIC_DEV_ID, T31_MIC_CHN_ID, &rawFrame);
