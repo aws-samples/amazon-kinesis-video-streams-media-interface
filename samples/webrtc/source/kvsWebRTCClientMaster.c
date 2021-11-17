@@ -19,8 +19,9 @@
 #include "com/amazonaws/kinesis/video/capturer/VideoCapturer.h"
 #include "com/amazonaws/kinesis/video/player/AudioPlayer.h"
 
-#define VIDEO_FRAME_BUFFER_SIZE_BYTES (128 * 1024UL)
-#define AUDIO_FRAME_BUFFER_SIZE_BYTES (1024UL)
+#define VIDEO_FRAME_BUFFER_SIZE_BYTES      (128 * 1024UL)
+#define AUDIO_FRAME_BUFFER_SIZE_BYTES      (1024UL)
+#define HUNDREDS_OF_NANOS_IN_A_MICROSECOND 10LL
 
 extern PSampleConfiguration gSampleConfiguration;
 static AudioCapturerHandle audioCapturerHandle = NULL;
@@ -306,7 +307,7 @@ PVOID sendVideoPackets(PVOID args)
         if (videoCapturerGetFrame(videoCapturerHandle, pFrameBuffer, VIDEO_FRAME_BUFFER_SIZE_BYTES, &timestamp, &frameSize)) {
             printf("videoCapturerGetFrame failed\n");
         } else {
-            writeFrameToAllSessions(timestamp, pFrameBuffer, frameSize, SAMPLE_VIDEO_TRACK_ID);
+            writeFrameToAllSessions(timestamp * HUNDREDS_OF_NANOS_IN_A_MICROSECOND, pFrameBuffer, frameSize, SAMPLE_VIDEO_TRACK_ID);
         }
     }
 
@@ -350,7 +351,7 @@ PVOID sendAudioPackets(PVOID args)
         if (audioCapturerGetFrame(audioCapturerHandle, pFrameBuffer, AUDIO_FRAME_BUFFER_SIZE_BYTES, &timestamp, &frameSize)) {
             printf("audioCapturerGetFrame failed\n");
         } else {
-            writeFrameToAllSessions(timestamp, pFrameBuffer, frameSize, SAMPLE_AUDIO_TRACK_ID);
+            writeFrameToAllSessions(timestamp * HUNDREDS_OF_NANOS_IN_A_MICROSECOND, pFrameBuffer, frameSize, SAMPLE_AUDIO_TRACK_ID);
         }
     }
 
