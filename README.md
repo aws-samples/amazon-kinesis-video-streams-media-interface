@@ -1,5 +1,7 @@
 # Amazon Kinesis Video Streams Media Interface
 
+[![main](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/main.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/main.yml)
+
 ## Introduction
 
 **Amazon Kinesis Video Streams Media Interface** provides abstract interfaces for board specific media APIs. This repository also contains SoCs sensors/encoder implementations for Amazon Kinesis Video Streams Producer and WebRTC with out-of-box samples.
