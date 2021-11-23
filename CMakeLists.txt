@@ -44,9 +44,9 @@ set(INCS
     ${INCS_DIR}/com/amazonaws/kinesis/video/player/AudioPlayer.h
 )
 set(SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}VideoCapturer.c
-    ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}AudioCapturer.c
-    ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}AudioPlayer.c
+    ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}/${BOARD}VideoCapturer.c
+    ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}/${BOARD}AudioCapturer.c
+    ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}/${BOARD}AudioPlayer.c
 )
 
 add_library(embedded-media-static STATIC ${SRCS} ${BOARD_SRCS})
@@ -79,7 +79,7 @@ install(DIRECTORY ${INCS_DIR}
         DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 set(SAMPLES_DIR ${CMAKE_CURRENT_LIST_DIR}/samples/)
-set(AWS_SDK_DIR ${SAMPLES_DIR}/aws-sdk/)
+set(AWS_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/aws-dependencies/)
 if(BUILD_WEBRTC_SAMPLES)
     add_subdirectory(${SAMPLES_DIR}/webrtc)
 endif()

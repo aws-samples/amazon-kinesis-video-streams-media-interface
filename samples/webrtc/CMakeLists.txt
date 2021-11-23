@@ -5,7 +5,7 @@ get_target_property(EMBEDDED_MEDIA_INCLUDES_DIR embedded-media-shared INCLUDE_DI
 get_target_property(EMBEDDED_MEDIA_LINK_DIR embedded-media-shared LINK_DIRECTORIES)
 
 message(STATUS "SAMPLES_DIR - ${SAMPLES_DIR}")
-message(STATUS "AWS_SDK_DIR - ${AWS_SDK_DIR}")
+message(STATUS "AWS_DEPENDENCIES_DIR - ${AWS_DEPENDENCIES_DIR}")
 message(STATUS "BOARD_LIBS_DIR - ${BOARD_LIBS_DIR}")
 message(STATUS "BOARD_LIBS - ${BOARD_LIBS}")
 message(STATUS "EMBEDDED_MEDIA_INCLUDES_DIR - ${EMBEDDED_MEDIA_INCLUDES_DIR}")
@@ -15,7 +15,7 @@ include(ExternalProject)
 ExternalProject_Add(kvs-webrtc
   GIT_REPOSITORY    https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c.git
   GIT_TAG           d08634bda8b32b0e9993a83835c4f0481c060abd
-  CMAKE_ARGS        -DADD_MUCLIBC=ON -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_HOST_PLATFORM=x86_64-unknown-linux-gnu -DBUILD_LIBSRTP_DESTINATION_PLATFORM=mips-unknown-linux-uclibcgnu -DCMAKE_INSTALL_PREFIX=${AWS_SDK_DIR} -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_SDK_DIR}
+  CMAKE_ARGS        -DADD_MUCLIBC=ON -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_HOST_PLATFORM=x86_64-unknown-linux-gnu -DBUILD_LIBSRTP_DESTINATION_PLATFORM=mips-unknown-linux-uclibcgnu -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/ -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
   PATCH_COMMAND     git apply ${CMAKE_CURRENT_LIST_DIR}/patches/0001-cmake-allow-user-to-specify-OPEN_SRC_INSTALL_PREFIX.patch ${CMAKE_CURRENT_LIST_DIR}/patches/0002-ram-optimization-reduce-rolling-buffer-and-jitter-bu.patch
   BUILD_ALWAYS      TRUE
   GIT_PROGRESS      TRUE
@@ -54,12 +54,12 @@ set(WEBRTC_SDK_LIBS_STATIC
 
 add_executable(kvswebrtcmaster-shared ${WEBRTC_SAMPLE_SRCS})
 add_dependencies(kvswebrtcmaster-shared kvs-webrtc embedded-media-shared)
-target_include_directories(kvswebrtcmaster-shared PRIVATE ${AWS_SDK_DIR}/include/ ${EMBEDDED_MEDIA_INCLUDES_DIR})
-target_link_directories(kvswebrtcmaster-shared PRIVATE ${AWS_SDK_DIR}/lib/ ${EMBEDDED_MEDIA_LINK_DIR})
+target_include_directories(kvswebrtcmaster-shared PRIVATE ${AWS_DEPENDENCIES_DIR}/webrtc/include/ ${EMBEDDED_MEDIA_INCLUDES_DIR})
+target_link_directories(kvswebrtcmaster-shared PRIVATE ${AWS_DEPENDENCIES_DIR}/webrtc/lib/ ${EMBEDDED_MEDIA_LINK_DIR})
 target_link_libraries(kvswebrtcmaster-shared embedded-media-shared ${WEBRTC_SDK_LIBS_SHARED} ${BOARD_LIBS_SHARED})
 
 add_executable(kvswebrtcmaster-static ${WEBRTC_SAMPLE_SRCS})
 add_dependencies(kvswebrtcmaster-static kvs-webrtc embedded-media-static)
-target_include_directories(kvswebrtcmaster-static PRIVATE ${AWS_SDK_DIR}/include/ ${EMBEDDED_MEDIA_INCLUDES_DIR})
-target_link_directories(kvswebrtcmaster-static PRIVATE ${AWS_SDK_DIR}/lib/ ${EMBEDDED_MEDIA_LINK_DIR})
+target_include_directories(kvswebrtcmaster-static PRIVATE ${AWS_DEPENDENCIES_DIR}/webrtc/include/ ${EMBEDDED_MEDIA_INCLUDES_DIR})
+target_link_directories(kvswebrtcmaster-static PRIVATE ${AWS_DEPENDENCIES_DIR}/webrtc/lib/ ${EMBEDDED_MEDIA_LINK_DIR})
 target_link_libraries(kvswebrtcmaster-static embedded-media-static ${WEBRTC_SDK_LIBS_STATIC} ${BOARD_LIBS_STATIC})
