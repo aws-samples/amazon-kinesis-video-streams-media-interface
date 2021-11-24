@@ -89,6 +89,11 @@ static int startRecvPic(VideoCapturerHandle handle, uint8_t chnNum)
         }
 
         LOG("IMP_Encoder_StartRecvPic(%d)", chnNum);
+    } else {
+        if (IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, chn[t31Handle->channelNum].fs_chn_attr.nrVBs * 2)) {
+            LOG("IMP_FrameSource_SetFrameDepth(%d,%d) failed", t31Handle->channelNum, chn[t31Handle->channelNum].fs_chn_attr.nrVBs * 2);
+            return -EAGAIN;
+        }
     }
 
     return 0;
@@ -106,6 +111,8 @@ static int stopRecvPic(VideoCapturerHandle handle, uint8_t chnNum)
         }
 
         LOG("IMP_Encoder_StopRecvPic(%d)", chnNum);
+    } else {
+        IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, 0);
     }
 
     return 0;
@@ -283,14 +290,8 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
 
     if (t31Handle->format == VID_FMT_RAW) {
         IMPFrameInfo* rawFrame = NULL;
-        if (IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, chn[t31Handle->channelNum].fs_chn_attr.nrVBs * 2)) {
-            LOG("IMP_FrameSource_SetFrameDepth(%d,%d) failed", t31Handle->channelNum, chn[t31Handle->channelNum].fs_chn_attr.nrVBs * 2);
-            return -EAGAIN;
-        }
-
         if (IMP_FrameSource_GetFrame(t31Handle->channelNum, &rawFrame)) {
             LOG("IMP_FrameSource_GetFrame(%d) failed", t31Handle->channelNum);
-            IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, 0);
             return -EAGAIN;
         }
         if (frameDataBufferSize < rawFrame->size) {
@@ -303,7 +304,6 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
         }
 
         IMP_FrameSource_ReleaseFrame(t31Handle->channelNum, rawFrame);
-        IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, 0);
     } else {
         size_t uPacketLen = 0;
         IMPEncoderStream encodeStream = {0};
