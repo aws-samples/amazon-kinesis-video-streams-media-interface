@@ -32,6 +32,7 @@ if(BOARD STREQUAL "T31")
     )
 endif()
 
+option(BUILD_SAVE_FRAME_SAMPLES "Build save frame samples" ON)
 option(BUILD_WEBRTC_SAMPLES "Build webrtc samples" ON)
 option(BUILD_KVS_SAMPLES "Build KVS Producer samples" OFF)
 
@@ -80,6 +81,9 @@ install(DIRECTORY ${INCS_DIR}
 
 set(SAMPLES_DIR ${CMAKE_CURRENT_LIST_DIR}/samples/)
 set(AWS_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/aws-dependencies/)
+if(BUILD_SAVE_FRAME_SAMPLES)
+    add_subdirectory(${SAMPLES_DIR}/saveframe)
+endif()
 if(BUILD_WEBRTC_SAMPLES)
     add_subdirectory(${SAMPLES_DIR}/webrtc)
 endif()
