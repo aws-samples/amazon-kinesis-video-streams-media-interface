@@ -15,85 +15,137 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <errno.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #include "com/amazonaws/kinesis/video/capturer/VideoCapturer.h"
 
-#define VIDEO_BUFFER_SIZE (2 * 1024 * 1024UL)
+#define VIDEO_BUFFER_SIZE               (1 * 1024 * 1024UL)
+#define SENSOR_ADAPTION_DELAY_MICRO_SEC (500 * 1000UL)
+
+#define CONVERT_NV12_TO_RGB24
+
+#ifdef CONVERT_NV12_TO_RGB24
+
+#define RGB24_FRAME_WIDTH  (640)
+#define RGB24_FRAME_HEIGHT (360)
+#define RGB_FRAME_SIZE     (RGB24_FRAME_WIDTH * RGB24_FRAME_HEIGHT * 3)
+
+int NV12_TO_RGB24(uint8_t* yuyv, uint8_t* rgbBuffer, size_t width, size_t height)
+{
+    const int nv_start = width * height;
+    uint32_t i, j, index = 0, rgb_index = 0;
+    uint8_t y, u, v;
+    int r, g, b, nv_index = 0;
+
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+            nv_index = i / 2 * width + j - j % 2;
+
+            y = yuyv[rgb_index];
+            u = yuyv[nv_start + nv_index];
+            v = yuyv[nv_start + nv_index + 1];
+
+            r = y + (140 * (v - 128)) / 100;                         // r
+            g = y - (34 * (u - 128)) / 100 - (71 * (v - 128)) / 100; // g
+            b = y + (177 * (u - 128)) / 100;                         // b
+
+            if (r > 255)
+                r = 255;
+            if (g > 255)
+                g = 255;
+            if (b > 255)
+                b = 255;
+            if (r < 0)
+                r = 0;
+            if (g < 0)
+                g = 0;
+            if (b < 0)
+                b = 0;
+
+            index = i * width * 3 + 3 * j;
+
+            rgbBuffer[index] = r;
+            rgbBuffer[index + 1] = g;
+            rgbBuffer[index + 2] = b;
+
+            rgb_index++;
+        }
+    }
+    return 0;
+}
+#endif
 
 int main(int argc, char** argv)
 {
     if (argc != 2) {
         printf("Usage: saveframe-static FILE\n");
+        return -EINVAL;
     }
 
+    int ret = 0;
     int fd = -1;
+    VideoCapturerHandle videoCapturerHandle = NULL;
+    uint8_t videoBuffer[VIDEO_BUFFER_SIZE];
+    uint64_t timestamp = 0;
+    size_t frameSize = 0;
 
     fd = open(argv[1], O_RDWR | O_CREAT, 0x644);
+    videoCapturerHandle = videoCapturerCreate();
 
     if (fd < 0) {
         printf("Failed to open file %s\n", argv[1]);
-        return -EAGAIN;
-    }
-
-    VideoCapturerHandle videoCapturerHandle = NULL;
-    videoCapturerHandle = videoCapturerCreate();
-    if (!videoCapturerHandle) {
+        ret = -EAGAIN;
+    } else if (!videoCapturerHandle) {
         printf("Failed to create video capturer\n");
-        close(fd);
-        return -EAGAIN;
-    }
-
-    if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_360P)) {
+        ret = -EAGAIN;
+    } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_360P)) {
         printf("Failed to set video capturer format\n");
-        close(fd);
-        videoCapturerDestory(videoCapturerHandle);
-        return -EAGAIN;
-    }
-
-    void* videoBuffer = NULL;
-    videoBuffer = malloc(VIDEO_BUFFER_SIZE);
-    if (!videoBuffer) {
-        printf("Failed to allocate video buffer\n");
-        close(fd);
-        videoCapturerDestory(videoCapturerHandle);
-        return -ENOMEM;
-    }
-
-    if (videoCapturerAcquireStream(videoCapturerHandle)) {
+        ret = -EAGAIN;
+    } else if (videoCapturerAcquireStream(videoCapturerHandle)) {
         printf("Failed to acquire video stream\n");
-        close(fd);
-        videoCapturerDestory(videoCapturerHandle);
-        if (videoBuffer) {
-            free(videoBuffer);
+        ret = -EAGAIN;
+    }
+
+    // Now we try to capture a raw frame
+    if (!ret) {
+        // Camera sensor might need some time to adaptive lights
+        usleep(SENSOR_ADAPTION_DELAY_MICRO_SEC);
+
+        if (videoCapturerGetFrame(videoCapturerHandle, videoBuffer, VIDEO_BUFFER_SIZE, &timestamp, &frameSize)) {
+            printf("Failed to get frame\n");
+            ret = -EAGAIN;
+        } else {
+            videoCapturerReleaseStream(videoCapturerHandle);
         }
-        return -EAGAIN;
-    }
 
-    uint64_t timestamp = 0;
-    size_t frameSize = 0;
-    if (videoCapturerGetFrame(videoCapturerHandle, videoBuffer, VIDEO_BUFFER_SIZE, &timestamp, &frameSize)) {
-        printf("Failed to get frame\n");
-        close(fd);
-        videoCapturerDestory(videoCapturerHandle);
-        if (videoBuffer) {
-            free(videoBuffer);
+#ifdef CONVERT_NV12_TO_RGB24
+        uint8_t rgbBuffer[RGB_FRAME_SIZE] = {0};
+        NV12_TO_RGB24(videoBuffer, rgbBuffer, RGB24_FRAME_WIDTH, RGB24_FRAME_HEIGHT);
+
+        if (write(fd, rgbBuffer, RGB_FRAME_SIZE) != RGB_FRAME_SIZE) {
+            printf("Failed to write frame to file\n");
+            ret = -EAGAIN;
+        } else {
+            printf("Frame with size %d capturered at %lld, saved as %s\n", RGB_FRAME_SIZE, timestamp, argv[1]);
         }
-        return -EAGAIN;
+#else
+        if (write(fd, videoBuffer, frameSize) != frameSize) {
+            printf("Failed to write frame to file\n");
+            ret = -EAGAIN;
+        } else {
+            printf("Frame with size %d capturered at %lld, saved as %s\n", frameSize, timestamp, argv[1]);
+        }
+#endif
     }
 
-    if (write(fd, videoBuffer, frameSize) != frameSize) {
-        printf("Failed to write frame to file\n");
-    } else {
-        printf("Frame with size %d capturered at %lld, saved as %s\n", frameSize, timestamp, argv[1]);
+    // Clean up
+    if (fd >= 0) {
+        close(fd);
+    }
+    if (videoCapturerHandle) {
+        videoCapturerDestory(videoCapturerHandle);
     }
 
-    close(fd);
-    videoCapturerDestory(videoCapturerHandle);
-    if (videoBuffer) {
-        free(videoBuffer);
-    }
-
-    return 0;
+    return ret;
 }
