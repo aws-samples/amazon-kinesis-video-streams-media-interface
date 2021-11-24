@@ -25,7 +25,8 @@
 
 #define T31_VIDEO_STREAM_1080P_CHANNEL_NUM CH0_INDEX
 #define T31_VIDEO_STREAM_720P_CHANNEL_NUM  CH1_INDEX
-#define T31_VIDEO_STREAM_CHANNEL_NUM       2
+#define T31_VIDEO_STREAM_360P_CHANNEL_NUM  CH2_INDEX
+#define T31_VIDEO_STREAM_CHANNEL_NUM       3
 
 #define T31_HANDLE_GET(x) T31VideoCapturer* t31Handle = (T31VideoCapturer*) ((x))
 
@@ -133,9 +134,9 @@ VideoCapturerHandle videoCapturerCreate(void)
         }
     }
 
-    // Now implementation supports H.264, 1080p and 720p
-    t31Handle->capability.formats = (1 << (VID_FMT_H264 - 1));
-    t31Handle->capability.resolutions = (1 << (VID_RES_1080P - 1)) | (1 << (VID_RES_720P - 1));
+    // Now implementation supports H.264, RAW(NV12), 1080p, 720p and 360p
+    t31Handle->capability.formats = (1 << (VID_FMT_H264 - 1)) | (1 << (VID_FMT_RAW - 1));
+    t31Handle->capability.resolutions = (1 << (VID_RES_1080P - 1)) | (1 << (VID_RES_720P - 1)) | (1 << (VID_RES_360P - 1));
 
     setStatus((VideoCapturerHandle) t31Handle, VID_CAP_STATUS_STREAM_OFF);
 
@@ -181,6 +182,10 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             t31Handle->channelNum = T31_VIDEO_STREAM_720P_CHANNEL_NUM;
             break;
 
+        case VID_RES_360P:
+            t31Handle->channelNum = T31_VIDEO_STREAM_360P_CHANNEL_NUM;
+            break;
+
         default:
             LOG("Unsupported resolution %d", resolution);
             return -EINVAL;
@@ -191,7 +196,6 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             chn[t31Handle->channelNum].payloadType = IMP_ENC_PROFILE_AVC_MAIN;
             break;
         case VID_FMT_RAW:
-            // chn[t31Handle->channelNum].fs_chn_attr.pixFmt = PIX_FMT_RGB24;
             break;
 
         default:

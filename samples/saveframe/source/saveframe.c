@@ -45,7 +45,7 @@ int main(int argc, char** argv)
         return -EAGAIN;
     }
 
-    if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_720P)) {
+    if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_360P)) {
         printf("Failed to set video capturer format\n");
         close(fd);
         videoCapturerDestory(videoCapturerHandle);
