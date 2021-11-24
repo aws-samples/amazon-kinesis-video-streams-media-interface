@@ -23,10 +23,10 @@
 #include <imp/imp_system.h>
 #include "sample-common.h"
 
-#define T31_VIDEO_STREAM_1080P_CHANNEL_NUM CH0_INDEX
-#define T31_VIDEO_STREAM_720P_CHANNEL_NUM  CH1_INDEX
-#define T31_VIDEO_STREAM_360P_CHANNEL_NUM  CH2_INDEX
-#define T31_VIDEO_STREAM_CHANNEL_NUM       3
+#define T31_VIDEO_STREAM_1080P_CHANNEL_NUM   CH0_INDEX
+#define T31_VIDEO_STREAM_720P_CHANNEL_NUM    CH1_INDEX
+#define T31_VIDEO_STREAM_LOW_RES_CHANNEL_NUM CH2_INDEX
+#define T31_VIDEO_STREAM_CHANNEL_NUM         3
 
 #define T31_HANDLE_GET(x) T31VideoCapturer* t31Handle = (T31VideoCapturer*) ((x))
 
@@ -141,9 +141,10 @@ VideoCapturerHandle videoCapturerCreate(void)
         }
     }
 
-    // Now implementation supports H.264, RAW(NV12), 1080p, 720p and 360p
+    // Now implementation supports H.264, RAW(NV12), 1080p, 720p, 360p and 320p
     t31Handle->capability.formats = (1 << (VID_FMT_H264 - 1)) | (1 << (VID_FMT_RAW - 1));
-    t31Handle->capability.resolutions = (1 << (VID_RES_1080P - 1)) | (1 << (VID_RES_720P - 1)) | (1 << (VID_RES_360P - 1));
+    t31Handle->capability.resolutions =
+        (1 << (VID_RES_1080P - 1)) | (1 << (VID_RES_720P - 1)) | (1 << (VID_RES_360P - 1)) | (1 << (VID_RES_320P - 1));
 
     setStatus((VideoCapturerHandle) t31Handle, VID_CAP_STATUS_STREAM_OFF);
 
@@ -190,7 +191,20 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             break;
 
         case VID_RES_360P:
-            t31Handle->channelNum = T31_VIDEO_STREAM_360P_CHANNEL_NUM;
+            t31Handle->channelNum = T31_VIDEO_STREAM_LOW_RES_CHANNEL_NUM;
+            chn[t31Handle->channelNum].fs_chn_attr.picWidth = 480;
+            chn[t31Handle->channelNum].fs_chn_attr.picHeight = 360;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.enable = 1;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.outwidth = chn[t31Handle->channelNum].fs_chn_attr.picWidth;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.outheight = chn[t31Handle->channelNum].fs_chn_attr.picHeight;
+            break;
+        case VID_RES_320P:
+            t31Handle->channelNum = T31_VIDEO_STREAM_LOW_RES_CHANNEL_NUM;
+            chn[t31Handle->channelNum].fs_chn_attr.picWidth = 416;
+            chn[t31Handle->channelNum].fs_chn_attr.picHeight = 320;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.enable = 1;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.outwidth = chn[t31Handle->channelNum].fs_chn_attr.picWidth;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.outheight = chn[t31Handle->channelNum].fs_chn_attr.picHeight;
             break;
 
         default:

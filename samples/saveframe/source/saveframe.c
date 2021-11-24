@@ -27,8 +27,8 @@
 
 #ifdef CONVERT_NV12_TO_RGB24
 
-#define RGB24_FRAME_WIDTH  (640)
-#define RGB24_FRAME_HEIGHT (360)
+#define RGB24_FRAME_WIDTH  (416)
+#define RGB24_FRAME_HEIGHT (320)
 #define RGB_FRAME_SIZE     (RGB24_FRAME_WIDTH * RGB24_FRAME_HEIGHT * 3)
 
 int NV12_TO_RGB24(uint8_t* yuyv, uint8_t* rgbBuffer, size_t width, size_t height)
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     } else if (!videoCapturerHandle) {
         printf("Failed to create video capturer\n");
         ret = -EAGAIN;
-    } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_360P)) {
+    } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_320P)) {
         printf("Failed to set video capturer format\n");
         ret = -EAGAIN;
     } else if (videoCapturerAcquireStream(videoCapturerHandle)) {
