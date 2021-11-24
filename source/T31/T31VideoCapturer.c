@@ -81,12 +81,14 @@ static int startRecvPic(VideoCapturerHandle handle, uint8_t chnNum)
 
     T31_HANDLE_STATUS_CHECK(t31Handle, VID_CAP_STATUS_STREAM_ON);
 
-    if (IMP_Encoder_StartRecvPic(chnNum)) {
-        LOG("IMP_Encoder_StartRecvPic(%d) failed", chnNum);
-        return -EAGAIN;
-    }
+    if (t31Handle->format != VID_FMT_RAW) {
+        if (IMP_Encoder_StartRecvPic(chnNum)) {
+            LOG("IMP_Encoder_StartRecvPic(%d) failed", chnNum);
+            return -EAGAIN;
+        }
 
-    LOG("IMP_Encoder_StartRecvPic(%d)", chnNum);
+        LOG("IMP_Encoder_StartRecvPic(%d)", chnNum);
+    }
 
     return 0;
 }
@@ -96,12 +98,14 @@ static int stopRecvPic(VideoCapturerHandle handle, uint8_t chnNum)
     T31_HANDLE_NULL_CHECK(handle);
     T31_HANDLE_GET(handle);
 
-    if (IMP_Encoder_StopRecvPic(chnNum)) {
-        LOG("IMP_Encoder_StopRecvPic(%d) failed", chnNum);
-        return -EAGAIN;
-    }
+    if (t31Handle->format != VID_FMT_RAW) {
+        if (IMP_Encoder_StopRecvPic(chnNum)) {
+            LOG("IMP_Encoder_StopRecvPic(%d) failed", chnNum);
+            return -EAGAIN;
+        }
 
-    LOG("IMP_Encoder_StopRecvPic(%d)", chnNum);
+        LOG("IMP_Encoder_StopRecvPic(%d)", chnNum);
+    }
 
     return 0;
 }
@@ -118,51 +122,14 @@ VideoCapturerHandle videoCapturerCreate(void)
     memset(t31Handle, 0, sizeof(T31VideoCapturer));
 
     if (!t31VideoSystemUser) {
+        for (int i = 0; i < T31_VIDEO_STREAM_CHANNEL_NUM; i++) {
+            chn[i].enable = false;
+        }
         /* Step.1 System init */
         if (sample_system_init()) {
             LOG("IMP_System_Init() failed");
             free(t31Handle);
             return NULL;
-        }
-
-        chn[T31_VIDEO_STREAM_1080P_CHANNEL_NUM].payloadType = IMP_ENC_PROFILE_AVC_MAIN;
-        chn[T31_VIDEO_STREAM_1080P_CHANNEL_NUM].enable = true;
-        chn[T31_VIDEO_STREAM_720P_CHANNEL_NUM].payloadType = IMP_ENC_PROFILE_AVC_MAIN;
-        chn[T31_VIDEO_STREAM_720P_CHANNEL_NUM].enable = true;
-
-        /* Step.2 FrameSource init */
-        if (sample_framesource_init()) {
-            LOG("FrameSource init failed");
-            free(t31Handle);
-            return NULL;
-        }
-
-        /* Step.3 Encoder init */
-        for (int i = 0; i < T31_VIDEO_STREAM_CHANNEL_NUM; i++) {
-            if (chn[i].enable) {
-                if (IMP_Encoder_CreateGroup(chn[i].index)) {
-                    LOG("IMP_Encoder_CreateGroup(%d) error !", chn[i].index);
-                    free(t31Handle);
-                    return NULL;
-                }
-            }
-        }
-
-        if (sample_encoder_init()) {
-            LOG("Encoder init failed");
-            free(t31Handle);
-            return NULL;
-        }
-
-        /* Step.4 Bind */
-        for (int i = 0; i < T31_VIDEO_STREAM_CHANNEL_NUM; i++) {
-            if (chn[i].enable) {
-                if (IMP_System_Bind(&chn[i].framesource_chn, &chn[i].imp_encoder)) {
-                    LOG("Bind FrameSource channel%d and Encoder failed", i);
-                    free(t31Handle);
-                    return NULL;
-                }
-            }
         }
     }
 
@@ -206,18 +173,63 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
     T31_HANDLE_NULL_CHECK(handle);
     T31_HANDLE_GET(handle);
 
-    if (format != VID_FMT_H264) {
-        LOG("Unsupported format %d", format);
-        return -EINVAL;
+    switch (resolution) {
+        case VID_RES_1080P:
+            t31Handle->channelNum = T31_VIDEO_STREAM_1080P_CHANNEL_NUM;
+            break;
+        case VID_RES_720P:
+            t31Handle->channelNum = T31_VIDEO_STREAM_720P_CHANNEL_NUM;
+            break;
+
+        default:
+            LOG("Unsupported resolution %d", resolution);
+            return -EINVAL;
     }
 
-    if (resolution == VID_RES_1080P) {
-        t31Handle->channelNum = T31_VIDEO_STREAM_1080P_CHANNEL_NUM;
-    } else if (resolution == VID_RES_720P) {
-        t31Handle->channelNum = T31_VIDEO_STREAM_720P_CHANNEL_NUM;
-    } else {
-        LOG("Unsupported resolution %d", resolution);
-        return -EINVAL;
+    switch (format) {
+        case VID_FMT_H264:
+            chn[t31Handle->channelNum].payloadType = IMP_ENC_PROFILE_AVC_MAIN;
+            break;
+        case VID_FMT_RAW:
+            // chn[t31Handle->channelNum].fs_chn_attr.pixFmt = PIX_FMT_RGB24;
+            break;
+
+        default:
+            LOG("Unsupported format %d", format);
+            return -EINVAL;
+    }
+    chn[t31Handle->channelNum].enable = true;
+
+    /* Step.2 FrameSource init */
+
+    if (IMP_FrameSource_CreateChn(chn[t31Handle->channelNum].index, &chn[t31Handle->channelNum].fs_chn_attr)) {
+        LOG("IMP_FrameSource_CreateChn(chn%d) error !", chn[t31Handle->channelNum].index);
+        return -EAGAIN;
+    }
+
+    if (IMP_FrameSource_SetChnAttr(chn[t31Handle->channelNum].index, &chn[t31Handle->channelNum].fs_chn_attr)) {
+        LOG("IMP_FrameSource_SetChnAttr(chn%d) error !", chn[t31Handle->channelNum].index);
+        return -EAGAIN;
+    }
+
+    if (format != VID_FMT_RAW) {
+        /* Step.3 Encoder init */
+
+        if (IMP_Encoder_CreateGroup(chn[t31Handle->channelNum].index)) {
+            LOG("IMP_Encoder_CreateGroup(%d) error !", chn[t31Handle->channelNum].index);
+            return -EAGAIN;
+        }
+
+        if (sample_encoder_init()) {
+            LOG("Encoder init failed");
+            return -EAGAIN;
+        }
+
+        /* Step.4 Bind */
+        if (IMP_System_Bind(&chn[t31Handle->channelNum].framesource_chn, &chn[t31Handle->channelNum].imp_encoder)) {
+            LOG("Bind FrameSource channel%d and Encoder failed", t31Handle->channelNum);
+            return -EAGAIN;
+        }
     }
 
     t31Handle->format = format;
@@ -242,8 +254,8 @@ int videoCapturerAcquireStream(VideoCapturerHandle handle)
     T31_HANDLE_NULL_CHECK(handle);
     T31_HANDLE_GET(handle);
 
-    if (sample_framesource_streamon()) {
-        LOG("ImpStreamOn failed");
+    if (IMP_FrameSource_EnableChn(chn[t31Handle->channelNum].index)) {
+        LOG("IMP_FrameSource_EnableChn(%d) error", chn[t31Handle->channelNum].index);
         return -EAGAIN;
     }
 
@@ -264,39 +276,65 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
     }
 
     int ret = 0;
-    size_t uPacketLen = 0;
-    IMPEncoderStream encodeStream = {0};
 
-    if (IMP_Encoder_PollingStream(t31Handle->channelNum, T31_POLLING_STREAM_TIMEOUT_MS)) {
-        LOG("IMP_Encoder_PollingStream(%d) timeout", t31Handle->channelNum);
-        return -EAGAIN;
-    }
+    if (t31Handle->format == VID_FMT_RAW) {
+        IMPFrameInfo* rawFrame = NULL;
+        if (IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, chn[t31Handle->channelNum].fs_chn_attr.nrVBs * 2)) {
+            LOG("IMP_FrameSource_SetFrameDepth(%d,%d) failed", t31Handle->channelNum, chn[t31Handle->channelNum].fs_chn_attr.nrVBs * 2);
+            return -EAGAIN;
+        }
 
-    if (IMP_Encoder_GetStream(t31Handle->channelNum, &encodeStream, 1)) {
-        LOG("IMP_Encoder_GetStream(%d) failed", t31Handle->channelNum);
-        return -EAGAIN;
-    }
+        if (IMP_FrameSource_GetFrame(t31Handle->channelNum, &rawFrame)) {
+            LOG("IMP_FrameSource_GetFrame(%d) failed", t31Handle->channelNum);
+            IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, 0);
+            return -EAGAIN;
+        }
+        if (frameDataBufferSize < rawFrame->size) {
+            LOG("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, rawFrame->size);
+            ret = -ENOMEM;
+        } else {
+            memcpy(pFrameDataBuffer, (void*) rawFrame->virAddr, rawFrame->size);
+            *pFrameSize = rawFrame->size;
+            *pTimestamp = IMP_System_GetTimeStamp();
+        }
 
-    for (int i = 0; i < encodeStream.packCount; i++) {
-        uPacketLen += encodeStream.pack[i].length;
-    }
-
-    if (frameDataBufferSize < uPacketLen) {
-        LOG("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, uPacketLen);
-        *pFrameSize = 0;
-        ret = -ENOMEM;
+        IMP_FrameSource_ReleaseFrame(t31Handle->channelNum, rawFrame);
+        IMP_FrameSource_SetFrameDepth(t31Handle->channelNum, 0);
     } else {
-        size_t offset = 0;
+        size_t uPacketLen = 0;
+        IMPEncoderStream encodeStream = {0};
+
+        if (IMP_Encoder_PollingStream(t31Handle->channelNum, T31_POLLING_STREAM_TIMEOUT_MS)) {
+            LOG("IMP_Encoder_PollingStream(%d) timeout", t31Handle->channelNum);
+            return -EAGAIN;
+        }
+
+        if (IMP_Encoder_GetStream(t31Handle->channelNum, &encodeStream, 1)) {
+            LOG("IMP_Encoder_GetStream(%d) failed", t31Handle->channelNum);
+            return -EAGAIN;
+        }
 
         for (int i = 0; i < encodeStream.packCount; i++) {
-            getPacket(&encodeStream, &encodeStream.pack[i], pFrameDataBuffer + offset, uPacketLen - offset);
-            offset += encodeStream.pack[i].length;
+            uPacketLen += encodeStream.pack[i].length;
         }
-        *pFrameSize = uPacketLen;
-        *pTimestamp = IMP_System_GetTimeStamp();
-    }
 
-    IMP_Encoder_ReleaseStream(t31Handle->channelNum, &encodeStream);
+        if (frameDataBufferSize < uPacketLen) {
+            LOG("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, uPacketLen);
+            *pFrameSize = 0;
+            ret = -ENOMEM;
+        } else {
+            size_t offset = 0;
+
+            for (int i = 0; i < encodeStream.packCount; i++) {
+                getPacket(&encodeStream, &encodeStream.pack[i], pFrameDataBuffer + offset, uPacketLen - offset);
+                offset += encodeStream.pack[i].length;
+            }
+            *pFrameSize = uPacketLen;
+            *pTimestamp = IMP_System_GetTimeStamp();
+        }
+
+        IMP_Encoder_ReleaseStream(t31Handle->channelNum, &encodeStream);
+    }
 
     return ret;
 }
@@ -310,7 +348,7 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
         return -EAGAIN;
     }
 
-    if (sample_framesource_streamoff()) {
+    if (IMP_FrameSource_DisableChn(chn[t31Handle->channelNum].index)) {
         LOG("FrameSource StreamOff failed");
         return -EAGAIN;
     }
@@ -331,21 +369,26 @@ void videoCapturerDestory(VideoCapturerHandle handle)
 
     setStatus(handle, VID_CAP_STATUS_NOT_READY);
 
-    free(handle);
+    if (chn[t31Handle->channelNum].enable) {
+        if (t31Handle->format != VID_FMT_RAW) {
+            if (IMP_System_UnBind(&chn[t31Handle->channelNum].framesource_chn, &chn[t31Handle->channelNum].imp_encoder)) {
+                LOG("UnBind FrameSource channel%d and Encoder failed");
+            }
+            sample_encoder_exit();
+        }
+
+        /*Destroy channel */
+        if (IMP_FrameSource_DestroyChn(chn[t31Handle->channelNum].index)) {
+            LOG("IMP_FrameSource_DestroyChn(%d) error", chn[t31Handle->channelNum].index);
+        }
+        chn[t31Handle->channelNum].enable = false;
+    }
 
     ATOMIC_INT_SUB(&t31VideoSystemUser);
 
     if (!t31VideoSystemUser) {
-        for (int i = 0; i < T31_VIDEO_STREAM_CHANNEL_NUM; i++) {
-            if (chn[i].enable) {
-                if (IMP_System_UnBind(&chn[i].framesource_chn, &chn[i].imp_encoder)) {
-                    LOG("UnBind FrameSource channel%d and Encoder failed", i);
-                }
-            }
-        }
-
-        sample_encoder_exit();
-        sample_framesource_exit();
         sample_system_exit();
     }
+
+    free(handle);
 }

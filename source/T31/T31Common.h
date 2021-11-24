@@ -49,5 +49,3 @@
     }
 
 #define T31_POLLING_STREAM_TIMEOUT_MS 1000
-
-#define MAX_CALLBACK_NUM                   3

@@ -137,7 +137,7 @@ INT32 main(INT32 argc, CHAR* argv[])
     videoCapturerGetCapability(videoCapturerHandle, &videoCapability);
     printf("VudioCapturerCapability: formats[%x], resolutions[%x]\n", videoCapability.formats, videoCapability.resolutions);
 
-    CHK_STATUS_ERR(videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_720P), STATUS_INVALID_OPERATION, "Unable to set video format");
+    CHK_STATUS_ERR(videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_1080P), STATUS_INVALID_OPERATION, "Unable to set video format");
     printf("Board VideoCapturer initialized\n");
 
     // do trickleIce by default
