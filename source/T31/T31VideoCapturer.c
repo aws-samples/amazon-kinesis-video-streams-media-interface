@@ -141,10 +141,10 @@ VideoCapturerHandle videoCapturerCreate(void)
         }
     }
 
-    // Now implementation supports H.264, RAW(NV12), 1080p, 720p, 360p and 320p
+    // Now implementation supports H.264, RAW(NV12), 1080p, 720p, 480p, 360p and 320p
     t31Handle->capability.formats = (1 << (VID_FMT_H264 - 1)) | (1 << (VID_FMT_RAW - 1));
     t31Handle->capability.resolutions =
-        (1 << (VID_RES_1080P - 1)) | (1 << (VID_RES_720P - 1)) | (1 << (VID_RES_360P - 1)) | (1 << (VID_RES_320P - 1));
+        (1 << (VID_RES_1080P - 1)) | (1 << (VID_RES_720P - 1)) | (1 << (VID_RES_480P - 1)) | (1 << (VID_RES_360P - 1)) | (1 << (VID_RES_320P - 1));
 
     setStatus((VideoCapturerHandle) t31Handle, VID_CAP_STATUS_STREAM_OFF);
 
@@ -188,6 +188,15 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             break;
         case VID_RES_720P:
             t31Handle->channelNum = T31_VIDEO_STREAM_720P_CHANNEL_NUM;
+            break;
+
+        case VID_RES_480P:
+            t31Handle->channelNum = T31_VIDEO_STREAM_LOW_RES_CHANNEL_NUM;
+            chn[t31Handle->channelNum].fs_chn_attr.picWidth = 640;
+            chn[t31Handle->channelNum].fs_chn_attr.picHeight = 480;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.enable = 1;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.outwidth = chn[t31Handle->channelNum].fs_chn_attr.picWidth;
+            chn[t31Handle->channelNum].fs_chn_attr.scaler.outheight = chn[t31Handle->channelNum].fs_chn_attr.picHeight;
             break;
 
         case VID_RES_360P:
