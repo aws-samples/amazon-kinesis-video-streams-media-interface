@@ -273,7 +273,7 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t si
             return -EAGAIN;
         }
 
-        frame.virAddr = streamOut.stream;
+        frame.virAddr = (uint32_t*) streamOut.stream;
         frame.len = streamOut.len;
         playFrame(handle, &frame);
 
