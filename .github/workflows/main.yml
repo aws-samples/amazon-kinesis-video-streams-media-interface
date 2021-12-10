@@ -38,8 +38,11 @@ jobs:
   cmake:
     needs: ecr-prepare
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        container: [ "482862934379.dkr.ecr.us-east-1.amazonaws.com/ingenic:4.7.2", "482862934379.dkr.ecr.us-east-1.amazonaws.com/ingenic:5.4.0" ]
     container:
-      image: 482862934379.dkr.ecr.us-east-1.amazonaws.com/ingenic:4.7.2
+      image: ${{ matrix.container }}
       credentials:
         username: ${{ secrets.ECR_USERNAME }}
         password: ${{ secrets.ECR_PASSWORD }}
