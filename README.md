@@ -36,8 +36,16 @@ export AWS_IOT_CORE_CERT=your_camera_certificate.pem
 export AWS_IOT_CORE_PRIVATE_KEY=your_camera_private.key
 export AWS_IOT_CORE_ROLE_ALIAS=your_camera_role_alias
 ```
-7. Execute sample on your board: `./kvswebrtcmaster-static`
-8. Check WebRTC live stream via AWS console or [AWS WebRTC test page]()
+Alternatively, you can choose use access key id/access key secret by turn off `IOT_CORE_ENABLE_CREDENTIALS` in [Samples.h](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/blob/main/samples/webrtc/source/Samples.h#L67) and setup credentials:
+```bash
+export AWS_KVS_LOG_LEVEL=2
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_KVS_CACERT_PATH=cacert.pem
+export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
+export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+7. Execute sample on your board: `./kvswebrtcmaster-static`. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`
+8. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html)
 
 ## Getting started with out-of-box KVS Producer sample
 
