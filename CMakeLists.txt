@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.12)
 project(embedded-media VERSION 1.0.0 LANGUAGES C CXX)
 
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(USE_MUCLIBC "Use muclibc" OFF)
+
 if(NOT BOARD OR BOARD STREQUAL "")
     message(STATUS "No board was selected. Use T31 by default.")
     set(BOARD "T31")
@@ -12,6 +20,8 @@ elseif(BOARD STREQUAL "AK3919")
     message(FATAL "AK3919 is not implemented yet.")
 endif()
 
+# Board Specific Parts Start
+
 if(BOARD STREQUAL "T31")
     set(T31_SDK_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdparty/t31/)
     set(BOARD_SRCS
@@ -21,9 +31,16 @@ if(BOARD STREQUAL "T31")
         ${T31_SDK_DIR}/include/
         ${T31_SDK_DIR}/samples/libimp-samples/
     )
-    set(BOARD_LIBS_DIR
-        ${T31_SDK_DIR}/lib/uclibc
-    )
+    if(USE_MUCLIBC)
+        set(BOARD_LIBS_DIR
+            ${T31_SDK_DIR}/lib/uclibc
+        )
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -muclibc")
+    else()
+        set(BOARD_LIBS_DIR
+            ${T31_SDK_DIR}/lib/glibc
+        )
+    endif()
     set(BOARD_LIBS_SHARED
         imp alog rt m pthread dl
     )
@@ -31,6 +48,8 @@ if(BOARD STREQUAL "T31")
         libimp.a libalog.a librt.a libm.a pthread dl
     )
 endif()
+
+# Board Specific Parts End
 
 option(BUILD_WEBRTC_SAMPLES "Build webrtc samples" ON)
 option(BUILD_KVS_SAMPLES "Build KVS Producer samples" OFF)

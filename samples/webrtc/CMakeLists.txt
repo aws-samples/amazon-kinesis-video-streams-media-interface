@@ -10,13 +10,17 @@ message(STATUS "BOARD_LIBS_DIR - ${BOARD_LIBS_DIR}")
 message(STATUS "BOARD_LIBS - ${BOARD_LIBS}")
 message(STATUS "EMBEDDED_MEDIA_INCLUDES_DIR - ${EMBEDDED_MEDIA_INCLUDES_DIR}")
 message(STATUS "EMBEDDED_MEDIA_LINK_DIR - ${EMBEDDED_MEDIA_LINK_DIR}")
+message(STATUS "USE_MUCLIBC - ${USE_MUCLIBC}")
 
 include(ExternalProject)
 ExternalProject_Add(kvs-webrtc
   GIT_REPOSITORY    https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c.git
-  GIT_TAG           d08634bda8b32b0e9993a83835c4f0481c060abd
-  CMAKE_ARGS        -DADD_MUCLIBC=ON -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_HOST_PLATFORM=x86_64-unknown-linux-gnu -DBUILD_LIBSRTP_DESTINATION_PLATFORM=mips-unknown-linux-uclibcgnu -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/ -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
-  PATCH_COMMAND     git apply ${CMAKE_CURRENT_LIST_DIR}/patches/0001-cmake-allow-user-to-specify-OPEN_SRC_INSTALL_PREFIX.patch ${CMAKE_CURRENT_LIST_DIR}/patches/0002-ram-optimization-reduce-rolling-buffer-and-jitter-bu.patch
+  GIT_TAG           22c9e3d7932365f0d04181b339f17e4870036f5c
+  CMAKE_ARGS        -DADD_MUCLIBC=${USE_MUCLIBC}
+                    -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_HOST_PLATFORM=x86_64-unknown-linux-gnu -DBUILD_LIBSRTP_DESTINATION_PLATFORM=mips-unknown-linux-uclibcgnu -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
+                    -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
+                    -DCMAKE_C_FLAGS="-std=gnu99"
+  PATCH_COMMAND     git apply ${CMAKE_CURRENT_LIST_DIR}/patches/0001-ram-optimization-reduce-rolling-buffer-and-jitter-bu.patch
   BUILD_ALWAYS      TRUE
   GIT_PROGRESS      TRUE
   TEST_COMMAND      ""

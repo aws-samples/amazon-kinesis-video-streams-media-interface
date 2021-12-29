@@ -34,6 +34,7 @@ jobs:
         gh secret set ECR_REGISTRY --body ${{ steps.login-ecr.outputs.registry }} --repo ${{ github.repository }}
         gh secret set ECR_USERNAME --body ${{ steps.login-ecr.outputs.username }} --repo ${{ github.repository }}
         gh secret set ECR_PASSWORD --body ${{ steps.login-ecr.outputs.password }} --repo ${{ github.repository }}
+        sleep 3
 
   cmake:
     needs: ecr-prepare
