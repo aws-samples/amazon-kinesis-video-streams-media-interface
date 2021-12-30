@@ -12,6 +12,8 @@ message(STATUS "EMBEDDED_MEDIA_INCLUDES_DIR - ${EMBEDDED_MEDIA_INCLUDES_DIR}")
 message(STATUS "EMBEDDED_MEDIA_LINK_DIR - ${EMBEDDED_MEDIA_LINK_DIR}")
 message(STATUS "USE_MUCLIBC - ${USE_MUCLIBC}")
 
+set(WEBRTC_CMAKE_C_FLAGS "-fPIC -std=gnu99")
+
 include(ExternalProject)
 ExternalProject_Add(kvs-webrtc
   GIT_REPOSITORY    https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c.git
@@ -19,7 +21,7 @@ ExternalProject_Add(kvs-webrtc
   CMAKE_ARGS        -DADD_MUCLIBC=${USE_MUCLIBC}
                     -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_HOST_PLATFORM=x86_64-unknown-linux-gnu -DBUILD_LIBSRTP_DESTINATION_PLATFORM=mips-unknown-linux-uclibcgnu -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
                     -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
-                    -DCMAKE_C_FLAGS=-fPIC -std=gnu99
+                    -DCMAKE_C_FLAGS=${WEBRTC_CMAKE_C_FLAGS}
   PATCH_COMMAND     git apply ${CMAKE_CURRENT_LIST_DIR}/patches/0001-ram-optimization-reduce-rolling-buffer-and-jitter-bu.patch
   BUILD_ALWAYS      TRUE
   GIT_PROGRESS      TRUE
