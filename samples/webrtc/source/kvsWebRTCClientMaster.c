@@ -19,7 +19,7 @@
 #include "com/amazonaws/kinesis/video/capturer/VideoCapturer.h"
 #include "com/amazonaws/kinesis/video/player/AudioPlayer.h"
 
-#define VIDEO_FRAME_BUFFER_SIZE_BYTES      (128 * 1024UL)
+#define VIDEO_FRAME_BUFFER_SIZE_BYTES      (160 * 1024UL)
 #define AUDIO_FRAME_BUFFER_SIZE_BYTES      (1024UL)
 #define HUNDREDS_OF_NANOS_IN_A_MICROSECOND 10LL
 
@@ -99,7 +99,7 @@ INT32 main(INT32 argc, CHAR* argv[])
     PSampleConfiguration pSampleConfiguration = NULL;
     SignalingClientMetrics signalingClientMetrics;
     PCHAR pChannelName;
-    signalingClientMetrics.version = 0;
+    signalingClientMetrics.version = SIGNALING_CLIENT_METRICS_CURRENT_VERSION;
 
     SET_INSTRUMENTED_ALLOCATORS();
 
@@ -196,9 +196,9 @@ INT32 main(INT32 argc, CHAR* argv[])
     printf("[KVS Master] Signaling client created successfully\n");
 
     // Enable the processing of the messages
-    retStatus = signalingClientConnectSync(pSampleConfiguration->signalingClientHandle);
+    retStatus = signalingClientFetchSync(pSampleConfiguration->signalingClientHandle);
     if (retStatus != STATUS_SUCCESS) {
-        printf("[KVS Master] signalingClientConnectSync(): operation returned status code: 0x%08x \n", retStatus);
+        printf("[KVS Master] signalingClientFetchSync(): operation returned status code: 0x%08x \n", retStatus);
         goto CleanUp;
     }
     printf("[KVS Master] Signaling client connection to socket established\n");
@@ -219,13 +219,27 @@ INT32 main(INT32 argc, CHAR* argv[])
 CleanUp:
 
     if (retStatus != STATUS_SUCCESS) {
-        printf("[KVS Master] Terminated with status code 0x%08x", retStatus);
+        printf("[KVS Master] Terminated with status code 0x%08x\n", retStatus);
     }
 
     printf("[KVS Master] Cleaning up....\n");
     if (pSampleConfiguration != NULL) {
         // Kick of the termination sequence
         ATOMIC_STORE_BOOL(&pSampleConfiguration->appTerminateFlag, TRUE);
+
+        if (IS_VALID_MUTEX_VALUE(pSampleConfiguration->sampleConfigurationObjLock)) {
+            MUTEX_LOCK(pSampleConfiguration->sampleConfigurationObjLock);
+        }
+
+        // Cancel the media thread
+        if (pSampleConfiguration->mediaThreadStarted) {
+            DLOGD("Canceling media thread");
+            THREAD_CANCEL(pSampleConfiguration->mediaSenderTid);
+        }
+
+        if (IS_VALID_MUTEX_VALUE(pSampleConfiguration->sampleConfigurationObjLock)) {
+            MUTEX_UNLOCK(pSampleConfiguration->sampleConfigurationObjLock);
+        }
 
         if (pSampleConfiguration->mediaSenderTid != INVALID_TID_VALUE) {
             THREAD_JOIN(pSampleConfiguration->mediaSenderTid, NULL);
@@ -242,7 +256,7 @@ CleanUp:
         }
         retStatus = freeSignalingClient(&pSampleConfiguration->signalingClientHandle);
         if (retStatus != STATUS_SUCCESS) {
-            printf("[KVS Master] freeSignalingClient(): operation returned status code: 0x%08x", retStatus);
+            printf("[KVS Master] freeSignalingClient(): operation returned status code: 0x%08x\n", retStatus);
         }
 
         retStatus = freeSampleConfiguration(&pSampleConfiguration);
