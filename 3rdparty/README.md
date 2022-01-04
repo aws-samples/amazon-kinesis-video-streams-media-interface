@@ -5,7 +5,7 @@ Put board sdk here.
 # T31
 
 ```
-t31/
+T31/
 |-- include
 |   |-- imp
 |   `-- sysutils
