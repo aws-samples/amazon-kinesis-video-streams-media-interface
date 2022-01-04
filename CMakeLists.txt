@@ -23,7 +23,7 @@ endif()
 # Board Specific Parts Start
 
 if(BOARD STREQUAL "T31")
-    set(T31_SDK_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdparty/t31/)
+    set(T31_SDK_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdparty/T31/)
     set(BOARD_SRCS
         ${T31_SDK_DIR}/samples/libimp-samples/sample-common.c
     )
