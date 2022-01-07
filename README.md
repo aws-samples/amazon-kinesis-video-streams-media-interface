@@ -20,6 +20,8 @@ git clone https://github.com/aws-samples/amazon-kinesis-video-streams-media-inte
 3. Copy SoC SDK dependencies into *3rdparty/$BOARD/*. See [3rdparty/README.md](3rdparty/README.md).
 4. Build the code:
 ```bash
+export CC=${YOUR_C_TOOLCHAIN}
+export CXX=${YOUR_CXX_TOOLCHAIN}
 cd amazon-kinesis-video-streams-media-interface
 mkdir build; cd build; cmake ..
 make
@@ -56,6 +58,8 @@ git clone https://github.com/aws-samples/amazon-kinesis-video-streams-media-inte
 2. Copy SoC SDK dependencies into *3rdparty/$BOARD/*. See [3rdparty/README.md](3rdparty/README.md).
 3. Build the code:
 ```bash
+export CC=${YOUR_C_TOOLCHAIN}
+export CXX=${YOUR_CXX_TOOLCHAIN}
 cd amazon-kinesis-video-streams-media-interface
 mkdir build; cd build; cmake .. -DBUILD_WEBRTC_SAMPLES=OFF -DBUILD_KVS_SAMPLES=ON
 make
@@ -83,6 +87,8 @@ git clone https://github.com/aws-samples/amazon-kinesis-video-streams-media-inte
 2. Copy SoC SDK dependencies into *3rdparty/$BOARD/*. See [3rdparty/README.md](3rdparty/README.md).
 3. Build the code:
 ```bash
+export CC=${YOUR_C_TOOLCHAIN}
+export CXX=${YOUR_CXX_TOOLCHAIN}
 cd amazon-kinesis-video-streams-media-interface
 mkdir build; cd build; cmake .. -DBUILD_WEBRTC_SAMPLES=OFF -DBUILD_SAVE_FRAME_SAMPLES=ON
 make
