@@ -361,6 +361,9 @@ STATUS initializePeerConnection(PSampleConfiguration pSampleConfiguration, PRtcP
     // Set this to custom callback to enable filtering of interfaces
     configuration.kvsRtcConfiguration.iceSetInterfaceFilterFunc = NULL;
 
+    // Disable TWCC to save RAM
+    configuration.kvsRtcConfiguration.disableSenderSideBandwidthEstimation = FALSE;
+
     // Set the ICE mode explicitly
     configuration.iceTransportPolicy = ICE_TRANSPORT_POLICY_ALL;
 
@@ -611,10 +614,10 @@ VOID sampleFrameHandler(UINT64 customData, PFrame pFrame)
     }
 }
 
-VOID sampleBandwidthEstimationHandler(UINT64 customData, DOUBLE maxiumBitrate)
+VOID sampleBandwidthEstimationHandler(UINT64 customData, DOUBLE maximumBitrate)
 {
     UNUSED_PARAM(customData);
-    DLOGV("received bitrate suggestion: %f", maxiumBitrate);
+    DLOGV("received bitrate suggestion: %f", maximumBitrate);
 }
 
 VOID sampleSenderBandwidthEstimationHandler(UINT64 customData, UINT32 txBytes, UINT32 rxBytes, UINT32 txPacketsCnt, UINT32 rxPacketsCnt,
