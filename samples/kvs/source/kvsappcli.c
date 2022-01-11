@@ -35,6 +35,10 @@
 #define AUDIO_FRAME_BUFFER_SIZE_BYTES (512UL)
 #define MICROSECONDS_IN_A_MILLISECOND (1000LL)
 
+#define KVS_CONNECTION_TIMEOUT_MS     (15 * 1000UL)
+#define KVS_STREAMING_RECV_TIMEOUT_MS (2 * 1000UL)
+#define KVS_STREAMING_SEND_TIMEOUT_MS (2 * 1000UL)
+
 #ifdef KVS_USE_POOL_ALLOCATOR
 #include "kvs/pool_allocator.h"
 static char pMemPool[POOL_ALLOCATOR_SIZE];
@@ -83,6 +87,22 @@ static int onMkvSent(uint8_t* pData, size_t uDataLen, void* pAppData)
 static int setKvsAppOptions(KvsAppHandle kvsAppHandle)
 {
     int res = ERRNO_NONE;
+
+    /* Setup network timeout */
+    size_t timeout = KVS_CONNECTION_TIMEOUT_MS;
+    if (KvsApp_setoption(kvsAppHandle, OPTION_NETIO_CONNECTION_TIMEOUT, (const char*) &timeout)) {
+        printf("Failed to set connection timeout\n");
+    }
+
+    timeout = KVS_STREAMING_RECV_TIMEOUT_MS;
+    if (KvsApp_setoption(kvsAppHandle, OPTION_NETIO_STREAMING_RECV_TIMEOUT, (const char*) &timeout)) {
+        printf("Failed to set stream recv timeout\n");
+    }
+
+    timeout = KVS_STREAMING_SEND_TIMEOUT_MS;
+    if (KvsApp_setoption(kvsAppHandle, OPTION_NETIO_STREAMING_SEND_TIMEOUT, (const char*) &timeout)) {
+        printf("Failed to set stream send timeout\n");
+    }
 
     /* Setup credentials, it should be either using IoT credentials or AWS access key. */
 #if ENABLE_IOT_CREDENTIAL
