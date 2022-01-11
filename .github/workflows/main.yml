@@ -31,12 +31,12 @@ jobs:
       id: set-ecr-credentials
       run: |
         gh auth login --with-token <<< ${{ secrets.PA_TOKEN }}
-        gh secret set ECR_REGISTRY --body ${{ steps.login-ecr.outputs.registry }} --repo ${{ github.repository }}
-        gh secret set ECR_USERNAME --body ${{ steps.login-ecr.outputs.username }} --repo ${{ github.repository }}
-        gh secret set ECR_PASSWORD --body ${{ steps.login-ecr.outputs.password }} --repo ${{ github.repository }}
-        sleep 3
+        gh secret set --env ECR ECR_REGISTRY --body ${{ steps.login-ecr.outputs.registry }} --repo ${{ github.repository }}
+        gh secret set --env ECR ECR_USERNAME --body ${{ steps.login-ecr.outputs.username }} --repo ${{ github.repository }}
+        gh secret set --env ECR ECR_PASSWORD --body ${{ steps.login-ecr.outputs.password }} --repo ${{ github.repository }}
 
   cmake:
+    environment: ECR
     needs: ecr-prepare
     runs-on: ubuntu-latest
     strategy:
