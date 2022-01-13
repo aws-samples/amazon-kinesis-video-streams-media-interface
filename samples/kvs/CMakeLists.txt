@@ -34,7 +34,9 @@ set(KVS_SDK_LIBS_SHARED
     llhttp
     parson
     aziotsharedutil
-    tlsf)
+    tlsf
+    pthread
+    m)
 
 set(KVS_SDK_LIBS_STATIC
     libkvsapp.a
@@ -45,7 +47,9 @@ set(KVS_SDK_LIBS_STATIC
     libllhttp.a
     libparson.a
     libaziotsharedutil.a
-    libtlsf.a)
+    libtlsf.a
+    pthread
+    m)
 
 add_executable(kvsproducer-shared ${KVS_SAMPLE_SRCS})
 add_dependencies(kvsproducer-shared kvs-producer embedded-media-shared)
