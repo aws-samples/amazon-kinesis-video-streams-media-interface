@@ -49,7 +49,7 @@
 
 #if USE_AUDIO_AAC
 #define AUDIO_CODEC_NAME                "A_AAC"
-#define AUDIO_MPEG_OBJECT_TYPE          AAC_LC
+#define AUDIO_MPEG_OBJECT_TYPE          MPEG4_AAC_LC
 #endif /* USE_AUDIO_AAC */
 
 #if USE_AUDIO_G711
