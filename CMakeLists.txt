@@ -9,6 +9,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 option(USE_MUCLIBC "Use muclibc" OFF)
 
+# Board Specific Parts Start
 if(NOT BOARD OR BOARD STREQUAL "")
     message(STATUS "No board was selected. Use T31 by default.")
     set(BOARD "T31")
@@ -20,35 +21,7 @@ elseif(BOARD STREQUAL "AK3919")
     message(FATAL "AK3919 is not implemented yet.")
 endif()
 
-# Board Specific Parts Start
-
-if(BOARD STREQUAL "T31")
-    set(T31_SDK_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdparty/T31/)
-    set(BOARD_SRCS
-        ${T31_SDK_DIR}/samples/libimp-samples/sample-common.c
-    )
-    set(BOARD_INCS_DIR
-        ${T31_SDK_DIR}/include/
-        ${T31_SDK_DIR}/samples/libimp-samples/
-    )
-    if(USE_MUCLIBC)
-        set(BOARD_LIBS_DIR
-            ${T31_SDK_DIR}/lib/uclibc
-        )
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -muclibc")
-    else()
-        set(BOARD_LIBS_DIR
-            ${T31_SDK_DIR}/lib/glibc
-        )
-    endif()
-    set(BOARD_LIBS_SHARED
-        imp alog rt m pthread dl
-    )
-    set(BOARD_LIBS_STATIC
-        libimp.a libalog.a librt.a libm.a pthread dl
-    )
-endif()
-
+include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/${BOARD}.cmake)
 # Board Specific Parts End
 
 option(BUILD_WEBRTC_SAMPLES "Build webrtc samples" ON)
