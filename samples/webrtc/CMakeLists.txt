@@ -43,7 +43,9 @@ set(WEBRTC_SDK_LIBS_SHARED
     usrsctp
     mbedtls
     mbedx509
-    mbedcrypto)
+    mbedcrypto
+    pthread
+    m)
 
 set(WEBRTC_SDK_LIBS_STATIC
     libkvsWebrtcClient.a
@@ -56,7 +58,9 @@ set(WEBRTC_SDK_LIBS_STATIC
     libusrsctp.a
     libmbedtls.a
     libmbedx509.a
-    libmbedcrypto.a)
+    libmbedcrypto.a
+    pthread
+    m)
 
 add_executable(kvswebrtcmaster-shared ${WEBRTC_SAMPLE_SRCS})
 add_dependencies(kvswebrtcmaster-shared kvs-webrtc embedded-media-shared)
