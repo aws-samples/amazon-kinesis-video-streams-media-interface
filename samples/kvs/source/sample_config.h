@@ -40,8 +40,8 @@
 
 /* Audio configuration */
 #if ENABLE_AUDIO_TRACK
-#define USE_AUDIO_AAC                   0   /* Set to 1 to use AAC as audio track */
-#define USE_AUDIO_G711                  1   /* Set to 1 to use G711 as audio track */
+#define USE_AUDIO_AAC                   1   /* Set to 1 to use AAC as audio track */
+#define USE_AUDIO_G711                  0   /* Set to 1 to use G711 as audio track */
 
 #if (USE_AUDIO_AAC == 0) && (USE_AUDIO_G711 == 0)
 #error "Please select audio source"
@@ -104,7 +104,7 @@
 /**
  * Get the size of stream buffer.  If there is no buffer limit, then assume it's 2M bytes.
  */
-#ifdef ENABLE_RING_BUFFER_MEM_LIMIT
+#if ENABLE_RING_BUFFER_MEM_LIMIT
 #define BUFFER_MEM_LIMIT        RING_BUFFER_MEM_LIMIT
 #else
 #define BUFFER_MEM_LIMIT        (2 * 1024 * 1024)

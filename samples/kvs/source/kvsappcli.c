@@ -115,7 +115,7 @@ static int setKvsAppOptions(KvsAppHandle kvsAppHandle)
 
 #if ENABLE_AUDIO_TRACK
     if (KvsApp_setoption(kvsAppHandle, OPTION_KVS_AUDIO_TRACK_INFO, (const char*) (&audioTrackInfo)) != 0) {
-        printf("Failed to set video track info\n");
+        printf("Failed to set audio track info\n");
     }
 #endif /* ENABLE_AUDIO_TRACK */
 
@@ -233,8 +233,8 @@ int main(int argc, char* argv[])
     Mkv_generatePcmCodecPrivateData(AUDIO_PCM_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber, &audioTrackInfo.pCodecPrivate,
                                     &audioTrackInfo.uCodecPrivateLen);
 #elif USE_AUDIO_AAC
-    Mkv_generateAacCodecPrivateData(AUDIO_MPEG_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber, &pCodecPrivateData,
-                                    &uCodecPrivateDataLen);
+    Mkv_generateAacCodecPrivateData(AUDIO_MPEG_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber, &audioTrackInfo.pCodecPrivate,
+                                    &audioTrackInfo.uCodecPrivateLen);
 #endif
 #endif
 
