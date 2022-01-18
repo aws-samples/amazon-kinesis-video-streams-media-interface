@@ -4,11 +4,13 @@
 
 ## Introduction
 
-**Amazon Kinesis Video Streams Media Interface** provides abstract interfaces for board specific media APIs. This repository also contains SoCs sensors/encoder implementations for Amazon Kinesis Video Streams Producer and WebRTC with out-of-box samples.
+**Amazon Kinesis Video Streams Media Interface** provides abstract interfaces for board specific media APIs. This repository also contains boards sensors/encoder implementations for Amazon Kinesis Video Streams Producer and WebRTC with out-of-box samples.
 
-## Supported SoCs
+## Supported Boards
 
-- T31
+- x86/x84(By selecting board `V4L2`)
+- RPi(By selecting board `V4L2`)
+- T31(By selecting board `T31`)
 
 ## Getting started with out-of-box KVS WebRTC sample
 

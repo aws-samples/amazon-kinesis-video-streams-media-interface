@@ -14,8 +14,8 @@ message(STATUS "EMBEDDED_MEDIA_LINK_DIR - ${EMBEDDED_MEDIA_LINK_DIR}")
 include(ExternalProject)
 ExternalProject_Add(kvs-producer
   GIT_REPOSITORY    https://github.com/aws-samples/amazon-kinesis-video-streams-producer-embedded-c.git
-  GIT_TAG           1704816bed9f9bfa70f2dc531081adb275c72d33
-  CMAKE_ARGS        -DBUILD_SHARED_SAMPLES=ON -DBUILD_STATIC_SAMPLES=ON -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/kvs/ -DCMAKE_BUILD_TYPE=Release
+  GIT_TAG           ad6860365c75ab19b8aa4148c305cc6cbb37eeeb
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/kvs/ -DCMAKE_BUILD_TYPE=Release
   BUILD_ALWAYS      TRUE
   GIT_PROGRESS      TRUE
   TEST_COMMAND      ""
@@ -26,7 +26,6 @@ set(KVS_SAMPLE_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/source/option_configuration.c)
 
 set(KVS_SDK_LIBS_SHARED
-    kvsapp
     kvs-embedded-c
     mbedtls
     mbedcrypto
@@ -39,7 +38,6 @@ set(KVS_SDK_LIBS_SHARED
     m)
 
 set(KVS_SDK_LIBS_STATIC
-    libkvsapp.a
     libkvs-embedded-c.a
     libmbedtls.a
     libmbedx509.a
