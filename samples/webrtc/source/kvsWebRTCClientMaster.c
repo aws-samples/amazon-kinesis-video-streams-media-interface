@@ -107,38 +107,46 @@ INT32 main(INT32 argc, CHAR* argv[])
     signal(SIGINT, sigintHandler);
 #endif
 
-    audioCapturerHandle = audioCapturerCreate();
-    CHK_ERR(audioCapturerHandle, STATUS_INVALID_OPERATION, "AudioCapturer init failed");
-
     AudioCapability audioCapability = {0};
-    audioCapturerGetCapability(audioCapturerHandle, &audioCapability);
-    printf("AudioCapturer Capability: formats[%x], channels[%x], sampleRates[%x], bitDepths[%x]\n", audioCapability.formats, audioCapability.channels,
-           audioCapability.sampleRates, audioCapability.bitDepths);
-
-    CHK_STATUS_ERR(audioCapturerSetFormat(audioCapturerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16), STATUS_INVALID_OPERATION,
-                   "Unable to set AudioCapturer format");
-    printf("Board AudioCapturer initialized\n");
+    audioCapturerHandle = audioCapturerCreate();
+    if (!audioCapturerHandle) {
+    } else {
+        audioCapturerGetCapability(audioCapturerHandle, &audioCapability);
+        DLOGD("AudioCapturer Capability: formats[%x], channels[%x], sampleRates[%x], bitDepths[%x]", audioCapability.formats,
+              audioCapability.channels, audioCapability.sampleRates, audioCapability.bitDepths);
+        if (audioCapturerSetFormat(audioCapturerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16)) {
+            DLOGE("Unable to set AudioCapturer format");
+            audioCapturerDestory(audioCapturerHandle);
+            audioCapturerHandle = NULL;
+        }
+    }
+    DLOGI("Board AudioCapturer initialized");
 
     audioPlayerHandle = audioPlayerCreate();
-    CHK_ERR(audioPlayerHandle, STATUS_INVALID_OPERATION, "AudioPlayer init failed");
+    if (!audioPlayerHandle) {
+        DLOGE("AudioPlayer init failed");
+    } else {
+        audioPlayerGetCapability(audioPlayerHandle, &audioCapability);
+        DLOGD("AudioPlayer Capability: formats[%x], channels[%x], sampleRates[%x], bitDepths[%x]", audioCapability.formats, audioCapability.channels,
+              audioCapability.sampleRates, audioCapability.bitDepths);
 
-    audioPlayerGetCapability(audioPlayerHandle, &audioCapability);
-    printf("AudioPlayer Capability: formats[%x], channels[%x], sampleRates[%x], bitDepths[%x]\n", audioCapability.formats, audioCapability.channels,
-           audioCapability.sampleRates, audioCapability.bitDepths);
-
-    CHK_STATUS_ERR(audioPlayerSetFormat(audioCapturerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16), STATUS_INVALID_OPERATION,
-                   "Unable to set AudioPlayer format");
-    printf("Board AudioPlayer initialized\n");
+        if (audioPlayerSetFormat(audioPlayerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16)) {
+            DLOGE("Unable to set AudioPlayer format");
+            audioPlayerDestory(audioPlayerHandle);
+            audioPlayerHandle = NULL;
+        }
+    }
+    DLOGI("Board AudioPlayer initialized\n");
 
     videoCapturerHandle = videoCapturerCreate();
     CHK_ERR(videoCapturerHandle, STATUS_INVALID_OPERATION, "VideoCapturer init failed");
 
     VideoCapability videoCapability = {0};
     videoCapturerGetCapability(videoCapturerHandle, &videoCapability);
-    printf("VudioCapturerCapability: formats[%x], resolutions[%x]\n", videoCapability.formats, videoCapability.resolutions);
+    DLOGD("VudioCapturerCapability: formats[%x], resolutions[%x]", videoCapability.formats, videoCapability.resolutions);
 
     CHK_STATUS_ERR(videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_1080P), STATUS_INVALID_OPERATION, "Unable to set video format");
-    printf("Board VideoCapturer initialized\n");
+    DLOGI("Board VideoCapturer initialized");
 
     // do trickleIce by default
     printf("[KVS Master] Using trickleICE by default\n");
@@ -167,11 +175,19 @@ INT32 main(INT32 argc, CHAR* argv[])
     }
 
     // Set the audio and video handlers
-    pSampleConfiguration->audioSource = sendAudioPackets;
-    pSampleConfiguration->videoSource = sendVideoPackets;
-    pSampleConfiguration->receiveAudioVideoSource = sampleReceiveAudioVideoFrame;
+    if (videoCapturerHandle) {
+        pSampleConfiguration->videoSource = sendVideoPackets;
+    }
+    if (audioCapturerHandle) {
+        pSampleConfiguration->audioSource = sendAudioPackets;
+        pSampleConfiguration->mediaType = SAMPLE_STREAMING_AUDIO_VIDEO;
+    } else {
+        pSampleConfiguration->mediaType = SAMPLE_STREAMING_VIDEO_ONLY;
+    }
+    if (audioPlayerHandle) {
+        pSampleConfiguration->receiveAudioVideoSource = sampleReceiveAudioVideoFrame;
+    }
     pSampleConfiguration->onDataChannel = onDataChannel;
-    pSampleConfiguration->mediaType = SAMPLE_STREAMING_AUDIO_VIDEO;
     printf("[KVS Master] Finished setting audio and video handlers\n");
 
     // Initialize KVS WebRTC. This must be done before anything else, and must only be done once.
