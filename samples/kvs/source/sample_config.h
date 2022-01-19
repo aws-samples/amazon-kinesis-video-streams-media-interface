@@ -40,8 +40,8 @@
 
 /* Audio configuration */
 #if ENABLE_AUDIO_TRACK
-#define USE_AUDIO_AAC                   1   /* Set to 1 to use AAC as audio track */
-#define USE_AUDIO_G711                  0   /* Set to 1 to use G711 as audio track */
+#define USE_AUDIO_AAC                   0   /* Set to 1 to use AAC as audio track */
+#define USE_AUDIO_G711                  1   /* Set to 1 to use G711 as audio track */
 
 #if (USE_AUDIO_AAC == 0) && (USE_AUDIO_G711 == 0)
 #error "Please select audio source"
@@ -49,12 +49,12 @@
 
 #if USE_AUDIO_AAC
 #define AUDIO_CODEC_NAME                "A_AAC"
-#define AUDIO_MPEG_OBJECT_TYPE          MPEG4_AAC_LC
+#define AUDIO_CODEC_OBJECT_TYPE         MPEG4_AAC_LC
 #endif /* USE_AUDIO_AAC */
 
 #if USE_AUDIO_G711
 #define AUDIO_CODEC_NAME                "A_MS/ACM"
-#define AUDIO_PCM_OBJECT_TYPE           PCM_FORMAT_CODE_ALAW
+#define AUDIO_CODEC_OBJECT_TYPE         PCM_FORMAT_CODE_ALAW
 #endif /* USE_AUDIO_G711 */
 
 #define AUDIO_TRACK_NAME                "kvs audio track"

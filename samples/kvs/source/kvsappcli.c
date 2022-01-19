@@ -114,8 +114,10 @@ static int setKvsAppOptions(KvsAppHandle kvsAppHandle)
 #endif /* ENABLE_IOT_CREDENTIAL */
 
 #if ENABLE_AUDIO_TRACK
-    if (KvsApp_setoption(kvsAppHandle, OPTION_KVS_AUDIO_TRACK_INFO, (const char*) (&audioTrackInfo)) != 0) {
-        printf("Failed to set audio track info\n");
+    if (audioCapturerHandle) {
+        if (KvsApp_setoption(kvsAppHandle, OPTION_KVS_AUDIO_TRACK_INFO, (const char*) (&audioTrackInfo)) != 0) {
+            printf("Failed to set audio track info\n");
+        }
     }
 #endif /* ENABLE_AUDIO_TRACK */
 
@@ -180,6 +182,7 @@ static void* videoThread(void* args)
     return (void*) res;
 }
 
+#if ENABLE_AUDIO_TRACK
 static void* audioThread(void* args)
 {
     int res = ERRNO_NONE;
@@ -217,26 +220,17 @@ static void* audioThread(void* args)
         }
     }
 
-    videoCapturerReleaseStream(videoCapturerHandle);
+    audioCapturerReleaseStream(videoCapturerHandle);
 
     return (void*) res;
 }
+#endif
 
 int main(int argc, char* argv[])
 {
     KvsAppHandle kvsAppHandle;
     uint64_t uLastPrintMemStatTimestamp = 0;
     const char* pKvsStreamName = NULL;
-
-#if ENABLE_AUDIO_TRACK
-#if USE_AUDIO_G711
-    Mkv_generatePcmCodecPrivateData(AUDIO_PCM_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber, &audioTrackInfo.pCodecPrivate,
-                                    &audioTrackInfo.uCodecPrivateLen);
-#elif USE_AUDIO_AAC
-    Mkv_generateAacCodecPrivateData(AUDIO_MPEG_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber, &audioTrackInfo.pCodecPrivate,
-                                    &audioTrackInfo.uCodecPrivateLen);
-#endif
-#endif
 
 #ifdef KVS_USE_POOL_ALLOCATOR
     poolAllocatorInit((void*) pMemPool, sizeof(pMemPool));
@@ -247,23 +241,40 @@ int main(int argc, char* argv[])
 
     if ((kvsAppHandle = KvsApp_create(OptCfg_getHostKinesisVideo(), OptCfg_getRegion(), OptCfg_getServiceKinesisVideo(), pKvsStreamName)) == NULL) {
         printf("Failed to initialize KVS\n");
-    } else if ((videoCapturerHandle = videoCapturerCreate()) == NULL) {
+        return ERRNO_FAIL;
+    }
+
+#if ENABLE_AUDIO_TRACK
+#if USE_AUDIO_G711
+    AudioFormat audioFormat = AUD_FMT_G711A;
+#elif USE_AUDIO_AAC
+    AudioFormat audioFormat = AUD_FMT_AAC;
+#endif
+    if ((audioCapturerHandle = audioCapturerCreate()) == NULL) {
+        printf("Failed to create audio capturer\n");
+    } else if (audioCapturerSetFormat(audioCapturerHandle, audioFormat, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16)) {
+        printf("Failed to set audio format\n");
+        audioCapturerDestory(audioCapturerHandle);
+        audioCapturerHandle = NULL;
+    } else if (pthread_create(&audioThreadTid, NULL, audioThread, kvsAppHandle)) {
+        printf("Failed to create audio thread\n");
+        audioCapturerDestory(audioCapturerHandle);
+        audioCapturerHandle = NULL;
+    } else {
+        Mkv_generatePcmCodecPrivateData(AUDIO_CODEC_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber,
+                                        &audioTrackInfo.pCodecPrivate, &audioTrackInfo.uCodecPrivateLen);
+        Mkv_generateAacCodecPrivateData(AUDIO_CODEC_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber,
+                                        &audioTrackInfo.pCodecPrivate, &audioTrackInfo.uCodecPrivateLen);
+    }
+#endif /* ENABLE_AUDIO_TRACK */
+
+    if ((videoCapturerHandle = videoCapturerCreate()) == NULL) {
         printf("Failed to create video capturer\n");
     } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_720P)) {
         printf("Failed to set video format\n");
     } else if (pthread_create(&videoThreadTid, NULL, videoThread, kvsAppHandle)) {
         printf("Failed to create video thread\n");
-    }
-#if ENABLE_AUDIO_TRACK
-    else if ((audioCapturerHandle = audioCapturerCreate()) == NULL) {
-        printf("Failed to create audio capturer\n");
-    } else if (audioCapturerSetFormat(audioCapturerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16)) {
-        printf("Failed to set audio format\n");
-    } else if (pthread_create(&audioThreadTid, NULL, audioThread, kvsAppHandle)) {
-        printf("Failed to create audio thread\n");
-    }
-#endif /* ENABLE_AUDIO_TRACK */
-    else if (setKvsAppOptions(kvsAppHandle) != ERRNO_NONE) {
+    } else if (setKvsAppOptions(kvsAppHandle) != ERRNO_NONE) {
         printf("Failed to set options\n");
     } else {
         while (1) {
