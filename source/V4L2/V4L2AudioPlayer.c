@@ -30,18 +30,9 @@ typedef struct {
 
 AudioPlayerHandle audioPlayerCreate(void)
 {
-    V4L2AudioPlayer* rpiHandle = NULL;
-
     LOG("V4L2 AudioPlayer is not implemented yet");
 
-    if (!(rpiHandle = (V4L2AudioPlayer*) malloc(sizeof(V4L2AudioPlayer)))) {
-        LOG("OOM");
-        return NULL;
-    }
-
-    memset(rpiHandle, 0, sizeof(V4L2AudioPlayer));
-
-    return rpiHandle;
+    return NULL;
 }
 
 AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
@@ -51,41 +42,36 @@ AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
 
 int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, const AudioChannel channel, const AudioSampleRate sampleRate,
                          const AudioBitDepth bitDepth)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioPlayerGetFormat(const AudioPlayerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                          AudioBitDepth* pBitDepth)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioPlayerAcquireStream(AudioPlayerHandle handle)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t size)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioPlayerReleaseStream(AudioPlayerHandle handle)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 void audioPlayerDestory(AudioPlayerHandle handle)
 {
-    if (!handle) {
-        return;
-    }
-
-    free(handle);
 }
