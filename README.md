@@ -8,7 +8,7 @@
 
 ## Supported Boards
 
-- x86/x84(By selecting board `V4L2`)
+- x86/x64(By selecting board `V4L2`)
 - RPi(By selecting board `V4L2`)
 - T31(By selecting board `T31`)
 
