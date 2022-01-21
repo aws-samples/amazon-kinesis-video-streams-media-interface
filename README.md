@@ -29,7 +29,7 @@ mkdir build; cd build; cmake .. -DBOARD=${YOUR_BOARD_NAME}
 make
 ```
 5. Upload built artifacts(i.e kvswebrtcmaster-static) at *amazon-kinesis-video-streams-media-interface/build/samples/webrtc/* to your board.
-6. Setup AWS credentials in enjoinment variables. The sample is using AWS IoT certificates by default:
+6. Setup AWS credentials in environment variables. The sample is using AWS IoT certificates by default:
 ```bash
 export AWS_KVS_LOG_LEVEL=2
 export AWS_DEFAULT_REGION=us-east-1
@@ -67,7 +67,7 @@ mkdir build; cd build; cmake .. -DBUILD_WEBRTC_SAMPLES=OFF -DBUILD_KVS_SAMPLES=O
 make
 ```
 4. Upload built artifacts(i.e kvsproducer-static) at *amazon-kinesis-video-streams-media-interface/build/samples/kvs/* to your board.
-5. Setup AWS credentials in enjoinment variables. The sample is using AWS access key/secret key by default:
+5. Setup AWS credentials in environment variables. The sample is using AWS access key/secret key by default:
 ```
 export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
 export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
