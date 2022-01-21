@@ -43,36 +43,35 @@ AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle const handl
 
 int audioCapturerGetCapability(const AudioCapturerHandle const handle, AudioCapability* pCapability)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format, const AudioChannel channel, const AudioSampleRate sampleRate,
                            const AudioBitDepth bitDepth)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioCapturerGetFormat(const AudioCapturerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                            AudioBitDepth* pBitDepth)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioCapturerAcquireStream(AudioCapturerHandle handle)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, const size_t frameDataBufferSize, uint64_t* pTimestamp,
                           size_t* pFrameSize)
 {
-    sleep(3);
     return -EAGAIN;
 }
 
 int audioCapturerReleaseStream(AudioCapturerHandle handle)
 {
-    return 0;
+    return -EAGAIN;
 }
 
 void audioCapturerDestory(AudioCapturerHandle handle)
