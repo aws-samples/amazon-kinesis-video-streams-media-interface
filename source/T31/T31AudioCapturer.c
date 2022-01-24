@@ -62,10 +62,10 @@ AudioCapturerHandle audioCapturerCreate(void)
 
     memset(t31Handle, 0, sizeof(T31AudioCapturer));
 
-    // Now implementation supports raw PCM, G.711 ALAW and ULAW, MONO, 8k, 16 bits
+    // Now implementation supports raw PCM, G.711 ALAW and ULAW, MONO, 8k/16k, 16 bits
     t31Handle->capability.formats = (1 << (AUD_FMT_G711A - 1)) | (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1));
     t31Handle->capability.channels = (1 << (AUD_CHN_MONO - 1));
-    t31Handle->capability.sampleRates = (1 << (AUD_SAM_8K - 1));
+    t31Handle->capability.sampleRates = (1 << (AUD_SAM_8K - 1)) | (1 << (AUD_SAM_16K - 1));
     t31Handle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
 
     setStatus((AudioCapturerHandle) t31Handle, AUD_CAP_STATUS_STREAM_OFF);
@@ -89,7 +89,7 @@ int audioCapturerGetCapability(const AudioCapturerHandle const handle, AudioCapa
     T31_HANDLE_GET(handle);
 
     if (!pCapability) {
-        return -EAGAIN;
+        return -EINVAL;
     }
 
     *pCapability = t31Handle->capability;

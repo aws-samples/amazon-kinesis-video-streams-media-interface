@@ -20,8 +20,8 @@
     if (!(x)) {                                                                                                                                      \
         return -EINVAL;                                                                                                                              \
     }
-#define V4L2_HANDLE_STATUS_CHECK(V4L2Handle, expectedStatus)                                                                                         \
-    if ((V4L2Handle)->status != (expectedStatus)) {                                                                                                  \
+#define V4L2_HANDLE_STATUS_CHECK(v4l2Handle, expectedStatus)                                                                                         \
+    if ((v4l2Handle)->status != (expectedStatus)) {                                                                                                  \
         return -EAGAIN;                                                                                                                              \
     }
 

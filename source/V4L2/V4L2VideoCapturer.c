@@ -92,7 +92,7 @@ int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapa
     V4L2_HANDLE_GET(handle);
 
     if (!pCapability) {
-        return -EAGAIN;
+        return -EINVAL;
     }
 
     *pCapability = v4l2Handle->capability;
@@ -104,6 +104,8 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
 {
     V4L2_HANDLE_NULL_CHECK(handle);
     V4L2_HANDLE_GET(handle);
+
+    V4L2_HANDLE_STATUS_CHECK(v4l2Handle, VID_CAP_STATUS_STREAM_OFF);
 
     uint32_t width, height = 0;
     switch (resolution) {
@@ -185,6 +187,8 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
 {
     V4L2_HANDLE_NULL_CHECK(handle);
     V4L2_HANDLE_GET(handle);
+
+    V4L2_HANDLE_STATUS_CHECK(v4l2Handle, VID_CAP_STATUS_STREAM_ON);
 
     return v4l2CapturerSyncGetFrame(v4l2Handle->privHandle, V4L2_SYNC_GET_FRAME_TIMEOUT_SEC, pFrameDataBuffer, frameDataBufferSize, pFrameSize);
 }
