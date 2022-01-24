@@ -182,6 +182,8 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
     T31_HANDLE_NULL_CHECK(handle);
     T31_HANDLE_GET(handle);
 
+    T31_HANDLE_STATUS_CHECK(t31Handle, VID_CAP_STATUS_STREAM_OFF);
+
     switch (resolution) {
         case VID_RES_1080P:
             t31Handle->channelNum = T31_VIDEO_STREAM_1080P_CHANNEL_NUM;
