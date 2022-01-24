@@ -16,4 +16,13 @@
 
 #include <stdio.h>
 
+#define V4L2_HANDLE_NULL_CHECK(x)                                                                                                                    \
+    if (!(x)) {                                                                                                                                      \
+        return -EINVAL;                                                                                                                              \
+    }
+#define V4L2_HANDLE_STATUS_CHECK(V4L2Handle, expectedStatus)                                                                                         \
+    if ((V4L2Handle)->status != (expectedStatus)) {                                                                                                  \
+        return -EAGAIN;                                                                                                                              \
+    }
+
 #define LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__)
