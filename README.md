@@ -9,9 +9,10 @@
 
 ## Supported Boards
 
-- x86/x64(By selecting board `V4L2`)
-- RPi(By selecting board `V4L2`)
-- T31(By selecting board `T31`)
+- FILE(Dummy boards that can capture from [sample frames](resources/frames/))
+- x86/x64(By selecting board `V4L2` or `FILE`)
+- RPi(By selecting board `V4L2` or `FILE`)
+- T31(By selecting board `T31` or `FILE`)
 
 ## Getting started with out-of-box KVS WebRTC sample
 
@@ -51,8 +52,8 @@ export AWS_KVS_CACERT_PATH=cacert.pem
 export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
 export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
-1. Execute sample on your board: `./kvswebrtcmaster-static`. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`
-2. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html)
+7. Execute sample on your board: `./kvswebrtcmaster-static`. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`
+8. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html)
 
 ## Getting started with out-of-box KVS Producer sample
 
