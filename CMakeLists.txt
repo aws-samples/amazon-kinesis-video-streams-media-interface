@@ -11,8 +11,10 @@ option(USE_MUCLIBC "Use muclibc" OFF)
 
 # Board Specific Parts Start
 if(NOT BOARD OR BOARD STREQUAL "")
-    message(STATUS "No board was selected. Use V4L2 by default.")
-    set(BOARD "V4L2")
+    message(STATUS "No board was selected. Use FILE by default.")
+    set(BOARD "FILE")
+elseif(BOARD STREQUAL "FILE")
+    message(STATUS "Selected board FILE")
 elseif(BOARD STREQUAL "V4L2")
     message(STATUS "Selected board V4L2")
 elseif(BOARD STREQUAL "T31")
