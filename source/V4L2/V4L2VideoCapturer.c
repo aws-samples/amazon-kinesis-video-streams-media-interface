@@ -15,10 +15,12 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "V4L2Common.h"
 #include "com/amazonaws/kinesis/video/capturer/VideoCapturer.h"
 
+#include "V4L2Port.h"
 #include "V4l2Capturer.h"
 
 #define V4L2_TARGET_BITRATE             (5 * 1024 * 1024LL)
@@ -190,7 +192,12 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
 
     V4L2_HANDLE_STATUS_CHECK(v4l2Handle, VID_CAP_STATUS_STREAM_ON);
 
-    return v4l2CapturerSyncGetFrame(v4l2Handle->privHandle, V4L2_SYNC_GET_FRAME_TIMEOUT_SEC, pFrameDataBuffer, frameDataBufferSize, pFrameSize);
+    int ret = v4l2CapturerSyncGetFrame(v4l2Handle->privHandle, V4L2_SYNC_GET_FRAME_TIMEOUT_SEC, pFrameDataBuffer, frameDataBufferSize, pFrameSize);
+    if (!ret) {
+        *pTimestamp = getEpochTimestampInUs();
+    }
+
+    return ret;
 }
 
 int videoCapturerReleaseStream(VideoCapturerHandle handle)

@@ -30,7 +30,7 @@
 
 #define RGB24_FRAME_WIDTH  (416)
 #define RGB24_FRAME_HEIGHT (320)
-#define RGB_FRAME_SIZE     (RGB24_FRAME_WIDTH * RGB24_FRAME_HEIGHT * 3)
+#define RGB_FRAME_SIZE     (RGB24_FRAME_WIDTH * RGB24_FRAME_HEIGHT * 3UL)
 
 int NV12_TO_RGB24(uint8_t* yuyv, uint8_t* rgbBuffer, size_t width, size_t height)
 {
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
         } else if (!videoCapturerHandle) {
             printf("Failed to create video capturer\n");
             ret = -EAGAIN;
-        } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_RAW, VID_RES_320P)) {
+        } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_1080P)) {
             printf("Failed to set video capturer format\n");
             ret = -EAGAIN;
         } else if (videoCapturerAcquireStream(videoCapturerHandle)) {
@@ -132,14 +132,14 @@ int main(int argc, char** argv)
                 printf("Failed to write frame to file\n");
                 ret = -EAGAIN;
             } else {
-                printf("Frame with size %d capturered at %lld, saved as %s\n", RGB_FRAME_SIZE, timestamp, outPutNameBuffer);
+                printf("Frame with size %ld capturered at %ld, saved as %s\n", RGB_FRAME_SIZE, timestamp, outPutNameBuffer);
             }
 #else
             if (write(fd, videoBuffer, frameSize) != frameSize) {
                 printf("Failed to write frame to file\n");
                 ret = -EAGAIN;
             } else {
-                printf("Frame with size %d capturered at %lld, saved as %s\n", frameSize, timestamp, outPutNameBuffer);
+                printf("Frame with size %ld capturered at %ld, saved as %s\n", frameSize, timestamp, outPutNameBuffer);
             }
 #endif
         }

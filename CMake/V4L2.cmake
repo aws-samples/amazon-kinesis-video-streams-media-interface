@@ -13,8 +13,10 @@ if(BOARD STREQUAL "V4L2")
     set(BOARD_BUILD_DEPENDS v4l2capturer)
 
     set(BOARD_SRCS
+        ${BOARD_SDK_DIR}/V4L2Port.c
     )
     set(BOARD_INCS_DIR
+        ${BOARD_SDK_DIR}
         ${BOARD_SDK_DIR}/include
     )
     set(BOARD_LIBS_DIR
