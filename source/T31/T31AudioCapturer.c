@@ -305,7 +305,7 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
     T31_HANDLE_NULL_CHECK(handle);
     T31_HANDLE_GET(handle);
 
-    FILE_HANDLE_STATUS_CHECK(t31Handle, AUD_CAP_STATUS_STREAM_ON);
+    T31_HANDLE_STATUS_CHECK(t31Handle, AUD_CAP_STATUS_STREAM_ON);
 
     if (IMP_AI_DisableChn(T31_MIC_DEV_ID, T31_MIC_CHN_ID)) {
         LOG("Audio channel disable failed");
