@@ -32,7 +32,7 @@
 #define ERRNO_FAIL __LINE__
 
 #define VIDEO_FRAME_BUFFER_SIZE_BYTES (128 * 1024UL)
-#define AUDIO_FRAME_BUFFER_SIZE_BYTES (512UL)
+#define AUDIO_FRAME_BUFFER_SIZE_BYTES (1024UL)
 #define MICROSECONDS_IN_A_MILLISECOND (1000LL)
 
 #ifdef KVS_USE_POOL_ALLOCATOR
@@ -261,16 +261,19 @@ int main(int argc, char* argv[])
         audioCapturerDestory(audioCapturerHandle);
         audioCapturerHandle = NULL;
     } else {
+#if USE_AUDIO_G711
         Mkv_generatePcmCodecPrivateData(AUDIO_CODEC_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber,
                                         &audioTrackInfo.pCodecPrivate, &audioTrackInfo.uCodecPrivateLen);
+#elif USE_AUDIO_AAC
         Mkv_generateAacCodecPrivateData(AUDIO_CODEC_OBJECT_TYPE, audioTrackInfo.uFrequency, audioTrackInfo.uChannelNumber,
                                         &audioTrackInfo.pCodecPrivate, &audioTrackInfo.uCodecPrivateLen);
+#endif
     }
 #endif /* ENABLE_AUDIO_TRACK */
 
     if ((videoCapturerHandle = videoCapturerCreate()) == NULL) {
         printf("Failed to create video capturer\n");
-    } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_720P)) {
+    } else if (videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_1080P)) {
         printf("Failed to set video format\n");
     } else if (pthread_create(&videoThreadTid, NULL, videoThread, kvsAppHandle)) {
         printf("Failed to create video thread\n");
