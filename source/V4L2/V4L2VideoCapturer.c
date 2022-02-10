@@ -15,6 +15,7 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "V4L2Common.h"
 #include "com/amazonaws/kinesis/video/capturer/VideoCapturer.h"
