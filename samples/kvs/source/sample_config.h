@@ -29,19 +29,18 @@
 #define AWS_KVS_HOST                    AWS_KVS_SERVICE "." AWS_KVS_REGION ".amazonaws.com"
 
 /* KVS optional configuration */
+#define SAMPLE_OPTIONS_FROM_ENV_VAR     1
 #define ENABLE_AUDIO_TRACK              1
 #define ENABLE_IOT_CREDENTIAL           0
-#define SAMPLE_OPTIONS_FROM_ENV_VAR     1
 #define ENABLE_RING_BUFFER_MEM_LIMIT    1
 #define DEBUG_STORE_MEDIA_TO_FILE       0
-
-#define VIDEO_CODEC_NAME                "V_MPEG4/ISO/AVC"
+/* Video configuration */
 #define VIDEO_TRACK_NAME                "kvs video track"
 
 /* Audio configuration */
 #if ENABLE_AUDIO_TRACK
-#define USE_AUDIO_AAC                   0   /* Set to 1 to use AAC as audio track */
-#define USE_AUDIO_G711                  1   /* Set to 1 to use G711 as audio track */
+#define USE_AUDIO_AAC                   1   /* Set to 1 to use AAC as audio track */
+#define USE_AUDIO_G711                  0   /* Set to 1 to use G711 as audio track */
 
 #if (USE_AUDIO_AAC == 0) && (USE_AUDIO_G711 == 0)
 #error "Please select audio source"
@@ -97,9 +96,9 @@
 #define POOL_ALLOCATOR_SIZE_FOR_KVS     (128 * 1024)
 
 /**
- * This sample use 1M measured on T31. Make it 1.5M for safety. Please increase it depends on real application.
+ * Reserve 512K for application usage.
  */
-#define POOL_ALLOCATOR_SIZE_FOR_APP     (1536 * 1024)
+#define POOL_ALLOCATOR_SIZE_FOR_APP     (512 * 1024)
 
 /**
  * Get the size of stream buffer.  If there is no buffer limit, then assume it's 2M bytes.
