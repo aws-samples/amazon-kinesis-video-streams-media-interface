@@ -40,5 +40,4 @@
 
 #define LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__)
 
-#define FRAME_FILE_PATH_PREFIX     "../../resources/frames/"
 #define FRAME_FILE_PATH_MAX_LENGTH (128)

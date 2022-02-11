@@ -66,6 +66,13 @@ target_link_libraries(embedded-media-shared PRIVATE ${BOARD_LIBS_SHARED})
 set_target_properties(embedded-media-shared PROPERTIES PUBLIC_HEADER "${INCS}")
 set_target_properties(embedded-media-shared PROPERTIES OUTPUT_NAME embedded-media)
 
+if(NOT FRAME_FILE_PATH_PREFIX OR FRAME_FILE_PATH_PREFIX STREQUAL "")
+    set(FRAME_FILE_PATH_PREFIX ${CMAKE_CURRENT_LIST_DIR}/resources/frames/)
+    message(STATUS "FRAME_FILE_PATH_PREFIX is ${FRAME_FILE_PATH_PREFIX}")
+endif()
+target_compile_definitions(embedded-media-static PRIVATE "FRAME_FILE_PATH_PREFIX=\"${FRAME_FILE_PATH_PREFIX}\"")
+target_compile_definitions(embedded-media-shared PRIVATE "FRAME_FILE_PATH_PREFIX=\"${FRAME_FILE_PATH_PREFIX}\"")
+
 include(GNUInstallDirs)
 
 install(TARGETS embedded-media-static
