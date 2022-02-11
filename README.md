@@ -35,14 +35,14 @@ make
 ```bash
 export AWS_KVS_LOG_LEVEL=2
 export AWS_DEFAULT_REGION=us-east-1
-export AWS_KVS_CACERT_PATH=cacert.pem
+export AWS_KVS_CACERT_PATH=rootca.pem
 export AWS_IOT_CORE_THING_NAME=your_camera_name
 export AWS_IOT_CORE_CREDENTIAL_ENDPOINT=xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com
 export AWS_IOT_CORE_CERT=your_camera_certificate.pem
 export AWS_IOT_CORE_PRIVATE_KEY=your_camera_private.key
 export AWS_IOT_CORE_ROLE_ALIAS=your_camera_role_alias
 ```
-> You can use Root CA in [resources/certs/cacert.pem](resources/certs/cacert.pem), or you can download it from [Amazon Trust Services](https://www.amazontrust.com/repository/SFSRootCAG2.pem)
+> You can use Root CA in [resources/certs/rootca.pem](resources/certs/rootca.pem), or you can download it from [Amazon Trust Services](https://www.amazontrust.com/repository/SFSRootCAG2.pem)
 
 Alternatively, you can choose use access key id/access key secret by turn off `IOT_CORE_ENABLE_CREDENTIALS` in [Samples.h](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/blob/main/samples/webrtc/source/Samples.h#L67) and setup credentials:
 ```bash
