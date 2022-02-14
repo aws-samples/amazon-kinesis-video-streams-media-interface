@@ -45,6 +45,7 @@ typedef struct {
     size_t frameIndex;
     size_t frameIndexStart;
     size_t frameIndexEnd;
+    size_t frameDurationUs;
     FILE* frameFile;
 } FILEAudioCapturer;
 
@@ -120,11 +121,13 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             fileHandle->framePathFormat = FRAME_FILE_PATH_FORMAT_G711A;
             fileHandle->frameIndexStart = FRAME_FILE_START_INDEX_G711A;
             fileHandle->frameIndexEnd = FRAME_FILE_END_INDEX_G711A;
+            fileHandle->frameDurationUs = FRAME_FILE_DURATION_US_G711A;
             break;
         case AUD_FMT_AAC:
             fileHandle->framePathFormat = FRAME_FILE_PATH_FORMAT_AAC;
             fileHandle->frameIndexStart = FRAME_FILE_START_INDEX_AAC;
             fileHandle->frameIndexEnd = FRAME_FILE_END_INDEX_AAC;
+            fileHandle->frameDurationUs = FRAME_FILE_DURATION_US_AAC;
             break;
 
         default:
@@ -240,7 +243,7 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
         ret = -EAGAIN;
     }
 
-    usleep(FRAME_FILE_DURATION_US_AAC);
+    usleep(fileHandle->frameDurationUs);
 
     return ret;
 }
