@@ -12,10 +12,12 @@ if(BOARD STREQUAL "T31")
             ${BOARD_SDK_DIR}/lib/uclibc
         )
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -muclibc")
+        set(BOARD_DESTINATION_PLATFORM mips-unknown-linux-uclibc)
     else()
         set(BOARD_LIBS_DIR
             ${BOARD_SDK_DIR}/lib/glibc
         )
+        set(BOARD_DESTINATION_PLATFORM mips-unknown-linux-gnu)
     endif()
     set(BOARD_LIBS_SHARED
         imp alog rt m pthread dl

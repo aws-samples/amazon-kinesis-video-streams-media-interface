@@ -44,6 +44,10 @@ set(SRCS
     ${CMAKE_CURRENT_LIST_DIR}/source/${BOARD}/${BOARD}AudioPlayer.c
 )
 
+if(NOT BOARD_DESTINATION_PLATFORM OR BOARD_DESTINATION_PLATFORM STREQUAL "")
+    set(BOARD_DESTINATION_PLATFORM OFF)
+endif()
+
 add_library(embedded-media-static STATIC ${SRCS} ${BOARD_SRCS})
 if(BOARD_BUILD_DEPENDS AND NOT (BOARD_BUILD_DEPENDS STREQUAL ""))
     add_dependencies(embedded-media-static ${BOARD_BUILD_DEPENDS})
