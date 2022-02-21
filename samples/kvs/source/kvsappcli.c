@@ -458,6 +458,12 @@ int main(int argc, char *argv[])
     }
 
     KvsApp_close(kvsAppHandle);
+    gStopRunning = true;
+
+    pthread_join(videoThreadTid, NULL);
+#if ENABLE_AUDIO_TRACK
+    pthread_join(audioThreadTid, NULL);
+#endif /* ENABLE_AUDIO_TRACK */
 
     videoCapturerDestory(videoCapturerHandle);
     videoCapturerHandle = NULL;
@@ -465,11 +471,6 @@ int main(int argc, char *argv[])
     audioCapturerDestory(audioCapturerHandle);
     audioCapturerHandle = NULL;
 #endif
-
-    pthread_join(videoThreadTid, NULL);
-#if ENABLE_AUDIO_TRACK
-    pthread_join(audioThreadTid, NULL);
-#endif /* ENABLE_AUDIO_TRACK */
 
     KvsApp_terminate(kvsAppHandle);
 
