@@ -1,5 +1,5 @@
 ---
-name: Build Issue
+name: Build issue
 about: Describe the build issue you met
 title: "[BUILD ISSUE]"
 labels: ''
