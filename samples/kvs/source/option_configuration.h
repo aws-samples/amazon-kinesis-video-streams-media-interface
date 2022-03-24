@@ -39,6 +39,17 @@ const char *OptCfg_getAwsAccessKey();
 const char *OptCfg_getAwsSecretAccessKey();
 
 /**
+ * @brief Get AWS session token
+ *
+ * It searches AWS secret access key with following order:
+ *      1. environment variable
+ *      2. sample_config.h
+ *
+ * @return AWS session token
+ */
+const char *OptCfg_getAwsSessionToken();
+
+/**
  * @brief Get AWS region
  *
  * It searches AWS region with following order:

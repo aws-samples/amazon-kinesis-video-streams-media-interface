@@ -266,6 +266,10 @@ static int setKvsAppOptions(KvsAppHandle kvsAppHandle)
     {
         printf("Failed to set AWS_SECRET_KEY\n");
     }
+    if (KvsApp_setoption(kvsAppHandle, OPTION_AWS_SESSION_TOKEN, OptCfg_getAwsSessionToken()) != 0)
+    {
+        printf("Failed to set AWS_SESSION_TOKEN\n");
+    }
 #endif /* ENABLE_IOT_CREDENTIAL */
 
 #if ENABLE_AUDIO_TRACK

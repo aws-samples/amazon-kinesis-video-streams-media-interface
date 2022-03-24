@@ -21,6 +21,8 @@
 /* KVS general configuration */
 #define AWS_ACCESS_KEY                  "xxxxxxxxxxxxxxxxxxxx"
 #define AWS_SECRET_KEY                  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+/* Only for AK/SK + STS case */
+#define AWS_SESSION_TOKEN               ""
 
 /* KVS stream configuration */
 #define KVS_STREAM_NAME                 "kvs_example_camera_stream"
