@@ -15,14 +15,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "option_configuration.h"
 #include "sample_config.h"
 
 #define AWS_ACCESS_KEY_ENV_VAR          "AWS_ACCESS_KEY_ID"
 #define AWS_SECRET_KEY_ENV_VAR          "AWS_SECRET_ACCESS_KEY"
-#define AWS_DEFAULT_REGION_ENV_VAR      "AWS_DEFAULT_REGION"
 #define AWS_SESSION_TOKEN_ENV_VAR       "AWS_SESSION_TOKEN"
+#define AWS_DEFAULT_REGION_ENV_VAR      "AWS_DEFAULT_REGION"
 
 #define AWS_KINESIS_VIDEO_HOST_ENV_VAR  "AWS_KVS_HOST"
 
@@ -56,6 +57,22 @@ const char *OptCfg_getAwsSecretAccessKey()
     }
 
     return pAwsSecretAccessKey;
+}
+
+const char *OptCfg_getAwsSessionToken()
+{
+    char *pAwsSessionToken = NULL;
+
+#ifdef SAMPLE_OPTIONS_FROM_ENV_VAR
+    pAwsSessionToken = getenv(AWS_SESSION_TOKEN_ENV_VAR);
+#endif /* SAMPLE_OPTIONS_FROM_ENV_VAR */
+
+    if (pAwsSessionToken == NULL)
+    {
+        pAwsSessionToken = strcmp(AWS_SESSION_TOKEN, "") ? AWS_SESSION_TOKEN : NULL;
+    }
+
+    return pAwsSessionToken;
 }
 
 const char *OptCfg_getRegion()
