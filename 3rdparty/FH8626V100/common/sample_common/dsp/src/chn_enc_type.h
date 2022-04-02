@@ -1,0 +1,102 @@
+#ifndef __chn_enc_type_h__
+#define __chn_enc_type_h__
+
+/*说明; 此文件的目的是定义这三个宏,CH0_ENC_TYPE, CH1_ENC_TYPE, CH2_ENC_TYPE*/
+
+#ifdef FH_CH0_USING_SAMPLE_H264
+#define CH0_ENC_TYPE FH_NORMAL_H264
+#endif
+
+#ifdef FH_CH0_USING_SAMPLE_S264
+#define CH0_ENC_TYPE FH_SMART_H264
+#endif
+
+#ifdef FH_CH0_USING_SAMPLE_H265
+#define CH0_ENC_TYPE FH_NORMAL_H265
+#endif
+
+#ifdef FH_CH0_USING_SAMPLE_S265
+#define CH0_ENC_TYPE FH_SMART_H265
+#endif
+
+#ifdef FH_CH0_USING_SAMPLE_MJPEG
+#define CH0_ENC_TYPE FH_MJPEG
+#endif
+
+#ifndef CH0_ENC_TYPE
+#define CH0_ENC_TYPE 0
+#endif
+
+#ifdef FH_CH1_USING_SAMPLE_H264
+#define CH1_ENC_TYPE FH_NORMAL_H264
+#endif
+
+#ifdef FH_CH1_USING_SAMPLE_S264
+#define CH1_ENC_TYPE FH_SMART_H264
+#endif
+
+#ifdef FH_CH1_USING_SAMPLE_H265
+#define CH1_ENC_TYPE FH_NORMAL_H265
+#endif
+
+#ifdef FH_CH1_USING_SAMPLE_S265
+#define CH1_ENC_TYPE FH_SMART_H265
+#endif
+
+#ifdef FH_CH1_USING_SAMPLE_MJPEG
+#define CH1_ENC_TYPE FH_MJPEG
+#endif
+
+#ifndef CH1_ENC_TYPE
+#define CH1_ENC_TYPE 0
+#endif
+
+#ifdef FH_CH2_USING_SAMPLE_H264
+#define CH2_ENC_TYPE FH_NORMAL_H264
+#endif
+
+#ifdef FH_CH2_USING_SAMPLE_S264
+#define CH2_ENC_TYPE FH_SMART_H264
+#endif
+
+#ifdef FH_CH2_USING_SAMPLE_H265
+#define CH2_ENC_TYPE FH_NORMAL_H265
+#endif
+
+#ifdef FH_CH2_USING_SAMPLE_S265
+#define CH2_ENC_TYPE FH_SMART_H265
+#endif
+
+#ifdef FH_CH2_USING_SAMPLE_MJPEG
+#define CH2_ENC_TYPE FH_MJPEG
+#endif
+
+#ifndef CH2_ENC_TYPE
+#define CH2_ENC_TYPE 0
+#endif
+
+#ifdef FH_CH3_USING_SAMPLE_H264
+#define CH3_ENC_TYPE FH_NORMAL_H264
+#endif
+
+#ifdef FH_CH3_USING_SAMPLE_S264
+#define CH3_ENC_TYPE FH_SMART_H264
+#endif
+
+#ifdef FH_CH3_USING_SAMPLE_H265
+#define CH3_ENC_TYPE FH_NORMAL_H265
+#endif
+
+#ifdef FH_CH3_USING_SAMPLE_S265
+#define CH3_ENC_TYPE FH_SMART_H265
+#endif
+
+#ifdef FH_CH3_USING_SAMPLE_MJPEG
+#define CH3_ENC_TYPE FH_MJPEG
+#endif
+
+#ifndef CH3_ENC_TYPE
+#define CH3_ENC_TYPE 0
+#endif
+
+#endif /*__chn_enc_type_h__*/

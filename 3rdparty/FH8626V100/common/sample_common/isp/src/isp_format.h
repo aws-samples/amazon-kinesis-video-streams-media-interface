@@ -1,0 +1,247 @@
+#ifndef __isp_format_h__
+#define __isp_format_h__
+
+/*此文件的作用: 定义这三个宏ISP_FORMAT, VI_INPUT_WIDTH, VI_INPUT_HEIGHT*/
+
+#ifdef FH_APP_USING_FORMAT_1080P60
+    #define ISP_FORMAT      FORMAT_1080P60
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1080P30
+    #define ISP_FORMAT      FORMAT_1080P30
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1080P25
+    #define ISP_FORMAT      FORMAT_1080P25
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1080P20
+    #define ISP_FORMAT      FORMAT_1080P20
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1080P15
+    #define ISP_FORMAT      FORMAT_1080P15
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1080P30_WDR
+    #define ISP_FORMAT      FORMAT_WDR_1080P30
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1080P25_WDR
+    #define ISP_FORMAT      FORMAT_WDR_1080P25
+    #define VI_INPUT_WIDTH  1920
+    #define VI_INPUT_HEIGHT 1080
+#endif
+
+#ifdef FH_APP_USING_FORMAT_960P30
+    #define ISP_FORMAT      FORMAT_960P30
+    #define VI_INPUT_WIDTH  1280
+    #define VI_INPUT_HEIGHT 960
+#endif
+
+#ifdef FH_APP_USING_FORMAT_960P25
+    #define ISP_FORMAT      FORMAT_960P25
+    #define VI_INPUT_WIDTH  1280
+    #define VI_INPUT_HEIGHT 960
+#endif
+
+#ifdef FH_APP_USING_FORMAT_720P30
+    #define ISP_FORMAT      FORMAT_720P30
+    #define VI_INPUT_WIDTH  1280
+    #define VI_INPUT_HEIGHT 720
+#endif
+
+#ifdef FH_APP_USING_FORMAT_720P25
+    #define ISP_FORMAT      FORMAT_720P25
+    #define VI_INPUT_WIDTH  1280
+    #define VI_INPUT_HEIGHT 720
+#endif
+
+#ifdef FH_APP_USING_FORMAT_720P15
+    #define ISP_FORMAT      FORMAT_720P15
+    #define VI_INPUT_WIDTH  1280
+    #define VI_INPUT_HEIGHT 720
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536P40
+    #define ISP_FORMAT      FORMAT_1536P40
+    #define VI_INPUT_WIDTH  2048
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536P30
+    #define ISP_FORMAT      FORMAT_1536P30
+    #define VI_INPUT_WIDTH  2048
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536P25
+    #define ISP_FORMAT      FORMAT_1536P25
+    #define VI_INPUT_WIDTH  2048
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536P40_WDR
+    #define ISP_FORMAT      FORMAT_WDR_1536P40
+    #define VI_INPUT_WIDTH  2048
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536P30_WDR
+    #define ISP_FORMAT      FORMAT_WDR_1536P30
+    #define VI_INPUT_WIDTH  2048
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536P25_WDR
+    #define ISP_FORMAT      FORMAT_WDR_1536P25
+    #define VI_INPUT_WIDTH  2048
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_2304X1296P25_WDR
+    #define ISP_FORMAT      FORMAT_WDR_2304X1296P25
+    #define VI_INPUT_WIDTH  2304
+    #define VI_INPUT_HEIGHT 1296
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP30
+    #define ISP_FORMAT      FORMAT_400WP30
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP25
+    #define ISP_FORMAT      FORMAT_400WP25
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP20
+    #define ISP_FORMAT      FORMAT_400WP20
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP15
+    #define ISP_FORMAT      FORMAT_400WP15
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP12
+    #define ISP_FORMAT      FORMAT_400WP12
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP30_WDR
+    #define ISP_FORMAT      FORMAT_WDR_400WP30
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_400WP25_WDR
+    #define ISP_FORMAT      FORMAT_WDR_400WP25
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1440
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500WP25
+    #define ISP_FORMAT      FORMAT_500WP25
+    #define VI_INPUT_WIDTH  2592
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+
+#ifdef FH_APP_USING_FORMAT_500WP20
+    #define ISP_FORMAT      FORMAT_500WP20
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500WP15
+    #define ISP_FORMAT      FORMAT_500WP15
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500W12P5
+    #define ISP_FORMAT      FORMAT_500W12P5
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500WP25_WDR
+    #define ISP_FORMAT      FORMAT_WDR_500WP25
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500WP20_WDR
+    #define ISP_FORMAT      FORMAT_WDR_500WP20
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500WP15_WDR
+    #define ISP_FORMAT      FORMAT_WDR_500WP15
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_500W12P5_WDR
+    #define ISP_FORMAT      FORMAT_WDR_500W12P5
+    #define VI_INPUT_WIDTH  2560
+    #define VI_INPUT_HEIGHT 1944
+#endif
+
+#ifdef FH_APP_USING_FORMAT_800WP15
+    #define ISP_FORMAT      FORMAT_800WP15
+    #define VI_INPUT_WIDTH  3840
+    #define VI_INPUT_HEIGHT 2160
+#endif
+
+#ifdef FH_APP_USING_FORMAT_800WP15_WDR
+    #define ISP_FORMAT      FORMAT_WDR_800WP15
+    #define VI_INPUT_WIDTH  3840
+    #define VI_INPUT_HEIGHT 2160
+#endif
+
+#ifdef FH_APP_USING_FORMAT_270P240
+    #define ISP_FORMAT      FORMAT_270P240
+    #define VI_INPUT_WIDTH  480
+    #define VI_INPUT_HEIGHT 270
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536X1536P30
+    #define ISP_FORMAT      FORMAT_1536X1536P30
+    #define VI_INPUT_WIDTH  1536
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536X1536P25
+    #define ISP_FORMAT      FORMAT_1536X1536P25
+    #define VI_INPUT_WIDTH  1536
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#ifdef FH_APP_USING_FORMAT_1536X1536P15
+    #define ISP_FORMAT      FORMAT_1536X1536P15
+    #define VI_INPUT_WIDTH  1536
+    #define VI_INPUT_HEIGHT 1536
+#endif
+
+#endif /*__isp_format_h__*/

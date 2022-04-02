@@ -1,0 +1,167 @@
+media demo主要目录分支如下
+
+media_demo
+    | -- components                               媒体数据处理、网络交互及操作系统差异接口封装组件
+    |    | -- libdbi_over_tcp                     dbi接口, 用于和pc端coolview网络交互
+    |    |    | -- include
+    |    |    |    ` -- dbi_over_tcp.h            dbi接口头文件
+    |    |    ` -- src
+    |    |         ` -- dbi_over_tcp.c            dbi主线程，发送数据及接收数据处理
+    |    |
+    |    | -- libdmc                              为不同码流发送方式封装统一接口
+    |    |     | -- include
+    |    |     |    | -- libdmc.h                 dmc组件相关头文件，包括dmc初始化、dmc去初始化、码流打包函数，打包回调函数注册和打包回调函数销毁等功能声明
+    |    |     |    | -- libdmc_http_mjpeg.h      mjpeg dmc回调函数注册及销毁应用声明
+    |    |     |    | -- libdmc_pes.h             pes dmc回调函数注册及销毁应用声明
+    |    |     |    ` -- libdmc_rtsp.h            rtsp dmc回调函数注册及销毁应用声明
+    |    |     ` -- src
+    |    |          | -- libdmc.c                 dmc组件相关头文件，包括dmc初始化、dmc去初始化、打包函数，打包回调函数注册和打包回调函数销毁等功能实现
+    |    |          | -- libdmc_http_mjpeg.c      mjpeg dmc回调函数注册及销毁应用实现
+    |    |          | -- libdmc_pes.c             pes dmc回调函数注册注册及销毁应用实现
+    |    |          ` -- libdmc_rtsp.c            rtsp dmc回调函数注册及销毁应用实现
+    |    |
+    |    | -- libfhosl                            操作系统差异接口封装，避免上层代码中的操作系统接口差异处理
+    |    |    | -- include
+    |    |    |   | -- fh_osl.h                   统一的操作系统接口声明
+    |    |    |    ` -- list.h                    双向链表相关操作函数及宏定义
+    |    |    | -- src
+    |    |         | -- fh_osl_linux.c            linux下统一操作系统接口实现
+    |    |         ` -- fh_osl_rtt.c              rtt下统一操作系统接口实现
+    |    |
+    |    | -- libmisc                             图像联通域分析、程序计时
+    |    |    | -- include
+    |    |    |    ` -- libmisc.h                 图像联通域分析函数、计时初始化函数及计时点添加函数声明
+    |    |    ` -- src
+    |    |         ` -- misc.c                    图像联通域分析函数、计时初始化函数及计时点添加函数实现
+    |    |
+    |    | -- libmjpeg_over_http                  mjpeg码流发送
+    |    |    | -- include
+    |    |    |    ` -- libhttp_mjpeg.h           mjpeg 码流发送主线程启动、停止及码流打包应用声明
+    |    |    ` -- src
+    |    |         ` -- libhttp_mjpeg.c           mjpeg 码流发送主线程启动、停止及码流打包应用实现
+    |    |
+    |    | -- libpes                              H264|H265 PS封装UDP发送
+    |    |    | -- include
+    |    |    |    ` -- libpes.h                  H264|H265码流发送主线程的启动、停止及码流打包应用声明
+    |    |    ` -- src
+    |    |         ` -- libpes.c                  H264|H265码流发送主线程的启动、停止及码流打包应用实现
+    |    |
+    |    | -- librtsp                             H264|H265 RTSP协议码流发送
+    |    |    | -- include
+    |    |    |    ` -- librtsp.h                 H264|H265码流发送主线程的启动、停止及码流打包应用声明
+    |    |    ` -- src
+    |    |         ` -- librtsp.c                 H264|H265码流发送主线程的启动、停止及码流打包应用实现
+    |    |
+    |    | -- librect_merge_by_gaus               图像框融合
+    |    |    | -- include
+    |    |    |    ` -- rect_merge_by_gaus.h      图像框融合应用声明
+    |    |    ` -- src
+    |    |         | -- rect_merge_by_gaus.c      图像框融合应用实现
+    |    |         ` -- optimize_gaus.c           图像框融合优化应用实现（待完成）
+    |    |
+    |    ` -- libscaler                           YUV格式转换及图像缩放
+    |         | -- include
+    |         |    ` -- fh_scaler.h               yuv数据缩放及存储格式转换（blk存储格式转为光栅存储）应用声明
+    |         ` -- src
+    |              ` -- fh_scaler.c               yuv数据缩放及格式转换应用实现
+    |
+    | -- sample_common
+    |    | -- bgm                                 富瀚BGM相关操作
+    |    |    | -- include
+    |    |    |    ` -- sample_bgm.h              bgm相关操作应用声明
+    |    |    ` -- src
+    |    |         ` -- sample_bgm.c              bgm相关操作应用实现
+    |    |
+    |    | -- dsp                                 富瀚出图流程VPU及VENC部分相关操作
+    |    |    | -- include
+    |    |    |    ` -- sample_common_dsp.h       出图流程VPU及VENC部分步骤简化封装声明
+    |    |    ` -- src
+    |    |         | -- chn_enc_type.h            根据menuconfig配置确定编码类型
+    |    |         | -- chn_rc_type.h             根据menuconfig配置确定编码码控类型
+    |    |         | -- chn_set_rc.h              不同码控类型设置api声明
+    |    |         | -- chn_set_rc.c              不同码控类型设置api实现
+    |    |         | -- stream.c                  初始化dmc模块，码流获取及处理线程
+    |    |         ` -- sample_common_dsp.c       出图流程VPU及VENC部分步骤简化封装实现
+    |    |
+    |    | -- fh_nn_detect                        富瀚基于NN算法的人形检测方法, 适用于FH865X系列芯片
+    |    |    | -- sample_nna_detect.c            fh nna人形检测主流程实现
+    |    |    ` -- sample_nna_detect.h            fh nna人形检测主流程函数声明
+    |    |
+    |    | -- human_detect                        富瀚传统软件人形检测应用
+    |    |    | -- include
+    |    |    |    | -- human_detect.h            人形检测功能启动、退出及在线配置应用声明
+    |    |    |    ` -- sample_human_detect.h     人形检测主流程启动、停止应用声明
+    |    |    ` -- src
+    |    |         | -- models                    人形检测模型文件存储路径
+    |    |         | -- human_config.h            人形检测算法参数及模型配置
+    |    |         | -- human_detect.c            人形人脸检测主要功能实现
+    |    |         | -- human_main.c              启动人形检测主流程
+    |    |         | -- model_linux.c             linux下模型加载函数
+    |    |         | -- model_rtt.c               rtt下模型加载函数
+    |    |         ` -- model.h                   模型加载函数声明
+    |    |
+    |    | -- human_detect_nn                     富瀚基于NN算法的人形检测方法，目前仅适用于YG
+    |    |    | -- human_detect_nn.c              nn人形检测主流程实现
+    |    |    ` -- human_detect_nn.h              nn人形检测主流程函数声明
+    |    |
+    |    | -- isp                                 富瀚出图流程中sensor及ISP部分相关操作
+    |    |    | -- include
+    |    |    |    | --sample_common_isp.h        isp主流程启动、停止及幅面切换、coolview启动、停止函数声明
+    |    |    |    ` --sensor_define_rtt.h        rtt下sensor宏定义转换，保持和linux一致，避免代码中对这一差异的处理
+    |    |    |
+    |    |    | -- sensor_hex
+    |    |    |
+    |    |    ` -- src
+    |    |         | -- start_sensor
+    |    |         |    | -- multi_sensor.c
+    |    |         |    | -- single_sensor.c
+    |    |         |    | -- start_sensor_v1.c    FH8626V100的sensor创建
+    |    |         |    | -- start_sensor_v2.c    FH885xV200、FH865X及之后的芯片sensor创建
+    |    |         |
+    |    |         | -- _sensor_.h                获取sensor信息及sensor参数
+    |    |         | -- all_sensor_array.c        声明数组g_sensor_hex_array，该数据中会存储所有配置sensor的参数数据
+    |    |         | -- check_sensor_format.c     sensor 出图制式正确性检测函数实现
+    |    |         | -- checkout_sensor_format.h  sensor 出图制式正确性检测函数声明
+    |    |         | -- isp_format.h              配置sensor出图制式及vi幅面
+    |    |         | -- sample_common_isp.c       isp主流程启动、停止及幅面切换、coolview启动、停止函数实现
+    |    |         | -- sample_smart_ir.c         智能IRcut实现
+    |    |         | -- sample_smart_ir.h         智能IRcut相关声明
+    |    |         | -- sensor_param.c            linux、rtt下获取对应sensor参数
+    |    |         | -- multi_sensor.c            multi sensor下sensor注册信息获取
+    |    |         ` -- single_sensor.c           非multi sensor下sensor注册信息获取
+    |    |
+    |    | -- motion_and_cover                    富瀚高级视频应用运动及遮挡检测
+    |    |    | -- sample_md_cd.c                 局部全局运动检测及遮挡检测应用实现
+    |    |    ` -- sample_md_cd.h                 运动及遮挡检测应用相关声明
+    |    |
+    |    | -- overlay                             富瀚OSD叠加
+    |    |    | -- font_array.h                   osd字库数据
+    |    |    | -- logo_array.h                   logo数据
+    |    |    | -- sample_overlay.h               TOSD、LOGO的初始化、叠加及去初始化函数声明
+    |    |    ` -- sample_over_lay_v2.c           OSD相关功能实现（适用于FH8626V100 | FH885xV200 | FH865x）
+    |    |
+    |    | -- venc                                富瀚出图相关在线功能
+    |    |    |-- sample_venc.c                   幅面切换、在线抓图、旋转、冻结等功能实现
+    |    |    |-- sample_venc.h                   幅面切换、在线抓图、旋转、冻结等功能声明
+    |    |    |-- sample_yuv_trans.c              yuv存储格式转换（宏块转光栅）
+    |    |    `-- venc.h                          venc主流程启动函数声明
+    |    |
+    |    ` -- sample_common.h                     头文件集合
+    |
+    | -- script
+    |    | -- linux                               linux相关编译及编译项处理脚本
+    |    ` -- rtt                                 rtt相关编译及编译项处理脚本
+    |
+    | -- startup
+    |    | -- demo_entry_linux.c                  linux应用启动
+    |    ` -- demo_entry_rtt.c                    rtt应用启动
+    |
+    | -- vlcview
+    |    | -- vlcview.c                           基本出图流程
+    |    ` -- vlcview.h                           基本出图流程头文件
+    |
+    | -- Makefile                                 Makefile
+    |
+    | -- readme.txt                               media_demo使用方法
+    |
+    ` -- filelist.txt                             media_demo目录及文件说明
