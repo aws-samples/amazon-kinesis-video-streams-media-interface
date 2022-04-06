@@ -19,13 +19,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include "FH8626V100Common.h"
-#include "dsp/fh_audio_mpi.h"
-#include "aacenc_api.h"
-#include "g7xx_api.h"
+#include "sample_common.h"
 
 #define USING_HARD_STREAM_AUDIO
 
 #define HANDLE_GET(x) FH8626V100AudioCapturer* audioHandle = (FH8626V100AudioCapturer*) ((x))
+
+#define DEFAULT_PERIOD_SIZE     1024
+#define DEFAULT_VOLUME          28
+#define DEFAULT_MICIN_VOL       2
+#define DEFAULT_AIN_VOL         28
 
 typedef struct {
     AudioCapturerStatus status;
@@ -62,8 +65,7 @@ AudioCapturerHandle audioCapturerCreate(void)
 
     memset(audioHandle, 0, sizeof(FH8626V100AudioCapturer));
 
-    // Now implementation supports raw PCM, G.711 ALAW and ULAW, MONO, 8k, 16 bits
-    audioHandle->capability.formats = (1 << (AUD_FMT_G711A - 1)) | (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1)) | (1 << (AUD_FMT_AAC - 1));
+    audioHandle->capability.formats = (1 << (AUD_FMT_G711A - 1))| (1 << (AUD_FMT_PCM - 1)) | (1 << (AUD_FMT_AAC - 1));
     audioHandle->capability.channels = (1 << (AUD_CHN_MONO - 1));
     audioHandle->capability.sampleRates = (1 << (AUD_SAM_8K - 1)) | (1 << (AUD_SAM_16K - 1)) | (1 << (AUD_SAM_32K - 1));
     audioHandle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
@@ -118,7 +120,6 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     switch (format) {
         case AUD_FMT_PCM:
         case AUD_FMT_G711A:
-        case AUD_FMT_G711U:
         case AUD_FMT_AAC:
             ac_config.enc_type = FH_PT_LPCM; // only support raw PCM format
             break;
@@ -166,20 +167,16 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             return -EINVAL;
     }
 
-    ac_config.io_type = FH_AC_MIC_IN;
-    ac_config.period_size = 1024;
-    ac_config.volume = 28;
+    ac_config.io_type     = FH_AC_MIC_IN;
+    ac_config.period_size = DEFAULT_PERIOD_SIZE;
+    ac_config.volume      = DEFAULT_VOLUME;
 
-    int micin_vol = 2;
-    int ain_vol = 28;
-    int hpf_en = 1;
     int ret = 0;
 
 #ifdef USING_HARD_STREAM_AUDIO
     CHECK_RET(FH_AC_Set_Config(&ac_config));
-    CHECK_RET(FH_AC_AI_MICIN_SetVol(micin_vol)); // level-1 gain for mic-in
-    CHECK_RET(FH_AC_AI_SetVol(ain_vol));         // level-2 gain
-    // CHECK_RET(FH_AC_AI_HPF_Ctrl(hpf_en));
+    CHECK_RET(FH_AC_AI_MICIN_SetVol(DEFAULT_MICIN_VOL)); // level-1 gain for mic-in
+    CHECK_RET(FH_AC_AI_SetVol(DEFAULT_AIN_VOL));         // level-2 gain
 
     FH_AC_NR_CONFIG nr_cfg;
     nr_cfg.enable = 1;

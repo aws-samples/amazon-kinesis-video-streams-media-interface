@@ -10,7 +10,6 @@ if(BOARD STREQUAL "FH8626V100")
     set(BOARD_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/${BOARD})
 
     set(BOARD_SRCS
-        # ${BOARD_SDK_DIR}/samples/libimp-samples/sample-common.c
         ${BOARD_SDK_DIR}/common/components/libpes/src/libpes.c
         ${BOARD_SDK_DIR}/common/sample_common/isp/src/start_sensor/start_sensor_v1.c
         ${BOARD_SDK_DIR}/common/sample_common/isp/src/start_sensor/start_sensor_v2.c
@@ -27,8 +26,6 @@ if(BOARD STREQUAL "FH8626V100")
     aux_source_directory(${BOARD_SDK_DIR}/common/vlcview BOARD_SRCS)
 
     set(BOARD_INCS_DIR
-        # ${BOARD_SDK_DIR}/include/
-        # ${BOARD_SDK_DIR}/samples/libimp-samples/
         ${BOARD_SDK_DIR}/include/
         ${BOARD_SDK_DIR}/include/dsp/
         ${BOARD_SDK_DIR}/include/dsp_ext/
@@ -61,14 +58,12 @@ if(BOARD STREQUAL "FH8626V100")
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
 
     set(BOARD_LIBS_SHARED
-        # imp alog rt m pthread dl
         pthread rt m
         advapi dsp isp ispcore dbi dci ${SENSOR}
         vmm vlcview mipi
         acw_mpi audio_codec
     )
     set(BOARD_LIBS_STATIC
-        # libimp.a libalog.a librt.a libm.a pthread dl
         pthread rt m
         libadvapi.a libdsp.a libisp.a libispcore.a libdbi.a libdci.a lib${SENSOR}.a
         libvmm.a libvlcview.a libmipi.a 

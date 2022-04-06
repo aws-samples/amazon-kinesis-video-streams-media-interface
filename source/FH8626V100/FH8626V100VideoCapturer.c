@@ -21,8 +21,6 @@
 
 #include "FH8626V100Common.h"
 #include "sample_common.h"
-#include "isp_enum.h"
-#include "vlcview.h"
 
 #define USING_HARD_STREAM_VIDEO
 

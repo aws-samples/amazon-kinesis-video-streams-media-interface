@@ -45,5 +45,11 @@
 
 #include "FHAdv_OSD_mpi.h"
 
+#include "dsp/fh_audio_mpi.h"
+#include "aacenc_api.h"
+#include "g7xx_api.h"
+#include "isp_enum.h"
+#include "vlcview.h"
+
 #endif /*__common_h__*/
 
