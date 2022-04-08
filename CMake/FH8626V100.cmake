@@ -18,11 +18,8 @@ if(BOARD STREQUAL "FH8626V100")
     aux_source_directory(${BOARD_SDK_DIR}/common/sample_common/isp/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/sample_common/dsp/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/sample_common/bgm/src BOARD_SRCS)
-    aux_source_directory(${BOARD_SDK_DIR}/common/components/libmjpeg_over_http/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/components/libdbi_over_tcp/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/components/libmisc/src BOARD_SRCS)
-    aux_source_directory(${BOARD_SDK_DIR}/common/components/librtsp/src BOARD_SRCS)
-    aux_source_directory(${BOARD_SDK_DIR}/common/components/libdmc/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/vlcview BOARD_SRCS)
 
     set(BOARD_INCS_DIR
@@ -41,19 +38,6 @@ if(BOARD STREQUAL "FH8626V100")
     )
 
     set(USE_MUCLIBC ON)
-    # if(USE_MUCLIBC)
-    #     set(BOARD_LIBS_DIR
-    #         ${BOARD_SDK_DIR}/lib/dynamic
-    #         ${BOARD_SDK_DIR}/lib/static
-    #     )
-    #     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -muclibc")
-    #     set(BOARD_DESTINATION_PLATFORM arm-fullhanv3-linux-uclibcgnueabi)
-    # else()
-    #     set(BOARD_LIBS_DIR
-    #         ${BOARD_SDK_DIR}/lib/glibc
-    #     )
-    #     set(BOARD_DESTINATION_PLATFORM arm-fullhanv3-linux-uclibcgnueabi)
-    # endif()
 
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
 

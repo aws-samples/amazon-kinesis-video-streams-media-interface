@@ -226,6 +226,7 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
 #ifdef USING_HARD_STREAM_VIDEO
     if (videoHandle->format == VID_FMT_RAW) {
         kvs_log("TODO VID_FMT_RAW");
+        return -EINVAL;
     } else if (videoHandle->format == VID_FMT_H264) {
         ret = FH_VENC_GetStream_Block(FH_STREAM_H264, &stream);
         if (ret == RETURN_OK) {

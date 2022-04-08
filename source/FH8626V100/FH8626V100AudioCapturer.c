@@ -16,8 +16,6 @@
 
 #include "com/amazonaws/kinesis/video/capturer/AudioCapturer.h"
 
-#include <string.h>
-#include <stdlib.h>
 #include "FH8626V100Common.h"
 #include "sample_common.h"
 
@@ -37,9 +35,8 @@ typedef struct {
     AudioChannel channel;
     AudioBitDepth bitDepth;
     AudioSampleRate sampleRate;
+    AAC_ENC_HANDLE aacHandle;
 } FH8626V100AudioCapturer;
-
-static AAC_ENC_HANDLE aacHandle = NULL;
 
 static int setStatus(AudioCapturerHandle handle, const AudioCapturerStatus newStatus)
 {
@@ -193,10 +190,10 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     switch (format) {
         case AUD_FMT_AAC:
 #ifdef USING_HARD_STREAM_AUDIO
-            if (aacHandle){
-                fh_aacenc_destroy(aacHandle);
+            if (audioHandle->aacHandle){
+                fh_aacenc_destroy(audioHandle->aacHandle);
             }
-            aacHandle = fh_aacenc_create(1, ac_config.sample_rate, 0);
+            audioHandle->aacHandle = fh_aacenc_create(1, ac_config.sample_rate, 0);
 #endif
             break;
 
@@ -288,7 +285,7 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
             break;
 
         case AUD_FMT_AAC:
-            convert_num = fh_aacenc_encode(aacHandle, (unsigned char*)audio_frame.data, audio_frame.len, (unsigned char*)convert_buf, (audio_frame.len >> 2));
+            convert_num = fh_aacenc_encode(audioHandle->aacHandle, (unsigned char*)audio_frame.data, audio_frame.len, (unsigned char*)convert_buf, (audio_frame.len >> 2));
             convert_num -= 7;       // offset aac header, kvs not support
             convert_raw_addr = convert_buf + 7;
             break;
@@ -350,8 +347,8 @@ void audioCapturerDestory(AudioCapturerHandle handle)
 
     FH_AC_DeInit();
 
-    if (aacHandle)
-        fh_aacenc_destroy(aacHandle);
+    if (audioHandle->aacHandle)
+        fh_aacenc_destroy(audioHandle->aacHandle);
 #endif
 
     setStatus(handle, AUD_CAP_STATUS_NOT_READY);
