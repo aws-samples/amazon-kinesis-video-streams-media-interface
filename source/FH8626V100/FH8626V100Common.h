@@ -39,30 +39,18 @@
 
 #define KVS_DEBUG_LOG
 #ifndef KVS_DEBUG_LOG
-#define kvs_kvs_log(format, args...)
+#define KVS_LOG(format, args...)
 #else
-#define kvs_log(format, args...) printf("[kvs %s:%d] " format, __func__, __LINE__, ##args)
+#define KVS_LOG(format, args...) printf("[kvs %s:%d] " format, __func__, __LINE__, ##args)
 #endif
 
 #define HANDLE_NULL_CHECK(x)                                                                                                                         \
     if (!(x)) {                                                                                                                                      \
-        kvs_log("HANDLE_STATUS_CHECK err\n");                                                                                                        \
+        KVS_LOG("HANDLE_STATUS_CHECK err\n");                                                                                                        \
         return -EINVAL;                                                                                                                              \
     }
 #define HANDLE_STATUS_CHECK(FH8626Handle, expectedStatus)                                                                                            \
     if ((FH8626Handle)->status != (expectedStatus)) {                                                                                                \
-        kvs_log("HANDLE_STATUS_CHECK err\n");                                                                                                        \
+        KVS_LOG("HANDLE_STATUS_CHECK err\n");                                                                                                        \
         return -EAGAIN;                                                                                                                              \
-    }
-
-#define CHECK_RET(expr) \
-    ret = expr; \
-    if (ret) \
-    { \
-        printf("%s:%d failed %08x: "#expr"\n", __func__, __LINE__, ret); \
-        goto Exit; \
-    } \
-    else \
-    { \
-        printf("done: "#expr"\n"); \
     }

@@ -43,7 +43,7 @@ static int setStatus(VideoCapturerHandle handle, const VideoCapturerStatus newSt
 
     if (newStatus != videoHandle->status) {
         videoHandle->status = newStatus;
-        kvs_log("VideoCapturer set new status[%d]\n", newStatus);
+        KVS_LOG("VideoCapturer set new status[%d]\n", newStatus);
     }
 
     return 0;
@@ -58,12 +58,12 @@ static int startRecvPic(VideoCapturerHandle handle, uint8_t chnNum)
 #ifdef USING_HARD_STREAM_VIDEO
     if (videoHandle->format == VID_FMT_H264) {
         if (FH_VENC_StartRecvPic(chnNum)) {
-            kvs_log("FH_VENC_StartRecvPic(%d) failed\n", chnNum);
+            KVS_LOG("FH_VENC_StartRecvPic(%d) failed\n", chnNum);
             return -EAGAIN;
         }
 
     } else {
-        kvs_log("err todo\n");
+        KVS_LOG("err todo\n");
         return -EAGAIN;
     }
 #endif
@@ -79,11 +79,11 @@ static int stopRecvPic(VideoCapturerHandle handle, uint8_t chnNum)
 #ifdef USING_HARD_STREAM_VIDEO
     if (videoHandle->format == VID_FMT_H264) {
         if (FH_VENC_StopRecvPic(chnNum)) {
-            kvs_log("FH_VENC_StopRecvPic(%d) failed\n", chnNum);
+            KVS_LOG("FH_VENC_StopRecvPic(%d) failed\n", chnNum);
             return -EAGAIN;
         }
     } else {
-        kvs_log("err todo\n");
+        KVS_LOG("err todo\n");
         return -EAGAIN;
     }
 #endif
@@ -95,7 +95,7 @@ VideoCapturerHandle videoCapturerCreate(void)
     FH8626V100VideoCapturer* videoHandle = NULL;
 
     if (!(videoHandle = (FH8626V100VideoCapturer*) malloc(sizeof(FH8626V100VideoCapturer)))) {
-        kvs_log("videoHandle malloc failed\n");
+        KVS_LOG("videoHandle malloc failed\n");
         return NULL;
     }
 
@@ -103,7 +103,7 @@ VideoCapturerHandle videoCapturerCreate(void)
 
 #ifdef USING_HARD_STREAM_VIDEO
     if (sample_video_init()) {
-        kvs_log("video init failed\n");
+        KVS_LOG("video init failed\n");
         free(videoHandle);
         return NULL;
     }
@@ -160,7 +160,7 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             res = FORMAT_1080P15;
             break;
         default:
-            kvs_log("Unsupported resolution %d", resolution);
+            KVS_LOG("Unsupported resolution %d", resolution);
             return -EINVAL;
     }
 
@@ -169,13 +169,13 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             fmt = FH_NORMAL_H264;
             break;
         default:
-            kvs_log("Unsupported format %d", format);
+            KVS_LOG("Unsupported format %d", format);
             return -EINVAL;
     }
 
 #ifdef USING_HARD_STREAM_VIDEO
     if (change_video(chn, fmt, res)) {
-        kvs_log("change video failed\n");
+        KVS_LOG("change video failed\n");
         return -EINVAL;
     }
 #endif
@@ -219,13 +219,13 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
     HANDLE_STATUS_CHECK(videoHandle, VID_CAP_STATUS_STREAM_ON);
 
     if (!pFrameDataBuffer || !pTimestamp || !pFrameSize) {
-        kvs_log("param err\n");
+        KVS_LOG("param err\n");
         return -EINVAL;
     }
 
 #ifdef USING_HARD_STREAM_VIDEO
     if (videoHandle->format == VID_FMT_RAW) {
-        kvs_log("TODO VID_FMT_RAW");
+        KVS_LOG("TODO VID_FMT_RAW");
         return -EINVAL;
     } else if (videoHandle->format == VID_FMT_H264) {
         ret = FH_VENC_GetStream_Block(FH_STREAM_H264, &stream);
@@ -245,17 +245,17 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
                     offset += stream.h264_stream.nalu[i].length;
                 }
             } else {
-                kvs_log("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, frmlen);
+                KVS_LOG("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, frmlen);
                 *pFrameSize = 0;
                 ret = -ENOMEM;
             }
 
             FH_VENC_ReleaseStream(videoHandle->channelNum);
         } else {
-            kvs_log("FH_VENC_GetStream_Block failed, %x\n", ret);
+            KVS_LOG("FH_VENC_GetStream_Block failed, %x\n", ret);
         }
     } else {
-        kvs_log("format not support");
+        KVS_LOG("format not support");
         return -EINVAL;
     }
 #endif

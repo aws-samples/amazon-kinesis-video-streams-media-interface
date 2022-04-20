@@ -55,3 +55,14 @@ T31/
     |-- libimp-samples
     `-- libsysutils-samples
 ```
+
+# FH8626V100
+
+User need to put FH8626V100 board SDK under [3rdparty/FH8626V100/](3rdparty/FH8626V100/):
+
+```
+FH8626V100/
+├── common
+├── include
+└── lib
+```

@@ -23,10 +23,10 @@
 
 #define HANDLE_GET(x) FH8626V100AudioCapturer* audioHandle = (FH8626V100AudioCapturer*) ((x))
 
-#define DEFAULT_PERIOD_SIZE     1024
-#define DEFAULT_VOLUME          28
-#define DEFAULT_MICIN_VOL       2
-#define DEFAULT_AIN_VOL         28
+#define DEFAULT_PERIOD_SIZE 1024
+#define DEFAULT_VOLUME      28
+#define DEFAULT_MICIN_VOL   2
+#define DEFAULT_AIN_VOL     28
 
 typedef struct {
     AudioCapturerStatus status;
@@ -45,7 +45,7 @@ static int setStatus(AudioCapturerHandle handle, const AudioCapturerStatus newSt
 
     if (newStatus != audioHandle->status) {
         audioHandle->status = newStatus;
-        kvs_log("AudioCapturer set new status[%d]\n", newStatus);
+        KVS_LOG("AudioCapturer set new status[%d]\n", newStatus);
     }
 
     return 0;
@@ -56,13 +56,13 @@ AudioCapturerHandle audioCapturerCreate(void)
     FH8626V100AudioCapturer* audioHandle = NULL;
 
     if (!(audioHandle = (FH8626V100AudioCapturer*) malloc(sizeof(FH8626V100AudioCapturer)))) {
-        kvs_log("OOM");
+        KVS_LOG("OOM");
         return NULL;
     }
 
     memset(audioHandle, 0, sizeof(FH8626V100AudioCapturer));
 
-    audioHandle->capability.formats = (1 << (AUD_FMT_G711A - 1))| (1 << (AUD_FMT_PCM - 1)) | (1 << (AUD_FMT_AAC - 1));
+    audioHandle->capability.formats = (1 << (AUD_FMT_G711A - 1)) | (1 << (AUD_FMT_PCM - 1)) | (1 << (AUD_FMT_AAC - 1));
     audioHandle->capability.channels = (1 << (AUD_CHN_MONO - 1));
     audioHandle->capability.sampleRates = (1 << (AUD_SAM_8K - 1)) | (1 << (AUD_SAM_16K - 1)) | (1 << (AUD_SAM_32K - 1));
     audioHandle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
@@ -70,9 +70,8 @@ AudioCapturerHandle audioCapturerCreate(void)
     setStatus((AudioCapturerHandle) audioHandle, AUD_CAP_STATUS_STREAM_OFF);
 
 #ifdef USING_HARD_STREAM_AUDIO
-    if(FH_AC_Init())
-    {
-        kvs_log("FH_AC_Init err\n");
+    if (FH_AC_Init()) {
+        KVS_LOG("FH_AC_Init err\n");
         return NULL;
     }
 #endif
@@ -122,7 +121,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             break;
 
         default:
-            kvs_log("Unsupported format %d", format);
+            KVS_LOG("Unsupported format %d", format);
             return -EINVAL;
     }
 
@@ -132,7 +131,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             break;
 
         default:
-            kvs_log("Unsupported channel num %d", channel);
+            KVS_LOG("Unsupported channel num %d", channel);
             return -EINVAL;
     }
 
@@ -150,7 +149,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             break;
 
         default:
-            kvs_log("Unsupported sample rate %d", sampleRate);
+            KVS_LOG("Unsupported sample rate %d", sampleRate);
             return -EINVAL;
     }
 
@@ -160,25 +159,37 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             break;
 
         default:
-            kvs_log("Unsupported bit depth %d", bitDepth);
+            KVS_LOG("Unsupported bit depth %d", bitDepth);
             return -EINVAL;
     }
 
-    ac_config.io_type     = FH_AC_MIC_IN;
+    ac_config.io_type = FH_AC_MIC_IN;
     ac_config.period_size = DEFAULT_PERIOD_SIZE;
-    ac_config.volume      = DEFAULT_VOLUME;
-
-    int ret = 0;
+    ac_config.volume = DEFAULT_VOLUME;
 
 #ifdef USING_HARD_STREAM_AUDIO
-    CHECK_RET(FH_AC_Set_Config(&ac_config));
-    CHECK_RET(FH_AC_AI_MICIN_SetVol(DEFAULT_MICIN_VOL)); // level-1 gain for mic-in
-    CHECK_RET(FH_AC_AI_SetVol(DEFAULT_AIN_VOL));         // level-2 gain
-
+    int ret = 0;
     FH_AC_NR_CONFIG nr_cfg;
     nr_cfg.enable = 1;
     nr_cfg.level = 1;
-    CHECK_RET(FH_AC_NR_SetConfig(&nr_cfg));
+
+    if (ret = FH_AC_Set_Config(&ac_config)) {
+        KVS_LOG("FH_AC_Set_Config failed: %d\n", ret);
+    } else if (ret = FH_AC_AI_MICIN_SetVol(DEFAULT_MICIN_VOL)) { // level-1 gain for mic-in
+        KVS_LOG("FH_AC_Set_Config failed: %d\n", ret);
+    } else if (ret = FH_AC_AI_SetVol(DEFAULT_AIN_VOL)) { // level-2 gain
+        KVS_LOG("FH_AC_AI_SetVol failed: %d\n", ret);
+    } else if (ret = FH_AC_NR_SetConfig(&nr_cfg)) {
+        KVS_LOG("FH_AC_NR_SetConfig failed: %d\n", ret);
+    }
+
+    if (ret) {
+#ifdef USING_HARD_STREAM_AUDIO
+        FH_AC_AI_Disable();
+#endif
+        return -EAGAIN;
+    }
+
 #endif
 
     audioHandle->format = format;
@@ -186,11 +197,10 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     audioHandle->sampleRate = sampleRate;
     audioHandle->bitDepth = bitDepth;
 
-
     switch (format) {
         case AUD_FMT_AAC:
 #ifdef USING_HARD_STREAM_AUDIO
-            if (audioHandle->aacHandle){
+            if (audioHandle->aacHandle) {
                 fh_aacenc_destroy(audioHandle->aacHandle);
             }
             audioHandle->aacHandle = fh_aacenc_create(1, ac_config.sample_rate, 0);
@@ -198,18 +208,11 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
             break;
 
         default:
-            kvs_log("Unsupported format %d", format);
+            KVS_LOG("Unsupported format %d", format);
             return -EINVAL;
     }
 
     return 0;
-
-Exit:
-#ifdef USING_HARD_STREAM_AUDIO
-    FH_AC_AI_Disable();
-#endif
-
-    return -EAGAIN;
 }
 
 int audioCapturerGetFormat(const AudioCapturerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
@@ -233,7 +236,7 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle)
 
 #ifdef USING_HARD_STREAM_AUDIO
     if (FH_AC_AI_Enable()) {
-        kvs_log("Audio device disable failed");
+        KVS_LOG("Audio device disable failed");
         return -EAGAIN;
     }
 #endif
@@ -262,46 +265,45 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
     audio_frame.data = (FH_UINT8*) frame_buf;
     ret = FH_AC_AI_GetFrameWithPts(&audio_frame, &audio_pts);
     if (ret || !audio_frame.len) {
-        kvs_log("FH_AC_AI_GetFrame failed");
+        KVS_LOG("FH_AC_AI_GetFrame failed");
         return -EAGAIN;
     }
 
     // Encode frame
     if (audioHandle->format != AUD_FMT_PCM) {
         int convert_num;
-        unsigned char *convert_raw_addr = NULL;
-        unsigned char *convert_buf = malloc(audio_frame.len >> 1);
-        if (!convert_buf)
-        {
-            kvs_log("oom\n");
+        unsigned char* convert_raw_addr = NULL;
+        unsigned char* convert_buf = malloc(audio_frame.len >> 1);
+        if (!convert_buf) {
+            KVS_LOG("oom\n");
             return -EAGAIN;
         }
 
-        switch (audioHandle->format)
-        {
-        case AUD_FMT_G711A:
-            convert_num = fh_pcm_2_g711A((unsigned char*) audio_frame.data, audio_frame.len, (unsigned char*) convert_buf);
-            convert_raw_addr = convert_buf;
-            break;
+        switch (audioHandle->format) {
+            case AUD_FMT_G711A:
+                convert_num = fh_pcm_2_g711A((unsigned char*) audio_frame.data, audio_frame.len, (unsigned char*) convert_buf);
+                convert_raw_addr = convert_buf;
+                break;
 
-        case AUD_FMT_AAC:
-            convert_num = fh_aacenc_encode(audioHandle->aacHandle, (unsigned char*)audio_frame.data, audio_frame.len, (unsigned char*)convert_buf, (audio_frame.len >> 2));
-            convert_num -= 7;       // offset aac header, kvs not support
-            convert_raw_addr = convert_buf + 7;
-            break;
+            case AUD_FMT_AAC:
+                convert_num = fh_aacenc_encode(audioHandle->aacHandle, (unsigned char*) audio_frame.data, audio_frame.len,
+                                               (unsigned char*) convert_buf, (audio_frame.len >> 2));
+                convert_num -= 7; // offset aac header, kvs not support
+                convert_raw_addr = convert_buf + 7;
+                break;
 
-        default:
-            kvs_log("Unsupported format %d", audioHandle->format);
-            break;
+            default:
+                KVS_LOG("Unsupported format %d", audioHandle->format);
+                break;
         }
 
         if (frameDataBufferSize >= convert_num) {
-            memcpy(pFrameDataBuffer, (void*)convert_raw_addr, convert_num);
+            memcpy(pFrameDataBuffer, (void*) convert_raw_addr, convert_num);
             *pFrameSize = convert_num;
             *pTimestamp = audio_pts;
             free(convert_buf);
         } else {
-            kvs_log("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, convert_num);
+            KVS_LOG("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, convert_num);
             *pFrameSize = 0;
             ret = -ENOMEM;
             free(convert_buf);
@@ -325,7 +327,7 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
 
 #ifdef USING_HARD_STREAM_AUDIO
     if (FH_AC_AI_Disable()) {
-        kvs_log("Audio device disable failed");
+        KVS_LOG("Audio device disable failed");
         return -EAGAIN;
     }
 #endif

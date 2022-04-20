@@ -38,6 +38,7 @@ if(BOARD STREQUAL "FH8626V100")
     )
 
     set(USE_MUCLIBC ON)
+    set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-uclibc)
 
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
 
