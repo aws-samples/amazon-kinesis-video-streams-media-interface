@@ -21,6 +21,9 @@ ExternalProject_Add(kvs-producer
   TEST_COMMAND      ""
 )
 
+include(CheckIncludeFiles)
+check_include_files(signal.h HAVE_SIGNAL_H)
+
 set(KVS_SAMPLE_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/source/kvsappcli.c
     ${CMAKE_CURRENT_LIST_DIR}/source/option_configuration.c)
@@ -60,3 +63,8 @@ add_dependencies(kvsproducer-static kvs-producer embedded-media-static)
 target_include_directories(kvsproducer-static PRIVATE ${AWS_DEPENDENCIES_DIR}/kvs/include/ ${EMBEDDED_MEDIA_INCLUDES_DIR})
 target_link_directories(kvsproducer-static PRIVATE ${AWS_DEPENDENCIES_DIR}/kvs/lib/ ${EMBEDDED_MEDIA_LINK_DIR})
 target_link_libraries(kvsproducer-static embedded-media-static ${KVS_SDK_LIBS_STATIC} ${BOARD_LIBS_STATIC})
+
+if(HAVE_SIGNAL_H)
+    target_compile_definitions(kvsproducer-shared PRIVATE HAVE_SIGNAL_H)
+    target_compile_definitions(kvsproducer-static PRIVATE HAVE_SIGNAL_H)
+endif()
