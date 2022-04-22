@@ -186,6 +186,12 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     if (ret) {
 #ifdef USING_HARD_STREAM_AUDIO
         FH_AC_AI_Disable();
+        if (format == AUD_FMT_AAC) {
+            if (audioHandle->aacHandle) {
+                fh_aacenc_destroy(audioHandle->aacHandle);
+            }
+            audioHandle->aacHandle = fh_aacenc_create(1, ac_config.sample_rate, 0);
+        }
 #endif
         return -EAGAIN;
     }
@@ -196,21 +202,6 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     audioHandle->channel = channel;
     audioHandle->sampleRate = sampleRate;
     audioHandle->bitDepth = bitDepth;
-
-    switch (format) {
-        case AUD_FMT_AAC:
-#ifdef USING_HARD_STREAM_AUDIO
-            if (audioHandle->aacHandle) {
-                fh_aacenc_destroy(audioHandle->aacHandle);
-            }
-            audioHandle->aacHandle = fh_aacenc_create(1, ac_config.sample_rate, 0);
-#endif
-            break;
-
-        default:
-            KVS_LOG("Unsupported format %d", format);
-            return -EINVAL;
-    }
 
     return 0;
 }
