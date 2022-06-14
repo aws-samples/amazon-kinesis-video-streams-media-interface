@@ -19,7 +19,7 @@ set(WEBRTC_CMAKE_C_FLAGS "-fPIC -std=gnu99")
 include(ExternalProject)
 ExternalProject_Add(kvs-webrtc
   GIT_REPOSITORY    https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c.git
-  GIT_TAG           v1.7.2
+  GIT_TAG           v1.7.3
   CMAKE_ARGS        -DADD_MUCLIBC=${USE_MUCLIBC}
                     -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_DESTINATION_PLATFORM=${BOARD_DESTINATION_PLATFORM} -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
                     -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
