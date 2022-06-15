@@ -107,6 +107,7 @@ INT32 main(INT32 argc, CHAR* argv[])
     signal(SIGINT, sigintHandler);
 #endif
 
+    /* Media Interface Construct */
     AudioCapability audioCapability = {0};
     audioCapturerHandle = audioCapturerCreate();
     if (!audioCapturerHandle) {
@@ -147,6 +148,7 @@ INT32 main(INT32 argc, CHAR* argv[])
 
     CHK_STATUS_ERR(videoCapturerSetFormat(videoCapturerHandle, VID_FMT_H264, VID_RES_1080P), STATUS_INVALID_OPERATION, "Unable to set video format");
     DLOGI("Board VideoCapturer initialized");
+    /* Media Interface Construct */
 
     // do trickleIce by default
     printf("[KVS Master] Using trickleICE by default\n");
@@ -217,6 +219,12 @@ INT32 main(INT32 argc, CHAR* argv[])
         printf("[KVS Master] signalingClientFetchSync(): operation returned status code: 0x%08x \n", retStatus);
         goto CleanUp;
     }
+
+    retStatus = signalingClientConnectSync(pSampleConfiguration->signalingClientHandle);
+    if (retStatus != STATUS_SUCCESS) {
+        printf("[KVS Master] signalingClientConnectSync(): operation returned status code: 0x%08x \n", retStatus);
+        goto CleanUp;
+    }
     printf("[KVS Master] Signaling client connection to socket established\n");
 
     gSampleConfiguration = pSampleConfiguration;
@@ -268,7 +276,7 @@ CleanUp:
         if (retStatus == STATUS_SUCCESS) {
             logSignalingClientStats(&signalingClientMetrics);
         } else {
-            printf("[KVS Master] signalingClientGetMetrics() operation returned status code: 0x%08x", retStatus);
+            printf("[KVS Master] signalingClientGetMetrics() operation returned status code: 0x%08x\n", retStatus);
         }
         retStatus = freeSignalingClient(&pSampleConfiguration->signalingClientHandle);
         if (retStatus != STATUS_SUCCESS) {
@@ -282,6 +290,7 @@ CleanUp:
     }
     printf("[KVS Master] Cleanup done\n");
 
+    /* Media Interface Destruct */
     if (audioCapturerHandle) {
         audioCapturerDestory(audioCapturerHandle);
         audioCapturerHandle = NULL;
@@ -298,6 +307,7 @@ CleanUp:
     }
 
     printf("Board SDK exited\n");
+    /* Media Interface Destruct */
 
     RESET_INSTRUMENTED_ALLOCATORS();
 
