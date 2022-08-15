@@ -5,6 +5,8 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  workflow_dispatch:
+    branches: [ develop ]
 
 env:
   BUILD_TYPE: Release
