@@ -17,7 +17,9 @@
 
 ## Getting started with out-of-box KVS WebRTC sample
 
-1. Generate AWS credentials by using this [script](https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c/blob/master/scripts/generate-iot-credential.sh)
+1. Prepare the AWS credentials
+   - If you want to use AWS access key id/access key secrets, you can generate AWS credentials by AWS IAM console.
+   - Alternatively if you want to use AWS IoT Certificate, you can generate AWS credentials by using this [script](https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c/blob/master/scripts/generate-iot-credential.sh)
 2. Clone the code:
 ```bash
 git clone https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface.git
@@ -32,29 +34,33 @@ mkdir build; cd build; cmake .. -DBOARD=${YOUR_BOARD_NAME}
 make
 ```
 5. Upload built artifacts(i.e kvswebrtcmaster-static) at *amazon-kinesis-video-streams-media-interface/build/samples/webrtc/* to your board.
-6. Setup AWS credentials in environment variables. The sample is using AWS IoT certificates by default:
-```bash
-export AWS_KVS_LOG_LEVEL=2
-export AWS_DEFAULT_REGION=us-east-1
-export AWS_KVS_CACERT_PATH=rootca.pem
-export AWS_IOT_CORE_THING_NAME=your_camera_name
-export AWS_IOT_CORE_CREDENTIAL_ENDPOINT=xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com
-export AWS_IOT_CORE_CERT=your_camera_certificate.pem
-export AWS_IOT_CORE_PRIVATE_KEY=your_camera_private.key
-export AWS_IOT_CORE_ROLE_ALIAS=your_camera_role_alias
-```
-> You can use Root CA in [resources/certs/rootca.pem](resources/certs/rootca.pem), or you can download it from [Amazon Trust Services](https://www.amazontrust.com/repository/SFSRootCAG2.pem)
+6. Setup AWS credentials in environment variables. 
+    - If you want to use AWS access key id/access key secrets, use following commands to setup environment variables:
+    ```bash
+    export AWS_KVS_LOG_LEVEL=2
+    export AWS_DEFAULT_REGION=us-east-1
+    export AWS_KVS_CACERT_PATH=cacert.pem
+    export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
+    export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    ```
+    > Replace AWS_DEFAULT_REGION, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY with your own credentials
 
-Alternatively, you can choose use access key id/access key secret by turn off `IOT_CORE_ENABLE_CREDENTIALS` in [Samples.h](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/blob/main/samples/webrtc/source/Samples.h#L67) and setup credentials:
-```bash
-export AWS_KVS_LOG_LEVEL=2
-export AWS_DEFAULT_REGION=us-east-1
-export AWS_KVS_CACERT_PATH=cacert.pem
-export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
-export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
-7. Execute sample on your board: `./kvswebrtcmaster-static`. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`
-8. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html)
+    > You can use Root CA in [resources/certs/rootca.pem](resources/certs/rootca.pem), or you can download it from [Amazon Trust Services](https://www.amazontrust.com/repository/SFSRootCAG2.pem)
+    - Alternatively if you want to use AWS IoT Certificate, turn on `IOT_CORE_ENABLE_CREDENTIALS` in [Samples.h](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/blob/main/samples/webrtc/source/Samples.h#L67) and using following commands to setup environment variables:
+    ```bash
+    export AWS_KVS_LOG_LEVEL=2
+    export AWS_DEFAULT_REGION=us-east-1
+    export AWS_KVS_CACERT_PATH=rootca.pem
+    export AWS_IOT_CORE_THING_NAME=your_camera_name
+    export AWS_IOT_CORE_CREDENTIAL_ENDPOINT=xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com
+    export AWS_IOT_CORE_CERT=your_camera_certificate.pem
+    export AWS_IOT_CORE_PRIVATE_KEY=your_camera_private.key
+    export AWS_IOT_CORE_ROLE_ALIAS=your_camera_role_alias
+    ```
+    > You can use Root CA in [resources/certs/rootca.pem](resources/certs/rootca.pem), or you can download it from [Amazon Trust Services](https://www.amazontrust.com/repository/SFSRootCAG2.pem)
+7. Make sure your the system time on your board has been synchronized. You may set it manually or use ntp client.
+8. Execute sample on your board: `./kvswebrtcmaster-static`. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`
+9. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html)
 
 ## Getting started with out-of-box KVS Producer sample
 
@@ -79,9 +85,10 @@ export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 export AWS_DEFAULT_REGION=us-east-1
 export AWS_KVS_HOST=kinesisvideo.us-east-1.amazonaws.com
 ```
-6. Execute sample on your board: `./kvsproducer-static $YOUR_STREAM_NAME`
-7. Check DASH live stream via [AWS KVS test page](https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/)
-8. Download video clips via AWS console.
+6. Make sure your the system time on your board has been synchronized. You may set it manually or use ntp client.
+7. Execute sample on your board: `./kvsproducer-static $YOUR_STREAM_NAME`
+8. Check DASH live stream via [AWS KVS test page](https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/)
+9. Download video clips via AWS console.
 
 > In current stage, browser doesn't support G.711 via HLS/DASH. To verify audio content in G.711 formats, user must download video clips.
 
