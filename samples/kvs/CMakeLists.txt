@@ -14,7 +14,7 @@ message(STATUS "EMBEDDED_MEDIA_LINK_DIR - ${EMBEDDED_MEDIA_LINK_DIR}")
 include(ExternalProject)
 ExternalProject_Add(kvs-producer
   GIT_REPOSITORY    https://github.com/aws-samples/amazon-kinesis-video-streams-producer-embedded-c.git
-  GIT_TAG           v1.0.0
+  GIT_TAG           v1.0.1
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/kvs/ -DCMAKE_BUILD_TYPE=Release
   BUILD_ALWAYS      TRUE
   GIT_PROGRESS      TRUE

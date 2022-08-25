@@ -307,6 +307,7 @@ static int setKvsAppOptions(KvsAppHandle kvsAppHandle)
 
 int main(int argc, char *argv[])
 {
+    int res = 0;
     KvsAppHandle kvsAppHandle;
     uint64_t uLastPrintMemStatTimestamp = 0;
     ePutMediaFragmentAckEventType eAckEventType = eUnknown;
@@ -391,9 +392,9 @@ int main(int argc, char *argv[])
                 break;
             }
 
-            if (KvsApp_open(kvsAppHandle) != 0)
+            if ((res = KvsApp_open(kvsAppHandle)) != 0)
             {
-                printf("Failed to open KVS app\n");
+                printf("Failed to open KVS app, err:-%X\n", -res);
                 break;
             }
 
@@ -403,8 +404,10 @@ int main(int argc, char *argv[])
                 {
                     break;
                 }
-                if (KvsApp_doWork(kvsAppHandle) != 0)
+                
+                if ((res = KvsApp_doWork(kvsAppHandle)) != 0)
                 {
+                    printf("do work err:-%X\n", -res);
                     break;
                 }
 
