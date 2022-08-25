@@ -12,8 +12,8 @@
 - FILE(Dummy boards that can capture from [sample frames](resources/frames/))
 - x86/x64(By selecting board `V4L2` or `FILE`)
 - RPi(By selecting board `V4L2` or `FILE`)
-- T31(By selecting board `T31` or `FILE`)
-- FH8626V100(By selecting board `FH8626V100` or `FILE`)
+- Ingenic T31(By selecting board `T31` or `FILE`)
+- Fullhan FH8626V100(By selecting board `FH8626V100` or `FILE`)
 
 ## Getting started with out-of-box KVS WebRTC sample
 
