@@ -24,7 +24,7 @@ ExternalProject_Add(kvs-webrtc
                     -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_SAMPLE=OFF -DBUILD_LIBSRTP_DESTINATION_PLATFORM=${BOARD_DESTINATION_PLATFORM} -DCMAKE_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
                     -DCMAKE_BUILD_TYPE=Release -DOPEN_SRC_INSTALL_PREFIX=${AWS_DEPENDENCIES_DIR}/webrtc/
                     -DCMAKE_C_FLAGS=${WEBRTC_CMAKE_C_FLAGS}
-  PATCH_COMMAND     git apply ${CMAKE_CURRENT_LIST_DIR}/patches/0001-ram-optimization-reduce-rolling-buffer-and-jitter-bu.patch
+  PATCH_COMMAND     ${CMAKE_CURRENT_LIST_DIR}/patches/webrtc-patch-manager.sh
   BUILD_ALWAYS      TRUE
   GIT_PROGRESS      TRUE
   TEST_COMMAND      ""
