@@ -41,7 +41,7 @@ It doesn't require other manually installation because CMake will download and b
 
 # T31
 
-User need to put T31 board SDK under [3rdparty/T31/](3rdparty/T31/):
+User need to put T31 board SDK under [3rdparty/T31/](T31/):
 
 ```
 T31/
@@ -58,7 +58,7 @@ T31/
 
 # FH8626V100
 
-User need to put FH8626V100 board SDK under [3rdparty/FH8626V100/](3rdparty/FH8626V100/):
+User need to put FH8626V100 board SDK under [3rdparty/FH8626V100/](FH8626V100/):
 
 ```
 FH8626V100/

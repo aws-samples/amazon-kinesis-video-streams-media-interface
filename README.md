@@ -39,7 +39,7 @@ make
     ```bash
     export AWS_KVS_LOG_LEVEL=2
     export AWS_DEFAULT_REGION=us-east-1
-    export AWS_KVS_CACERT_PATH=cacert.pem
+    export AWS_KVS_CACERT_PATH=rootca.pem
     export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
     export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     ```
@@ -59,8 +59,9 @@ make
     ```
     > You can use Root CA in [resources/certs/rootca.pem](resources/certs/rootca.pem), or you can download it from [Amazon Trust Services](https://www.amazontrust.com/repository/SFSRootCAG2.pem)
 7. Make sure your the system time on your board has been synchronized. You may set it manually or use ntp client.
-8. Execute sample on your board: `./kvswebrtcmaster-static`. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`
-9. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html)
+8. If you are using access key id/access key secret, execute sample with channel name as parameter: `./kvswebrtcmaster-static your_channel_name`. If you are using AWS IoT Certificate, execute sample on your board directly: `./kvswebrtcmaster-static`. 
+9. Check WebRTC live stream via AWS console or [AWS WebRTC test page](https://d3etpwtx4wgido.cloudfront.net/)
+    > Browser should work as viewer mode during test.
 
 ## Getting started with out-of-box KVS Producer sample
 
