@@ -3,6 +3,17 @@
 [![main](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/main.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/main.yml)
 [![main](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/develop.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/develop.yml)
 
+- [Amazon Kinesis Video Streams Media Interface](#amazon-kinesis-video-streams-media-interface)
+  - [Introduction](#introduction)
+  - [Supported Boards](#supported-boards)
+  - [Getting started with out-of-box KVS WebRTC sample](#getting-started-with-out-of-box-kvs-webrtc-sample)
+  - [Getting started with out-of-box KVS Producer sample](#getting-started-with-out-of-box-kvs-producer-sample)
+  - [Getting started with out-of-box save frame sample](#getting-started-with-out-of-box-save-frame-sample)
+  - [Platform Implementation Guide](#platform-implementation-guide)
+  - [Contributing](#contributing)
+  - [Code Of Conduct](#code-of-conduct)
+  - [License](#license)
+
 ## Introduction
 
 **Amazon Kinesis Video Streams Media Interface** provides abstract interfaces for board specific media APIs. This repository also contains boards sensors/encoder implementations for Amazon Kinesis Video Streams Producer and WebRTC with out-of-box samples.
