@@ -2,11 +2,17 @@
 
 This documents provides guidelines to install board SDK required by this library.
 
-# FILE
+- [Board SDK Install Guide](#board-sdk-install-guide)
+	- [FILE](#file)
+	- [V4L2](#v4l2)
+	- [T31](#t31)
+	- [FH8626V100](#fh8626v100)
+
+## FILE
 
 FILE capturer is a dummy capturer that read sample frames from [resources/frames/]. It doesn't require user to manually install any 3rdparty SDK.
 
-# V4L2
+## V4L2
 
 V4L2 request libv4l2 on your build device. You may install it via:
 
@@ -39,7 +45,7 @@ ioctl: VIDIOC_ENUM_FMT
 
 It doesn't require other manually installation because CMake will download and build dependencies automatically.
 
-# T31
+## T31
 
 User need to put T31 board SDK under [3rdparty/T31/](T31/):
 
@@ -56,7 +62,7 @@ T31/
     `-- libsysutils-samples
 ```
 
-# FH8626V100
+## FH8626V100
 
 User need to put FH8626V100 board SDK under [3rdparty/FH8626V100/](FH8626V100/):
 
