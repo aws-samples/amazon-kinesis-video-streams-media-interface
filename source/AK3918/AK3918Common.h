@@ -16,28 +16,14 @@
 
 #include <stdio.h>
 
-#define FILE_HANDLE_NULL_CHECK(x)                                                                                                                    \
+#define AK3918_HANDLE_NULL_CHECK(x)                                                                                                                    \
     if (!(x)) {                                                                                                                                      \
         return -EINVAL;                                                                                                                              \
     }
-#define FILE_HANDLE_STATUS_CHECK(fileHandle, expectedStatus)                                                                                         \
-    if ((fileHandle)->status != (expectedStatus)) {                                                                                                  \
+#define AK3918_HANDLE_STATUS_CHECK(AK3918Handle, expectedStatus)                                                                                         \
+    if ((AK3918Handle)->status != (expectedStatus)) {                                                                                                  \
         return -EAGAIN;                                                                                                                              \
     }
 
-#define GET_FILE_SIZE(f, size)                                                                                                                       \
-    do {                                                                                                                                             \
-        fseek((f), 0, SEEK_END);                                                                                                                     \
-        (size) = ftell((f));                                                                                                                         \
-        rewind((f));                                                                                                                                 \
-    } while (0)
-
-#define CLOSE_FILE(f)                                                                                                                                \
-    do {                                                                                                                                             \
-        fclose((f));                                                                                                                                 \
-        (f) = NULL;                                                                                                                                  \
-    } while (0)
-
 #define LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__)
 
-#define FRAME_FILE_PATH_MAX_LENGTH (512)
