@@ -176,7 +176,7 @@ int videoCapturerAcquireStream(VideoCapturerHandle handle)
     V4L2_HANDLE_NULL_CHECK(handle);
     V4L2_HANDLE_GET(handle);
 
-    if (!v4l2CapturerStartStreaming(v4l2Handle->privHandle)) {
+    if (v4l2CapturerStartStreaming(v4l2Handle->privHandle)) {
         LOG("Failed to acquire stream");
         return -EAGAIN;
     }
@@ -205,7 +205,7 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
     V4L2_HANDLE_NULL_CHECK(handle);
     V4L2_HANDLE_GET(handle);
 
-    if (!v4l2CapturerStopStreaming(v4l2Handle->privHandle)) {
+    if (v4l2CapturerStopStreaming(v4l2Handle->privHandle)) {
         LOG("Failed to release stream");
         return -EAGAIN;
     }
