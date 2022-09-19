@@ -67,12 +67,12 @@ AudioCapturerHandle audioCapturerCreate(void)
     if(g_init == 0)
     {
         ipc_main();
-        printf("@@@@@@@@@ %s  @@@@@@@@ %d init ok \n",__FUNCTION__,__LINE__);
+        LOG("@@@@@@@@@ %s  @@@@@@@@ %d init ok \n",__FUNCTION__,__LINE__);
         g_init = 1;	
     }
     else
     {
-         printf("@@@@@@@@@ %s  @@@@@@@@@ %d repeate ! \n",__FUNCTION__,__LINE__);
+         LOG("@@@@@@@@@ %s  @@@@@@@@@ %d repeate ! \n",__FUNCTION__,__LINE__);
     }		
     
     AK3918AudioCapturer* AK3918Handle = NULL;
@@ -126,7 +126,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     AK3918_HANDLE_GET(handle);
 
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, AUD_CAP_STATUS_STREAM_OFF);
-    printf("format:     %d,AudioChannel:     %d,AudioSampleRate sampleRate:   %d,  AudioBitDepth bitDepth:   %d\n",format,channel,sampleRate,bitDepth);
+    LOG("format:     %d,AudioChannel:     %d,AudioSampleRate sampleRate:   %d,  AudioBitDepth bitDepth:   %d\n",format,channel,sampleRate,bitDepth);
     switch (format) {
         case AUD_FMT_G711A:
             break;
@@ -207,12 +207,10 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
     
     int ret = 0;
     aa_frame_info Audioframe;
-    static int ic = 0;
     
     while(1)
     {
-        int iRet = AA_LS_GetFrame(0,    AA_LS_STREAM_AUDIO, AK3918Handle->nAudioHandle, &Audioframe);
-        //printf("1111111 %s 11111111 %d  iret:    %d\n",__FUNCTION__,__LINE__,iRet);    
+        int iRet = AA_LS_GetFrame(0, AA_LS_STREAM_AUDIO, AK3918Handle->nAudioHandle, &Audioframe);   
         if(iRet != 0)
         {
             ak_sleep_ms(5);           
@@ -221,9 +219,6 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
         {
 		if(AK3918Handle->format == AUD_FMT_G711A)
 		{
-                    if(++ic%25 == 0){
-                    printf("AudioframeDataBufferSize:   %d, Audioframe.uiDataLen : %d\n",frameDataBufferSize,Audioframe.uiDataLen);
-		     }
                     if(frameDataBufferSize > Audioframe.uiDataLen)
                     {
                         memcpy(pFrameDataBuffer,Audioframe.pData,Audioframe.uiDataLen);
@@ -231,12 +226,12 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
                         *pTimestamp = Audioframe.u64Time*1000;                                            
                     }
 		     else
-                        printf("framesize error!   fun : %s  Line:  %d\n",__FUNCTION__,__LINE__);
+                        LOG("framesize error!   fun : %s  Line:  %d\n",__FUNCTION__,__LINE__);
 		    
 		}
 		else
 		{
-		   printf("Audio format error:%d\n",AK3918Handle->format);                 
+		   LOG("Audio format error:%d\n",AK3918Handle->format);                 
                }
                break;
         }

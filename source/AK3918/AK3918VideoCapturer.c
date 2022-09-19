@@ -35,11 +35,8 @@ typedef struct {
     int nVideoHandle;
 } AK3918VideoCapturer;
 
-
-
 static int setStatus(VideoCapturerHandle handle, const VideoCapturerStatus newStatus)
 {
-
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
@@ -75,11 +72,10 @@ VideoCapturerHandle videoCapturerCreate(void)
 
 VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle)
 {
-
     if (!handle) {    
         return VID_CAP_STATUS_NOT_READY;
     }
-
+    
     AK3918_HANDLE_GET(handle);
     
     return AK3918Handle->status;
@@ -101,7 +97,6 @@ int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapa
 
 int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format, const VideoResolution resolution)
 {
-
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
@@ -112,8 +107,7 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             break;
 
         default:
-            LOG("Unsupported format %d", format);
-            
+            LOG("Unsupported format %d", format);            
             return -EINVAL;
     }
 
@@ -145,7 +139,6 @@ int videoCapturerGetFormat(const VideoCapturerHandle const handle, VideoFormat* 
 
 int videoCapturerAcquireStream(VideoCapturerHandle handle)
 {
-
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
@@ -156,14 +149,12 @@ int videoCapturerAcquireStream(VideoCapturerHandle handle)
 int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, const size_t frameDataBufferSize, uint64_t* pTimestamp,
                           size_t* pFrameSize)
 {
-
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, VID_CAP_STATUS_STREAM_ON);
 
-    if (!pFrameDataBuffer || !pTimestamp || !pFrameSize) {
-    
+    if (!pFrameDataBuffer || !pTimestamp || !pFrameSize) {  
         return -EINVAL;
     }
     
@@ -172,9 +163,7 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
     static int ic = 0;
     while(1)
     {
-   
-        int iRet = AA_LS_GetFrame(0,    AA_LS_STREAM_VIDEO, AK3918Handle->nVideoHandle, &frame);
-        //printf("1111111 %s 11111111 %d  iret:    %d\n",__FUNCTION__,__LINE__,iRet);
+        int iRet = AA_LS_GetFrame(0, AA_LS_STREAM_VIDEO, AK3918Handle->nVideoHandle, &frame);
         if(iRet != 0)
         {
             ak_sleep_ms(5);
@@ -182,9 +171,9 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
         else
         {
 
-                if(ic++%25 == 0)
-                	printf("Getframe  : recv a frame((%d, %d, %d) \n",frame.uiDataLen, frame.iWidth, frame.iHeight);
-                
+                if(ic++%25 == 0){
+                	LOG("Getframe  : recv a frame((%d, %d, %d) \n",frame.uiDataLen, frame.iWidth, frame.iHeight);
+                }
                 if(frameDataBufferSize > frame.uiDataLen)
                 {
                     memcpy(pFrameDataBuffer,frame.pData,frame.uiDataLen);
@@ -196,13 +185,11 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
         
     }
 
-
     return ret;
 }
 
 int videoCapturerReleaseStream(VideoCapturerHandle handle)
 {
-
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
@@ -222,8 +209,7 @@ void videoCapturerDestory(VideoCapturerHandle handle)
 
     AK3918_HANDLE_GET(handle);
 
-    if (AK3918Handle->status == VID_CAP_STATUS_STREAM_ON) {
-    
+    if (AK3918Handle->status == VID_CAP_STATUS_STREAM_ON) {   
         videoCapturerReleaseStream(handle);
     }
 

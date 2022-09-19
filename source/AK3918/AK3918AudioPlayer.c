@@ -69,18 +69,17 @@ AudioPlayerHandle audioPlayerCreate(void)
 
 AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
 {
-
     if (!handle) {
         return AUD_PLY_STATUS_NOT_READY;
     }
-	
+    	
     AK3918_HANDLE_GET(handle);
+    
     return AK3918Handle->status;
 }
 
 int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability)
 {
-
    AK3918_HANDLE_NULL_CHECK(handle);
    AK3918_HANDLE_GET(handle);
 
@@ -89,13 +88,13 @@ int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapabili
     }
 	
     *pCapability = AK3918Handle->capability;
+    
     return 0;
 }
 
 int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, const AudioChannel channel, const AudioSampleRate sampleRate,
                          const AudioBitDepth bitDepth)
 {
-
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
@@ -192,7 +191,7 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t si
             int iRet = AA_LS_SendVoice(0, pData, size);
             if(iRet)
             {
-                printf("SendVoice failed!\n");
+                LOG("SendVoice failed!\n");
             }
         }
         
