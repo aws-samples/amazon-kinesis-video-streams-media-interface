@@ -24,8 +24,6 @@
 
 #define AK3918_HANDLE_GET(x) AK3918AudioPlayer* AK3918Handle = (AK3918AudioPlayer*) ((x))
 
-#define DEBUG printf("111111 %s:%d \n",__FUNCTION__,__LINE__);
-
 typedef struct {
     AudioPlayerStatus status;
     AudioCapability capability;
@@ -42,7 +40,6 @@ static int setStatus(AudioPlayerHandle handle, const AudioPlayerStatus newStatus
 	
     if (newStatus != AK3918Handle->status) {
         AK3918Handle->status = newStatus;
-
         LOG("AudioPlayer new status[%d]", newStatus);
     }
 
@@ -188,8 +185,7 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t si
 
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, AUD_PLY_STATUS_STREAM_ON);
     static FILE *ad = NULL;
-    if (!pData) {
-    
+    if (!pData) {   
         return -EINVAL;
     }
         if (AK3918Handle->format == AUD_FMT_G711A) {
@@ -198,12 +194,8 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t si
             {
                 printf("SendVoice failed!\n");
             }
-            //printf("send framesize: %d\n",size);//send framesize : 160
         }
         
-        
-    
-
     return 0;
 }
 
@@ -212,7 +204,6 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 	
-
     return setStatus(handle, AUD_PLY_STATUS_STREAM_OFF);
 }
 

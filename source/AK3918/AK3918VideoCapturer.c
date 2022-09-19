@@ -27,15 +27,12 @@
 
 #define AK3918_HANDLE_GET(x) AK3918VideoCapturer* AK3918Handle = (AK3918VideoCapturer*) ((x))
 
-#define  debug_here printf("111111 %s:%d \n",__FUNCTION__,__LINE__);
-
 typedef struct {
     VideoCapturerStatus status;
     VideoCapability capability;
     VideoFormat format;
     VideoResolution resolution;
     int nVideoHandle;
-    char* framePathFormat;
 } AK3918VideoCapturer;
 
 
@@ -67,7 +64,6 @@ VideoCapturerHandle videoCapturerCreate(void)
     memset(AK3918Handle, 0, sizeof(AK3918VideoCapturer));
     AK3918Handle->nVideoHandle = -1;
     int iret = AA_LS_RegStreamClient(0,AA_LS_STREAM_VIDEO,&AK3918Handle->nVideoHandle,NULL,NULL,NULL,NULL);
-    printf("1111111 %s 11111111 %d  iret:    %d\n",__FUNCTION__,__LINE__,iret);
 
     AK3918Handle->capability.formats = (1 << (VID_FMT_H264 - 1));
     AK3918Handle->capability.resolutions = (1 << (VID_RES_1080P - 1));
@@ -80,8 +76,7 @@ VideoCapturerHandle videoCapturerCreate(void)
 VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle)
 {
 
-    if (!handle) {
-    
+    if (!handle) {    
         return VID_CAP_STATUS_NOT_READY;
     }
 
@@ -95,8 +90,7 @@ int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapa
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
-    if (!pCapability) {
-    
+    if (!pCapability) {    
         return -EAGAIN;
     }
 

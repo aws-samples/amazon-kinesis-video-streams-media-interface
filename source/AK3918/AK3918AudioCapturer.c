@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include "AK3918Common.h"
-//#include "AK3918Port.h"
 #include "com/amazonaws/kinesis/video/capturer/AudioCapturer.h"
 
 #include "fun_stream_mgr.h"
@@ -36,7 +35,6 @@ typedef struct {
     AudioBitDepth bitDepth;
     AudioSampleRate sampleRate;
     int nAudioHandle;
-    char* framePathFormat;
 } AK3918AudioCapturer;
 
 static int setStatus(AudioCapturerHandle handle, const AudioCapturerStatus newStatus)
@@ -87,7 +85,7 @@ AudioCapturerHandle audioCapturerCreate(void)
     memset(AK3918Handle, 0, sizeof(AK3918AudioCapturer));
     AK3918Handle->nAudioHandle = -1;
     int iRet = AA_LS_RegStreamClient(0, AA_LS_STREAM_AUDIO, &AK3918Handle->nAudioHandle, NULL, NULL, NULL, NULL);
-    printf("1111111111111 %s, 1111111111111111 %d\n",__FUNCTION__,iRet);
+
     // Now we have sample frames for G.711 ALAW and AAC, MONO, 8k, 16 bits
     AK3918Handle->capability.formats = (1 << (AUD_FMT_G711A - 1));
     AK3918Handle->capability.channels = (1 << (AUD_CHN_MONO - 1));
