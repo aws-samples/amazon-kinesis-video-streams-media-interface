@@ -9,6 +9,7 @@
   - [Getting started with out-of-box KVS WebRTC sample](#getting-started-with-out-of-box-kvs-webrtc-sample)
   - [Getting started with out-of-box KVS Producer sample](#getting-started-with-out-of-box-kvs-producer-sample)
   - [Getting started with out-of-box save frame sample](#getting-started-with-out-of-box-save-frame-sample)
+  - [Cross compile FILE board](#cross-compile-file-board)
   - [Platform Implementation Guide](#platform-implementation-guide)
   - [Contributing](#contributing)
   - [Code Of Conduct](#code-of-conduct)
@@ -20,11 +21,14 @@
 
 ## Supported Boards
 
-- FILE(Dummy boards that can capture from [sample frames](resources/frames/))
-- x86/x64(By selecting board `V4L2` or `FILE`)
-- RPi(By selecting board `V4L2` or `FILE`)
-- Ingenic T31(By selecting board `T31` or `FILE`)
-- Fullhan FH8626V100(By selecting board `FH8626V100` or `FILE`)
+| Name               | Description                                                           | CMake Parameter                  | Status             |
+| ------------------ | --------------------------------------------------------------------- | -------------------------------- | ------------------ |
+| FILE               | Dummy boards that can capture from [sample frames](resources/frames/) | `-DBOARD=FILE`                   | :heavy_check_mark: |
+| x86/x64            | Capture from V4L2 device or capture from dummy frames                 | `-DBOARD=V4L2` or `-DBOARD=FILE` | :heavy_check_mark: |
+| Raspberry Pi       | Capture from V4L2 device or capture from dummy frames                 | `-DBOARD=V4L2` or `-DBOARD=FILE` | :heavy_check_mark: |
+| Ingenic T31        | IPC SoC designed by Ingenic                                           | `-DBOARD=T31`                    | :heavy_check_mark: |
+| Fullhan FH8626V100 | IPC SoC designed by Fullhan                                           | `-DBOARD=FH8626V100`             | :heavy_check_mark: |
+
 
 ## Getting started with out-of-box KVS WebRTC sample
 
@@ -120,6 +124,30 @@ mkdir build; cd build; cmake .. -DBUILD_WEBRTC_SAMPLES=OFF -DBUILD_SAVE_FRAME_SA
 make
 ```
 4. Execute sample on your board: `./saveframe-static $FILE_NAME`
+
+## Cross compile FILE board
+
+To cross compile `FILE` board sample, user need to setup `CC`, `CXX`, `USE_MUCLIBC` and `BOARD_DESTINATION_PLATFORM`.
+
+For ARM boards with uclibc:
+```bash
+export CC=${YOUR_C_TOOLCHAIN}
+export CXX=${YOUR_CXX_TOOLCHAIN}
+cd amazon-kinesis-video-streams-media-interface
+mkdir build; cd build
+cmake .. -DBOARD=FILE -DUSE_MUCLIBC=ON -DBOARD_DESTINATION_PLATFORM=arm-unknown-linux-uclibc
+```
+> If board is using glibc, use cmake command `cmake .. -DBOARD=FILE -DUSE_MUCLIBC=OFF -DBOARD_DESTINATION_PLATFORM=arm-unknown-linux-gnu` instead.
+
+For MIPS boards with uclibc:
+```bash
+export CC=${YOUR_C_TOOLCHAIN}
+export CXX=${YOUR_CXX_TOOLCHAIN}
+cd amazon-kinesis-video-streams-media-interface
+mkdir build; cd build
+cmake .. -DBOARD=FILE -DUSE_MUCLIBC=ON -DBOARD_DESTINATION_PLATFORM=mips-unknown-linux-uclibc
+```
+> If board is using glibc, use cmake command `cmake .. -DBOARD=FILE -DUSE_MUCLIBC=OFF -DBOARD_DESTINATION_PLATFORM=mips-unknown-linux-gnu` instead.
 
 ## Platform Implementation Guide
 
