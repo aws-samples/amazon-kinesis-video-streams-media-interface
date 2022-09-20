@@ -92,6 +92,7 @@ AudioCapturerHandle audioCapturerCreate(void)
     AK3918Handle->capability.sampleRates = (1 << (AUD_SAM_8K - 1));
     AK3918Handle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
     setStatus((AudioCapturerHandle) AK3918Handle, AUD_CAP_STATUS_STREAM_OFF);
+    
     return (AudioCapturerHandle) AK3918Handle;
 }
 
@@ -102,6 +103,7 @@ AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle const handl
     }
 
     AK3918_HANDLE_GET(handle);
+    
     return AK3918Handle->status;
 }
 
@@ -226,16 +228,15 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
                         *pTimestamp = Audioframe.u64Time*1000;                                            
                     }
 		     else
-                        LOG("framesize error!   fun : %s  Line:  %d\n",__FUNCTION__,__LINE__);
-		    
+                        LOG("framesize error!   fun : %s  Line:  %d\n",__FUNCTION__,__LINE__);		    
 		}
 		else
 		{
 		   LOG("Audio format error:%d\n",AK3918Handle->format);                 
-               }
+                }
                break;
         }
-        
+                
     }
     
     return ret;

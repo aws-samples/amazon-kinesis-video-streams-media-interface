@@ -142,7 +142,6 @@ int videoCapturerAcquireStream(VideoCapturerHandle handle)
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
-
     return setStatus(handle, VID_CAP_STATUS_STREAM_ON);
 }
 
@@ -181,8 +180,7 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
                     *pTimestamp = frame.u64Time;
                 }
 		 break;              
-        }
-        
+        }        
     }
 
     return ret;
@@ -202,8 +200,7 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
 
 void videoCapturerDestory(VideoCapturerHandle handle)
 {
-    if (!handle) {
-    
+    if (!handle) {    
         return;
     }
 
