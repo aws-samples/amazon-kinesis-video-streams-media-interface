@@ -19,7 +19,7 @@
 #include "com/amazonaws/kinesis/video/capturer/VideoCapturer.h"
 #include "com/amazonaws/kinesis/video/player/AudioPlayer.h"
 
-#define VIDEO_FRAME_BUFFER_SIZE_BYTES      (160 * 1024UL)
+#define VIDEO_FRAME_BUFFER_SIZE_BYTES      (256 * 1024UL)
 #define AUDIO_FRAME_BUFFER_SIZE_BYTES      (1024UL)
 #define HUNDREDS_OF_NANOS_IN_A_MICROSECOND 10LL
 
