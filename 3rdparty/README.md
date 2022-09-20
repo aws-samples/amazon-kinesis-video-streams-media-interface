@@ -78,15 +78,16 @@ FH8626V100/
 User need to put AK3918 board SDK under [3rdparty/AK3918](AK3918/):
 
 ```
+AK3918/
 ├── framework
-│   ├── include
-│   └── lib
+│   ├── include
+│   └── lib
 ├── lib
-│   ├── dynamic
-│   └── static
+│   ├── dynamic
+│   └── static
 └── platform
-    ├── include
-    ├── include_3rd
-    ├── lib
-    └── sample
+    ├── include
+    ├── include_3rd
+    ├── lib
+    └── sample
 ```
