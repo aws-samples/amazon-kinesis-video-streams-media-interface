@@ -82,6 +82,7 @@ AK3918/
 ├── framework
 │   ├── include
 │   └── lib
+├── ipc_main.c
 ├── lib
 │   ├── dynamic
 │   └── static
