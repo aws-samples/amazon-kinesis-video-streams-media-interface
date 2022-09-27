@@ -16,14 +16,13 @@
 
 #include <stdio.h>
 
-#define AK3918_HANDLE_NULL_CHECK(x)                                                                                                                    \
+#define AK3918_HANDLE_NULL_CHECK(x)                                                                                                                  \
     if (!(x)) {                                                                                                                                      \
         return -EINVAL;                                                                                                                              \
     }
-#define AK3918_HANDLE_STATUS_CHECK(AK3918Handle, expectedStatus)                                                                                         \
-    if ((AK3918Handle)->status != (expectedStatus)) {                                                                                                  \
+#define AK3918_HANDLE_STATUS_CHECK(AK3918Handle, expectedStatus)                                                                                     \
+    if ((AK3918Handle)->status != (expectedStatus)) {                                                                                                \
         return -EAGAIN;                                                                                                                              \
     }
 
 #define LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__)
-

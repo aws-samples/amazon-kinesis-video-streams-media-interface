@@ -54,17 +54,14 @@ extern int ipc_main();
 static int g_init = 0;
 AudioCapturerHandle audioCapturerCreate(void)
 {
-    if(g_init == 0)
-    {
+    if (g_init == 0) {
         ipc_main();
-        LOG("@@@@@@@@@ %s  @@@@@@@@ %d init ok \n",__FUNCTION__,__LINE__);
-        g_init = 1;	
+        LOG("@@@@@@@@@ %s  @@@@@@@@ %d init ok \n", __FUNCTION__, __LINE__);
+        g_init = 1;
+    } else {
+        LOG("@@@@@@@@@ %s  @@@@@@@@@ %d repeate ! \n", __FUNCTION__, __LINE__);
     }
-    else
-    {
-         LOG("@@@@@@@@@ %s  @@@@@@@@@ %d repeate ! \n",__FUNCTION__,__LINE__);
-    }		
-    
+
     AK3918AudioCapturer* AK3918Handle = NULL;
 
     if (!(AK3918Handle = (AK3918AudioCapturer*) malloc(sizeof(AK3918AudioCapturer)))) {
@@ -82,7 +79,7 @@ AudioCapturerHandle audioCapturerCreate(void)
     AK3918Handle->capability.sampleRates = (1 << (AUD_SAM_8K - 1));
     AK3918Handle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
     setStatus((AudioCapturerHandle) AK3918Handle, AUD_CAP_STATUS_STREAM_OFF);
-    
+
     return (AudioCapturerHandle) AK3918Handle;
 }
 
@@ -93,7 +90,7 @@ AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle const handl
     }
 
     AK3918_HANDLE_GET(handle);
-    
+
     return AK3918Handle->status;
 }
 
@@ -102,7 +99,7 @@ int audioCapturerGetCapability(const AudioCapturerHandle const handle, AudioCapa
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
-    if (!pCapability) {    
+    if (!pCapability) {
         return -EINVAL;
     }
 
@@ -118,11 +115,12 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     AK3918_HANDLE_GET(handle);
 
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, AUD_CAP_STATUS_STREAM_OFF);
-    LOG("format:     %d,AudioChannel:     %d,AudioSampleRate sampleRate:   %d,  AudioBitDepth bitDepth:   %d\n",format,channel,sampleRate,bitDepth);
+    LOG("format:     %d,AudioChannel:     %d,AudioSampleRate sampleRate:   %d,  AudioBitDepth bitDepth:   %d\n", format, channel, sampleRate,
+        bitDepth);
     switch (format) {
         case AUD_FMT_G711A:
             break;
-        
+
         default:
             LOG("Unsupported format %d", format);
             return -EINVAL;
@@ -196,39 +194,29 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
     if (!pFrameDataBuffer || !pTimestamp || !pFrameSize) {
         return -EINVAL;
     }
-    
+
     int ret = 0;
     aa_frame_info Audioframe;
-    
-    while(1)
-    {
-        int iRet = AA_LS_GetFrame(0, AA_LS_STREAM_AUDIO, AK3918Handle->nAudioHandle, &Audioframe);   
-        if(iRet != 0)
-        {
-            ak_sleep_ms(5);           
+
+    while (1) {
+        int iRet = AA_LS_GetFrame(0, AA_LS_STREAM_AUDIO, AK3918Handle->nAudioHandle, &Audioframe);
+        if (iRet != 0) {
+            ak_sleep_ms(5);
+        } else {
+            if (AK3918Handle->format == AUD_FMT_G711A) {
+                if (frameDataBufferSize > Audioframe.uiDataLen) {
+                    memcpy(pFrameDataBuffer, Audioframe.pData, Audioframe.uiDataLen);
+                    *pFrameSize = Audioframe.uiDataLen;
+                    *pTimestamp = Audioframe.u64Time * 1000;
+                } else
+                    LOG("framesize error!   fun : %s  Line:  %d\n", __FUNCTION__, __LINE__);
+            } else {
+                LOG("Audio format error:%d\n", AK3918Handle->format);
+            }
+            break;
         }
-        else
-        {
-		if(AK3918Handle->format == AUD_FMT_G711A)
-		{
-                    if(frameDataBufferSize > Audioframe.uiDataLen)
-                    {
-                        memcpy(pFrameDataBuffer,Audioframe.pData,Audioframe.uiDataLen);
-                        *pFrameSize = Audioframe.uiDataLen;
-                        *pTimestamp = Audioframe.u64Time*1000;                                            
-                    }
-		     else
-                        LOG("framesize error!   fun : %s  Line:  %d\n",__FUNCTION__,__LINE__);		    
-		}
-		else
-		{
-		   LOG("Audio format error:%d\n",AK3918Handle->format);                 
-                }
-               break;
-        }
-                
     }
-    
+
     return ret;
 }
 

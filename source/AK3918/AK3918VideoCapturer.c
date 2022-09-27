@@ -48,19 +48,18 @@ static int setStatus(VideoCapturerHandle handle, const VideoCapturerStatus newSt
     return 0;
 }
 
-
 VideoCapturerHandle videoCapturerCreate(void)
 {
     AK3918VideoCapturer* AK3918Handle = NULL;
     if (!(AK3918Handle = (AK3918VideoCapturer*) malloc(sizeof(AK3918VideoCapturer)))) {
         LOG("OOM");
-        
+
         return NULL;
     }
-    
+
     memset(AK3918Handle, 0, sizeof(AK3918VideoCapturer));
     AK3918Handle->nVideoHandle = -1;
-    int iret = AA_LS_RegStreamClient(0,AA_LS_STREAM_VIDEO,&AK3918Handle->nVideoHandle,NULL,NULL,NULL,NULL);
+    int iret = AA_LS_RegStreamClient(0, AA_LS_STREAM_VIDEO, &AK3918Handle->nVideoHandle, NULL, NULL, NULL, NULL);
 
     AK3918Handle->capability.formats = (1 << (VID_FMT_H264 - 1));
     AK3918Handle->capability.resolutions = (1 << (VID_RES_1080P - 1));
@@ -72,12 +71,12 @@ VideoCapturerHandle videoCapturerCreate(void)
 
 VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle)
 {
-    if (!handle) {    
+    if (!handle) {
         return VID_CAP_STATUS_NOT_READY;
     }
-    
+
     AK3918_HANDLE_GET(handle);
-    
+
     return AK3918Handle->status;
 }
 
@@ -86,7 +85,7 @@ int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapa
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
 
-    if (!pCapability) {    
+    if (!pCapability) {
         return -EAGAIN;
     }
 
@@ -107,7 +106,7 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
             break;
 
         default:
-            LOG("Unsupported format %d", format);            
+            LOG("Unsupported format %d", format);
             return -EINVAL;
     }
 
@@ -153,34 +152,28 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
 
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, VID_CAP_STATUS_STREAM_ON);
 
-    if (!pFrameDataBuffer || !pTimestamp || !pFrameSize) {  
+    if (!pFrameDataBuffer || !pTimestamp || !pFrameSize) {
         return -EINVAL;
     }
-    
+
     int ret = 0;
     aa_frame_info frame;
     static int ic = 0;
-    while(1)
-    {
+    while (1) {
         int iRet = AA_LS_GetFrame(0, AA_LS_STREAM_VIDEO, AK3918Handle->nVideoHandle, &frame);
-        if(iRet != 0)
-        {
+        if (iRet != 0) {
             ak_sleep_ms(5);
+        } else {
+            if (ic++ % 25 == 0) {
+                LOG("Getframe  : recv a frame((%d, %d, %d) \n", frame.uiDataLen, frame.iWidth, frame.iHeight);
+            }
+            if (frameDataBufferSize > frame.uiDataLen) {
+                memcpy(pFrameDataBuffer, frame.pData, frame.uiDataLen);
+                *pFrameSize = frame.uiDataLen;
+                *pTimestamp = frame.u64Time;
+            }
+            break;
         }
-        else
-        {
-
-                if(ic++%25 == 0){
-                	LOG("Getframe  : recv a frame((%d, %d, %d) \n",frame.uiDataLen, frame.iWidth, frame.iHeight);
-                }
-                if(frameDataBufferSize > frame.uiDataLen)
-                {
-                    memcpy(pFrameDataBuffer,frame.pData,frame.uiDataLen);
-                    *pFrameSize = frame.uiDataLen;
-                    *pTimestamp = frame.u64Time;
-                }
-		 break;              
-        }        
     }
 
     return ret;
@@ -200,13 +193,13 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
 
 void videoCapturerDestory(VideoCapturerHandle handle)
 {
-    if (!handle) {    
+    if (!handle) {
         return;
     }
 
     AK3918_HANDLE_GET(handle);
 
-    if (AK3918Handle->status == VID_CAP_STATUS_STREAM_ON) {   
+    if (AK3918Handle->status == VID_CAP_STATUS_STREAM_ON) {
         videoCapturerReleaseStream(handle);
     }
 

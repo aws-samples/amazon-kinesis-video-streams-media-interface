@@ -37,7 +37,7 @@ static int setStatus(AudioPlayerHandle handle, const AudioPlayerStatus newStatus
 {
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
-	
+
     if (newStatus != AK3918Handle->status) {
         AK3918Handle->status = newStatus;
         LOG("AudioPlayer new status[%d]", newStatus);
@@ -48,20 +48,20 @@ static int setStatus(AudioPlayerHandle handle, const AudioPlayerStatus newStatus
 
 AudioPlayerHandle audioPlayerCreate(void)
 {
-    AK3918AudioPlayer* AK3918Handle = NULL; 
+    AK3918AudioPlayer* AK3918Handle = NULL;
     if (!(AK3918Handle = (AK3918AudioPlayer*) malloc(sizeof(AK3918AudioPlayer)))) {
         LOG("OOM");
         return NULL;
     }
-	
+
     memset(AK3918Handle, 0, sizeof(AK3918AudioPlayer));
 
     // Now implementation supports raw PCM, G.711 ALAW and ULAW, MONO, 8k, 16 bits
-    AK3918Handle->capability.formats =  (1 << (AUD_FMT_G711A - 1)) | (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1));
+    AK3918Handle->capability.formats = (1 << (AUD_FMT_G711A - 1)) | (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1));
     AK3918Handle->capability.channels = (1 << (AUD_CHN_MONO - 1));
     AK3918Handle->capability.sampleRates = (1 << (AUD_SAM_8K - 1));
     AK3918Handle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
-	
+
     setStatus((AudioPlayerHandle) AK3918Handle, AUD_PLY_STATUS_STREAM_OFF);
 
     return (AudioPlayerHandle) AK3918Handle;
@@ -72,23 +72,23 @@ AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
     if (!handle) {
         return AUD_PLY_STATUS_NOT_READY;
     }
-    	
+
     AK3918_HANDLE_GET(handle);
-    
+
     return AK3918Handle->status;
 }
 
 int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability)
 {
-   AK3918_HANDLE_NULL_CHECK(handle);
-   AK3918_HANDLE_GET(handle);
+    AK3918_HANDLE_NULL_CHECK(handle);
+    AK3918_HANDLE_GET(handle);
 
     if (!pCapability) {
         return -EAGAIN;
     }
-	
+
     *pCapability = AK3918Handle->capability;
-    
+
     return 0;
 }
 
@@ -101,16 +101,16 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, AUD_PLY_STATUS_STREAM_OFF);
 
     switch (format) {
-       case AUD_FMT_PCM:
-            
+        case AUD_FMT_PCM:
+
             break;
 
         case AUD_FMT_G711A:
-            
+
             break;
 
         case AUD_FMT_G711U:
-            
+
             break;
         default:
             LOG("Unsupported format %d", format);
@@ -119,7 +119,7 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
 
     switch (channel) {
         case AUD_CHN_MONO:
-            
+
             break;
 
         default:
@@ -129,7 +129,7 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
 
     switch (sampleRate) {
         case AUD_SAM_8K:
-            
+
             break;
 
         default:
@@ -139,14 +139,14 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
 
     switch (bitDepth) {
         case AUD_BIT_16:
-            
+
             break;
 
         default:
             LOG("Unsupported bit depth %d", bitDepth);
             return -EINVAL;
     }
-	
+
     AK3918Handle->format = format;
     AK3918Handle->channel = channel;
     AK3918Handle->sampleRate = sampleRate;
@@ -160,7 +160,7 @@ int audioPlayerGetFormat(const AudioPlayerHandle const handle, AudioFormat* pFor
 {
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
-	
+
     *pFormat = AK3918Handle->format;
     *pChannel = AK3918Handle->channel;
     *pSampleRate = AK3918Handle->sampleRate;
@@ -173,7 +173,7 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 {
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
-	
+
     return setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
 }
 
@@ -183,18 +183,17 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t si
     AK3918_HANDLE_GET(handle);
 
     AK3918_HANDLE_STATUS_CHECK(AK3918Handle, AUD_PLY_STATUS_STREAM_ON);
-    static FILE *ad = NULL;
-    if (!pData) {   
+    static FILE* ad = NULL;
+    if (!pData) {
         return -EINVAL;
     }
-        if (AK3918Handle->format == AUD_FMT_G711A) {
-            int iRet = AA_LS_SendVoice(0, pData, size);
-            if(iRet)
-            {
-                LOG("SendVoice failed!\n");
-            }
+    if (AK3918Handle->format == AUD_FMT_G711A) {
+        int iRet = AA_LS_SendVoice(0, pData, size);
+        if (iRet) {
+            LOG("SendVoice failed!\n");
         }
-        
+    }
+
     return 0;
 }
 
@@ -202,7 +201,7 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
 {
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
-	
+
     return setStatus(handle, AUD_PLY_STATUS_STREAM_OFF);
 }
 
@@ -211,7 +210,7 @@ void audioPlayerDestory(AudioPlayerHandle handle)
     if (!handle) {
         return;
     }
-    
+
     AK3918_HANDLE_GET(handle);
 
     if (AK3918Handle->status == AUD_PLY_STATUS_STREAM_ON) {
