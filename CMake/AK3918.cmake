@@ -10,7 +10,6 @@ if(BOARD STREQUAL "AK3918")
         ${BOARD_SDK_DIR}/framework/include/
         ${BOARD_SDK_DIR}/framework/include/common/
         ${BOARD_SDK_DIR}/framework/include/alarm/
-        ${BOARD_SDK_DIR}/framework/record/
         ${BOARD_SDK_DIR}/framework/include/record/
         ${BOARD_SDK_DIR}/platform/include/
        
@@ -22,9 +21,10 @@ if(BOARD STREQUAL "AK3918")
 
     set(BOARD_LIBS_SHARED
         pthread rt m
-        ipc_framework
+	ipc_framework plat_common plat_log mpi_mux mpi_demux akmedia plat_mem plat_thread plat_osal mpi_venc plat_vi plat_isp_sdk plat_vpss plat_dbg mpi_adec plat_vqe plat_ao akaudiofilter akaudiocodec ak_mrd plat_ai mpi_aenc app_osd_ex mpi_osd mpi_svp app_video akv_cnn app_mem_ex curl iconv
     )
     set(BOARD_LIBS_STATIC
-        
+        pthread rt m
+	ipc_framework plat_common plat_log mpi_mux mpi_demux akmedia plat_mem plat_thread plat_osal mpi_venc plat_vi plat_isp_sdk plat_vpss plat_dbg mpi_adec plat_vqe plat_ao akaudiofilter akaudiocodec ak_mrd plat_ai mpi_aenc app_osd_ex mpi_osd mpi_svp app_video akv_cnn app_mem_ex curl iconv
     )
 endif()
