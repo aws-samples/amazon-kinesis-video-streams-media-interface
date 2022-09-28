@@ -13,6 +13,7 @@ if(BOARD STREQUAL "AK3918")
         ${BOARD_SDK_DIR}/platform/include/
     )
 
+    set(USE_MUCLIBC ON)
     set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-uclibc)
 
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
