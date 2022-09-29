@@ -7,6 +7,7 @@ This documents provides guidelines to install board SDK required by this library
 	- [V4L2](#v4l2)
 	- [T31](#t31)
 	- [FH8626V100](#fh8626v100)
+	- [AK3918](#ak3918)
 
 ## FILE
 
@@ -73,9 +74,9 @@ FH8626V100/
 └── lib
 ```
 
-#AK3918
+## AK3918
 
-User need to put AK3918 board SDK under [3rdparty/AK3918](AK3918/):
+User need to put AK3918 board SDK under [3rdparty/AK3918/](AK3918/):
 
 ```
 AK3918/

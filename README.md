@@ -4,6 +4,7 @@
 [![v4l2](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/v4l2.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/v4l2.yml)
 [![ingenic-t31](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/ingenic-t31.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/ingenic-t31.yml)
 [![fullhan-fh8626v100](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/fullhan-fh8626v100.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/fullhan-fh8626v100.yml)
+[![anyka-ak3918](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/anyka-ak3918.yml/badge.svg)](https://github.com/aws-samples/amazon-kinesis-video-streams-media-interface/actions/workflows/anyka-ak3918.yml)
 
 - [Amazon Kinesis Video Streams Media Interface](#amazon-kinesis-video-streams-media-interface)
   - [Introduction](#introduction)
