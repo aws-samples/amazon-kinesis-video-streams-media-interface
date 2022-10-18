@@ -44,6 +44,9 @@ ioctl: VIDIOC_ENUM_FMT
 	[13]: 'RX24' (32-bit XBGR 8-8-8-8)
 ```
 
+> For Raspberry Pi OS Bullseye or later, user must enable **Legacy Camera Support** to make the v4l2 device supports **H264**
+> ![](../doc/pi-legacy-camera-support.png)
+
 It doesn't require other manually installation because CMake will download and build dependencies automatically.
 
 ## T31
