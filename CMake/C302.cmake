@@ -4,17 +4,10 @@ if(BOARD STREQUAL "C302")
 
     set(BOARD_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/${BOARD})
 
-    #set(BOARD_SRCS
-    #    ${BOARD_SDK_DIR}/common/xxxx
-    #)
-
-    #aux_source_directory(${BOARD_SDK_DIR}/common/xxx BOARD_SRCS)
-
     set(BOARD_INCS_DIR
         ${BOARD_SDK_DIR}/include/
     )
 
-    set(USE_MUCLIBC ON)
     set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-glibc)
 
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)

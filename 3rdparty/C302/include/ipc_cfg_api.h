@@ -1,29 +1,3 @@
-/*
- * Copyright (C) 2019-2024 Amlogic, Inc. All rights reserved.
- *
- * All information contained herein is Amlogic confidential.
- *
- * This software is provided to you pursuant to Software License Agreement
- * (SLA) with Amlogic Inc ("Amlogic"). This software may be used
- * only in accordance with the terms of this agreement.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification is strictly prohibited without prior written permission from
- * Amlogic.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 #ifndef __IPC_CFG_API_H__
 #define __IPC_CFG_API_H__
 
@@ -144,42 +118,42 @@ typedef enum IPC_PARAM_VIDEO_ID
 /*********************************************************************************
  *Function   : IPC_CFG_GetOptions
  *
- *Description: 获取参数的详情信息 如可设置范围等
+ *Description: Get parameters's information, such as setting range
  *
- *Param      : #[in] s32Chn 通道号(有通道概念的参数有效)
- *             #[in] enParamId 参数ID(用来区分获取的参数大类)
- *             #[in] s32SubId 参数ID(有些参数中有多个小类型)例:IPC_PARAM_VIDEO_ID
- *             #[in/out] pOptions 获取的参数详情信息
+ *Param      : #[in] s32Chn, Channel number (parameters with channel concept are valid)
+ *             #[in] enParamId, Parameter ID (used to distinguish the obtained parameter categories)
+ *             #[in] s32SubId, Parameter SubID (some parameters have multiple subtypes)
+ *             #[in/out] pOptions, Parameter details obtained
  *
- *Return     : =0 成功
- *             =Other 失败
+ *Return     : =0, success
+ *             =Other, fail
  *********************************************************************************/
 int IPC_CFG_GetOptions(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, IPC_CFG_OPTIONS **pOptions);
 
 /*********************************************************************************
  *Function   : IPC_CFG_RestoreParam
  *
- *Description: 恢复初始参数
+ *Description: Restore initial parameters
  *
- *Param      : #[in] enMode 恢复模式
+ *Param      : #[in] enMode, Recovery mode
  *
- *Return     : =0 成功
- *             =Other 失败
+ *Return     : =0, success
+ *             =Other, fail
  *********************************************************************************/
 int IPC_CFG_RestoreParam(IPC_PARAM_RESTORE enMode, unsigned int uflag);
 
 /*********************************************************************************
  *Function   : IPC_CFG_GetParam
  *
- *Description: 获取参数
+ *Description: Get parameters
  *
- *Param      : #[in] s32Chn 通道号(有通道概念的参数有效)
- *             #[in] enParamId 参数ID(用来区分获取的参数大类)
- *             #[in] s32SubId 参数ID(有些参数中有多个小类型)例:IPC_PARAM_VIDEO_ID
- *             #[in/out] pConfig 获取的参数(不能为NULL)
+ *Param      : #[in] s32Chn, Channel number (parameters with channel concept are valid)
+ *             #[in] enParamId, Parameter ID (used to distinguish the obtained parameter categories)
+ *             #[in] s32SubId, Parameter SubID (some parameters have multiple subtypes)
+ *             #[in/out] pConfig, Obtained parameter (cannot be NULL)
  *
- *Return     : =0 成功
- *             =Other 失败
+ *Return     : =0, success
+ *             =Other, fail
  *********************************************************************************/
 int IPC_CFG_GetParam(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, void *pConfig);
 
@@ -188,15 +162,15 @@ int IPC_CFG_CheckParam(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, void *p
 /*********************************************************************************
  *Function   : IPC_CFG_SetParam
  *
- *Description: 设置参数
+ *Description: Set parameters
  *
- *Param      : #[in] s32Chn 通道号(有通道概念的参数有效)
- *             #[in] enParamId 参数ID(用来区分参数大类)
- *             #[in] s32SubId 参数ID(有些参数中有多个小类型)例:IPC_PARAM_VIDEO_ID
- *             #[in] pConfig 设置的参数(不能为NULL)
+ *Param      : #[in] s32Chn, Channel number (parameters with channel concept are valid)
+ *             #[in] enParamId, Parameter ID (used to distinguish the obtained parameter categories)
+ *             #[in] s32SubId, Parameter SubID (some parameters have multiple subtypes)
+ *             #[in] pConfig, Set parameter (cannot be NULL)
  *
- *Return     : =0 成功
- *             =Other 失败
+ *Return     : =0, success
+ *             =Other, fail
  *********************************************************************************/
 int IPC_CFG_SetParam(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, void *pConfig);
 
