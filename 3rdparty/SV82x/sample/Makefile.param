@@ -1,0 +1,75 @@
+INS_LIB:= ../../lib/glibc
+MDP_INC_PATH:= ../../include
+KVS_SV82X_ADP_INC_PATH := ../../../../source/SV82x
+KVS_SV82X_ADP_INC_PATH1 := ../../../../include
+KVS_SV82X_SAMPLE_COM_INC_PATH := ../../../../3rdparty/SV82x/common
+KVS_INC_PATH := ../../../../include
+MDP_3rdparty_INC_PATH:=  ../../../../3rdparty/SV82X
+SENSOR_LIBS :=
+
+MI_LIBS := $(INS_LIB)/libmbase.a
+MI_LIBS += $(INS_LIB)/libmlink.a
+MI_LIBS += $(INS_LIB)/libmfake.a
+MI_LIBS += $(INS_LIB)/libvbuf.a
+MI_LIBS += $(INS_LIB)/libviss.a
+MI_LIBS += $(INS_LIB)/libupvqe.a
+MI_LIBS += $(INS_LIB)/libdnvqe.a
+MI_LIBS += $(INS_LIB)/libaudioin.a
+MI_LIBS += $(INS_LIB)/libaudioout.a
+MI_LIBS += $(INS_LIB)/libaudiodec.a
+MI_LIBS += $(INS_LIB)/libaudioenc.a
+MI_LIBS += $(INS_LIB)/libaudiocommon.a
+MI_LIBS += $(INS_LIB)/libdoss.a
+MI_LIBS += $(INS_LIB)/libvgss.a
+MI_LIBS += $(INS_LIB)/libisp.a
+MI_LIBS += $(INS_LIB)/libae.a
+MI_LIBS += $(INS_LIB)/libawb.a
+MI_LIBS += $(INS_LIB)/libvc.a
+MI_LIBS += $(INS_LIB)/libregion.a
+MI_LIBS += $(INS_LIB)/libaf.a
+MI_LIBS += $(INS_LIB)/libthreadpool.a
+
+MI_LIBS += $(INS_LIB)/libi2cops.a
+MI_LIBS += $(INS_LIB)/libextops.a
+MI_LIBS += $(INS_LIB)/libcam_clb.a
+
+#SNS_NAME := $(notdir $(shell find ../../../../../../../system/mdp/component/sensor/camera/user/src -mindepth 1 -maxdepth 1 -type d -name "*[mipi|dvp]"))
+SNS_NAME := $(notdir $(shell find $(INS_LIB)/ -name "libcam_*.a"))
+#MI_LIBS += $(foreach x,$(SNS_NAME),$(INS_LIB)/libcam_$(x).a)
+MI_LIBS += $(foreach x,$(SNS_NAME),$(INS_LIB)/$(x))
+
+MI_LIBS += $(INS_LIB)/libext_drv_ms41929.a
+MI_LIBS += $(INS_LIB)/libext_drv_a6208.a
+
+MI_LIBS += $(INS_LIB)/libpanel_otm1289a_mipi.a
+MI_LIBS += $(INS_LIB)/libpanel_wks70002_lvds.a
+MI_LIBS += $(INS_LIB)/libpanel_lt8912b_mipi.a
+MI_LIBS += $(INS_LIB)/libpanel_wks43178_cpu.a
+MI_LIBS += $(INS_LIB)/libpanel_spcs92048_prgb.a
+MI_LIBS += $(INS_LIB)/libpanel_ili9488_mipi.a
+MI_LIBS += $(INS_LIB)/libpanel_eos_default.a
+
+MI_LIBS += $(INS_LIB)/libax.a
+
+SUB_INS_INC = $(shell find $(INS_INC) -type d)
+
+#INC_FLAGS := $(addprefix -I,$(SUB_INS_INC))
+INC_FLAGS += -I$(MDP_INC_PATH)
+
+CFLAGS += -Wall -g $(INC_FLAGS) -lpthread -lm -ldl  -Wno-duplicate-decl-specifier
+CFLAGS += -lstdc++
+CFLAGS += $(LIBS_CFLAGS)
+CFLAGS += $(MDP_CFLAGS)
+
+COMMON_DIR ?= $(PWD)/../common
+AUDIO_ADP_DIR ?= $(PWD)/../audio/adp
+COMM_SRC := $(wildcard $(COMMON_DIR)/*.c)
+COMM_OBJ := $(COMM_SRC:%.c=%.o)
+COMM_INC := -I$(COMMON_DIR)
+COMM_INC += -I$(AUDIO_ADP_DIR)
+COMM_INC += -I$(KVS_SV82X_ADP_INC_PATH)
+COMM_INC += -I$(KVS_SV82X_ADP_INC_PATH1)
+COMM_INC += -I$(KVS_SV82X_SAMPLE_COM_INC_PATH)
+COMM_INC += -I$(KVS_INC_PATH)
+COMM_INC += -I$(MDP_3rdparty_INC_PATH)
+
