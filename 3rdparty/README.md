@@ -50,6 +50,18 @@ ioctl: VIDIOC_ENUM_FMT
 
 It doesn't require other manually installation because CMake will download and build dependencies automatically.
 
+## SV82x
+
+User need to put SV82x board SDK under [3rdparty/SV82x/](SV82x/):
+
+```
+SV82x/
+├── common
+├── include
+├── lib
+└── sample
+```
+
 ## T31
 
 User need to put T31 board SDK under [3rdparty/T31/](T31/):
