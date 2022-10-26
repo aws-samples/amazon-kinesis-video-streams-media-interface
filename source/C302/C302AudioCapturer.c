@@ -116,11 +116,11 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
 
     switch (format) {
     case AUD_FMT_G711A:
-	    enc_type = CODEC_G711A;
-	    break;
+        enc_type = CODEC_G711A;
+    break;
     case AUD_FMT_G711U:
-	    enc_type = CODEC_G711U;
-	    break;
+        enc_type = CODEC_G711U;
+        break;
     case AUD_FMT_AAC:
         enc_type = CODEC_AAC;
         break;
@@ -133,9 +133,9 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     case AUD_CHN_MONO:
         channels = 1;
         break;
-	case AUD_CHN_STEREO:
-	    channels = 2;
-	    break;
+    case AUD_CHN_STEREO:
+        channels = 2;
+        break;
     default:
         KVS_LOG("Unsupported channel num %d", channel);
         return -EINVAL;

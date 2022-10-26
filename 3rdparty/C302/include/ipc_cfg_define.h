@@ -183,9 +183,9 @@ typedef enum IPC_AUDIO_BITWIDTH
 /* video input */
 typedef struct IPC_VI_CONFIG
 {
-    char                        szSnsType[STR_COMM_LENGTH16];              // sensor type
-    IPC_FRAMERATE_MODE          enFramerate;                               // input framerate mode
-    IPC_INPUT_LANE              enInputLane;                               // input lane
+    char                        szSnsType[STR_COMM_LENGTH16];                       // sensor type
+    IPC_FRAMERATE_MODE          enFramerate;                                        // input framerate mode
+    IPC_INPUT_LANE              enInputLane;                                        // input lane
 } IPC_VI_CONFIG;
 
 /* video encode stream */
@@ -193,56 +193,56 @@ typedef struct IPC_STREAM_CONFIG
 {
     int                         s32ViId;
     int                         s32IspId;
-    IPC_RESOLUTION              enResolution;                              // resolution
-    IPC_VFORMAT_TYPE            enFormat;                                  // 0-need encode，1-NV21
-    IPC_VCODEC_TYPE             enCodec;                                   // encode type
-    unsigned int                u32Framerate;                              // framerate
-    unsigned int                u32Profile;                                // H.264:0-baseline, 1-MP, 2-HP 3-SVC-T; H.265:0-MP, 1-Main; Jpege/MJpege:0-baseline
-    unsigned int                u32H26xGop;                                // H264 H265 Gop
-    IPC_GOP_MODE                enGopMode;                                 // Gop mode
-    IPC_RC                      enRcMode;                                  // RC mode
-    unsigned int                u32Bitrate;                                // CBR QVBR(TargetBitRate) valid
-    unsigned int                u32MaxBitrate;                             // VBR AVBR CVBR(&LongTermMaxBitrate) valid
-    unsigned int                u32MinBitrate;                             // CVBR(LongTermMinBitrate) valid
-    unsigned int                u32IQp;                                    // H26X FIXQP valid
-    unsigned int                u32PQp;                                    // H26X FIXQP valid
-    unsigned int                u32BQp;                                    // H26X FIXQP valid
-    unsigned int                u32QpMapMode;                              // H265 QPMAP valid
-    unsigned int                u32Quality;                                // MJPEG valid
+    IPC_RESOLUTION              enResolution;                                       // resolution
+    IPC_VFORMAT_TYPE            enFormat;                                           // 0-need encode，1-NV21
+    IPC_VCODEC_TYPE             enCodec;                                            // encode type
+    unsigned int                u32Framerate;                                       // framerate
+    unsigned int                u32Profile;                                         // H.264:0-baseline, 1-MP, 2-HP 3-SVC-T; H.265:0-MP, 1-Main; Jpege/MJpege:0-baseline
+    unsigned int                u32H26xGop;                                         // H264 H265 Gop
+    IPC_GOP_MODE                enGopMode;                                          // Gop mode
+    IPC_RC                      enRcMode;                                           // RC mode
+    unsigned int                u32Bitrate;                                         // CBR QVBR(TargetBitRate) valid
+    unsigned int                u32MaxBitrate;                                      // VBR AVBR CVBR(&LongTermMaxBitrate) valid
+    unsigned int                u32MinBitrate;                                      // CVBR(LongTermMinBitrate) valid
+    unsigned int                u32IQp;                                             // H26X FIXQP valid
+    unsigned int                u32PQp;                                             // H26X FIXQP valid
+    unsigned int                u32BQp;                                             // H26X FIXQP valid
+    unsigned int                u32QpMapMode;                                       // H265 QPMAP valid
+    unsigned int                u32Quality;                                         // MJPEG valid
 } IPC_STREAM_CONFIG;
 
-/* image */
+/* 图像 */
 typedef struct IPC_IMAGE_CONFIG
 {
-    unsigned char               u8Flip;                                    // 0-not flip, 1-flip
-    unsigned char               u8Mirror;                                  // 0-not mirror, 1-mirror
-    unsigned char               u8ExpMode;                                 // exposure mode: 0-Auto(slow shutter) 1-Auto(fix frame) 2-Manual
-    unsigned char               u8WbMode;                                  // whitebalance mode: 0-Auto 1-Manual
-    unsigned int                u32ExpTime;                                // manual exposure time
-    unsigned int                u32ExpDGain;                               // manual isp digital gain
-    unsigned char               u8RGain;                                   // manual wb red gain
-    unsigned char               u8BGain;                                   // manual wb green gain
-    unsigned char               u8Denoise3d;                               // 3D noise reduction
-    unsigned char               u8Brightness;                              // brightness
-    unsigned char               u8Saturation;                              // saturation
-    unsigned char               u8Contrast;                                // contrast
-    unsigned char               u8Sharpen;                                 // sharp
-    unsigned char               u8Hue;                                     // hue
-    unsigned char               u8WDR;                                     // WDR
-    unsigned char               u8LDC;                                     // distortion correction
-    unsigned char               u8HLC;                                     // strong light suppression
-    IPC_IRCUT_TYPE              enIrcutType;                               // IRCUT type
-    unsigned int                u32DayToNight;                             // time for day to night(timing mode valid)
-    unsigned int                u32NightToDay;                             // time for night to day(timing mode valid)
+    unsigned char               u8Flip;                                             // 0-not flip, 1-flip
+    unsigned char               u8Mirror;                                           // 0-not mirror, 1-mirror
+    unsigned char               u8ExpMode;                                          // exposure mode: 0-Auto(slow shutter) 1-Auto(fix frame) 2-Manual
+    unsigned char               u8WbMode;                                           // whitebalance mode: 0-Manual 1-Auto
+    unsigned int                u32ExpTime;                                         // manual exposure time
+    unsigned int                u32ExpDGain;                                        // manual isp digital gain
+    unsigned char               u8RGain;                                            // manual wb red gain
+    unsigned char               u8BGain;                                            // manual wb green gain
+    unsigned char               u8Denoise3d;                                        // 3D noise reduction
+    unsigned char               u8Brightness;                                       // brightness
+    unsigned char               u8Saturation;                                       // saturation
+    unsigned char               u8Contrast;                                         // contrast
+    unsigned char               u8Sharpen;                                          // sharp
+    unsigned char               u8Hue;                                              // hue
+    unsigned char               u8WDR;                                              // WDR
+    unsigned char               u8LDC;                                              // distortion correction
+    unsigned char               u8HLC;                                              // strong light suppression
+    IPC_IRCUT_TYPE              enIrcutType;                                        // IRCUT type
+    unsigned int                u32DayToNight;                                      // time for day to night(timing mode valid)
+    unsigned int                u32NightToDay;                                      // time for night to day(timing mode valid)
 } IPC_IMAGE_CONFIG;
 
 typedef struct IPC_VIDEO_CONFIG
 {
-    int                         s32SensorNum;                              // sensor number
-    int                         s32StreamNum;                              // video stream number
-    IPC_VI_CONFIG               stViCfg[MAX_SENSOR_NUM];                   // video input
-    IPC_STREAM_CONFIG           stStreamCfg[MAX_STREAM_NUM];               // video encode stream
-    IPC_IMAGE_CONFIG            stImageCfg[MAX_SENSOR_NUM];                // image parameters
+    int                         s32SensorNum;                                       // sensor number
+    int                         s32StreamNum;                                       // video stream number
+    IPC_VI_CONFIG               stViCfg[MAX_SENSOR_NUM];                            // video input
+    IPC_STREAM_CONFIG           stStreamCfg[MAX_STREAM_NUM];                        // video encode stream
+    IPC_IMAGE_CONFIG            stImageCfg[MAX_SENSOR_NUM];                         // image parameters
 } IPC_VIDEO_CONFIG;
 /*---------------------------------video parameters end--------------------------------*/
 
@@ -250,22 +250,26 @@ typedef struct IPC_VIDEO_CONFIG
 /* audio input */
 typedef struct IPC_AI_CONFIG
 {
-    IPC_ACODEC_TYPE             enCodec;                                   // encode type
-    unsigned int                u32Channels;                               // channel number
-    IPC_AUDIO_SAMPLERATE        enSampleRate;                              // samplerate
-    IPC_AUDIO_BITWIDTH          enBitWidth;                                // bit width
-    unsigned int                u32Volume;                                 // volume
+    unsigned int                u32Enabled;                                         // enabled
+    IPC_ACODEC_TYPE             enCodec;                                            // encode type
+    unsigned int                u32Channels;                                        // channel number
+    IPC_AUDIO_SAMPLERATE        enSampleRate;                                       // samplerate
+    IPC_AUDIO_BITWIDTH          enBitWidth;                                         // bit width
+    unsigned int                u32Volume;                                          // volume
+    //unsigned int                u32VqeEnable;
 } IPC_AI_CONFIG;
 
 /* audio output */
 typedef struct IPC_AO_CONFIG
 {
-    IPC_ACODEC_TYPE             enCodec;                                    // decode type
-    unsigned int                u32Channels;                                // channel number
-    IPC_AUDIO_SAMPLERATE        enSampleRate;                               // samplerate
-    IPC_AUDIO_BITWIDTH          enBitWidth;                                 // bit width
-    unsigned int                u32Volume;                                  // volume
+    unsigned int                u32Enabled;                                         // enabled
+    IPC_ACODEC_TYPE             enCodec;                                            // encode type
+    unsigned int                u32Channels;                                        // channel number
+    IPC_AUDIO_SAMPLERATE        enSampleRate;                                       // samplerate
+    IPC_AUDIO_BITWIDTH          enBitWidth;                                         // bit width
+    unsigned int                u32Volume;                                          // volume
 } IPC_AO_CONFIG;
+
 /*--------------------------------audio parameters end---------------------------------*/
 
 int IPC_CFG_CheckCfgDir();

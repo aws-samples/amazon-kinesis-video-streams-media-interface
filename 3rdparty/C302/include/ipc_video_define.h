@@ -87,6 +87,7 @@ int IPC_ISP_SetCSCAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetWBAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetWDRExpAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetExpAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
+int IPC_ISP_SetHLCAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 
 int IPC_VI_GetViPipe(int sViId, int sPipeId);
 unsigned int IPC_VI_GetInputFps(int sViId);

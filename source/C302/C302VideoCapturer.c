@@ -79,7 +79,7 @@ static int stopRecvPic(VideoCapturerHandle handle)
 
 #ifdef USING_HARD_STREAM_VIDEO
     if (videoHandle->format == VID_FMT_H264) {
-	IPC_VFRAME_Relase(&videoHandle->vframe);
+    IPC_VFRAME_Relase(&videoHandle->vframe);
         IPC_VIDEO_Disable();
     } else {
         KVS_LOG("err todo\n");
@@ -152,11 +152,11 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
 
     switch (format) {
     case VID_FMT_H264:
-	    vcodec = CODEC_H264;
-	    break;
+        vcodec = CODEC_H264;
+        break;
     case VID_FMT_H265:
-	    vcodec = CODEC_H265;
-	    break;
+        vcodec = CODEC_H265;
+        break;
     default:
         KVS_LOG("Unsupported format %d", format);
         return -EINVAL;
@@ -167,10 +167,10 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
         vresolution.u32Width = 1920;
         vresolution.u32Height = 1080;
         break;
-	case VID_RES_720P:
-	    vresolution.u32Width = 1280;
+    case VID_RES_720P:
+        vresolution.u32Width = 1280;
         vresolution.u32Height = 720;
-	    break;
+        break;
     default:
         KVS_LOG("Unsupported resolution %d", resolution);
         return -EINVAL;
@@ -231,15 +231,15 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
 #ifdef USING_HARD_STREAM_VIDEO
     if (videoHandle->format == VID_FMT_H264) {
         ret = IPC_VIDEO_GetFrame(&videoHandle->vframe, DEFAULT_STREAM_CHN, 0);
-	    if (ret > 0) {
+        if (ret > 0) {
             //KVS_LOG("IPC_VIDEO_GetFrame:%u\n", videoHandle->vframe.u32len);
             memcpy(pFrameDataBuffer, videoHandle->vframe.u8data, videoHandle->vframe.u32len);
-	        *pFrameSize = videoHandle->vframe.u32len;
-	        *pTimestamp = videoHandle->vframe.u64pts;
+            *pFrameSize = videoHandle->vframe.u32len;
+            *pTimestamp = videoHandle->vframe.u64pts;
         }
-    	else {
-    	    return -EINVAL;
-    	}
+        else {
+            return -EINVAL;
+        }
     } else {
         KVS_LOG("format not support");
         return -EINVAL;

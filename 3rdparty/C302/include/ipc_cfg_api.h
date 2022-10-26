@@ -72,7 +72,8 @@ typedef enum IPC_CFG_IMAGE_OPTIONS
 
 typedef enum IPC_CFG_AI_OPTIONS
 {
-    CFG_AI_OPTION_ENCODEC = 0,
+    CFG_AI_OPTION_ENABLED = 0,
+    CFG_AI_OPTION_ENCODEC,
     CFG_AI_OPTION_CHANNEL,
     CFG_AI_OPTION_SAMPLERATE,
     CFG_AI_OPTION_BITWIDTH,
@@ -83,7 +84,8 @@ typedef enum IPC_CFG_AI_OPTIONS
 
 typedef enum IPC_CFG_AO_OPTIONS
 {
-    CFG_AO_OPTION_ENCODEC = 0,
+    CFG_AO_OPTION_ENABLED = 0,
+    CFG_AO_OPTION_ENCODEC,
     CFG_AO_OPTION_CHANNEL,
     CFG_AO_OPTION_SAMPLERATE,
     CFG_AO_OPTION_BITWIDTH,
@@ -131,18 +133,6 @@ typedef enum IPC_PARAM_VIDEO_ID
 int IPC_CFG_GetOptions(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, IPC_CFG_OPTIONS **pOptions);
 
 /*********************************************************************************
- *Function   : IPC_CFG_RestoreParam
- *
- *Description: Restore initial parameters
- *
- *Param      : #[in] enMode, Recovery mode
- *
- *Return     : =0, success
- *             =Other, fail
- *********************************************************************************/
-int IPC_CFG_RestoreParam(IPC_PARAM_RESTORE enMode, unsigned int uflag);
-
-/*********************************************************************************
  *Function   : IPC_CFG_GetParam
  *
  *Description: Get parameters
@@ -173,6 +163,10 @@ int IPC_CFG_CheckParam(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, void *p
  *             =Other, fail
  *********************************************************************************/
 int IPC_CFG_SetParam(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, void *pConfig);
+
+int IPC_CFG_GetParamItemInfo(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, int s32Option,
+                                        unsigned int *psMin, unsigned int *psMax, unsigned int *psCur, unsigned int *psDef);
+int IPC_CFG_SetParamItemInfo(int s32Chn, IPC_PARAM_ID enParamId, int s32SubId, int s32Option, int s32Value);
 
 int IPC_CFG_Init(unsigned int uflag);
 void IPC_CFG_UnInit(unsigned int uflag);

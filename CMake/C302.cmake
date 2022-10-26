@@ -21,7 +21,7 @@ if(BOARD STREQUAL "C302")
     set(BOARD_LIBS_STATIC
 	pthread dl m z fdk-aac
         sns_imx307 sns_imx335 sns_gc4653 sns_imx415
-        ae alg awb dewarp mbi mbi_dewarp mbi_isp mbi_venc ppu
+	ae alg awb dewarp mbi mbi_dewarp mbi_isp mbi_venc ppu
         libparam.a libvideo.a libaudio.a libmbuffer.a
     )
 endif()

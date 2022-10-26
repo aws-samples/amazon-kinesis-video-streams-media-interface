@@ -1,7 +1,6 @@
 #ifndef __IPC_VIDEO_API_H__
 #define __IPC_VIDEO_API_H__
 
-#include "ipc_cfg_api.h"
 #include "ipc_video_define.h"
 
 #ifdef __cplusplus
@@ -13,6 +12,8 @@ extern "C" {
 int IPC_VIDEO_GetStreamNum();
 unsigned int IPC_VIDEO_GetStreamYUVSize(int sStreamId);
 
+int IPC_VIDEO_GetStreamConfig(int nStreamId, IPC_VFORMAT_TYPE *fmt, IPC_RESOLUTION_SIZE *vres,
+                                           IPC_VCODEC_TYPE *codec, unsigned int *framerate, unsigned int *profile);
 int IPC_VIDEO_SetStreamConfig(int nStreamId, IPC_VFORMAT_TYPE fmt, IPC_RESOLUTION_SIZE *vres,
                                            IPC_VCODEC_TYPE codec, unsigned int framerate, unsigned int profile);
 

@@ -31,8 +31,12 @@ int IPC_AUDIO_GetFrame(IPC_AUDIO_FRAME *paframe);
 unsigned int IPC_AUDIO_GetFrmSize();
 int IPC_AUDIO_SendFrame(IPC_AUDIO_FRAME *paframe);
 
-int IPC_AUDIO_Enable(unsigned int uflag);
+int IPC_AUDIO_CheckEnable(unsigned int uflag);
+void IPC_AUDIO_PrintFormat(unsigned int uflag);
+void IPC_AUDIO_GetFormat(unsigned int uflag, unsigned int *usamplerate,
+                                unsigned int *uchannel, unsigned int *ubitwidth);
 
+int IPC_AUDIO_Enable(unsigned int uflag);
 void IPC_AUDIO_Disable(unsigned int uflag);
 
 int IPC_AUDIO_SetConfig(unsigned int uflag, IPC_ACODEC_TYPE codec_type,
