@@ -108,3 +108,4 @@ C302/
    ├── dynamic
    └── static
 ```
+Note: Other related dependent libraries and header files need to obtain the cross-compiled toolchain of C302.
