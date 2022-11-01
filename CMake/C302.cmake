@@ -8,6 +8,9 @@ if(BOARD STREQUAL "C302")
         ${BOARD_SDK_DIR}/include/
     )
 
+    # User MUST copy the sysroot folder provided by amlogic into ${BOARD_SDK_DIR}
+    set(CMAKE_SYSROOT ${BOARD_SDK_DIR}/sysroot/)
+
     set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-glibc)
 
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
@@ -16,12 +19,12 @@ if(BOARD STREQUAL "C302")
         pthread dl m z fdk-aac
         sns_imx307 sns_imx335 sns_gc4653 sns_imx415
         ae alg awb dewarp mbi mbi_dewarp mbi_isp mbi_venc ppu
-    	param video audio mbuffer
+        param video audio mbuffer
     )
     set(BOARD_LIBS_STATIC
-	pthread dl m z fdk-aac
+        pthread dl m z fdk-aac
         sns_imx307 sns_imx335 sns_gc4653 sns_imx415
-	ae alg awb dewarp mbi mbi_dewarp mbi_isp mbi_venc ppu
+        ae alg awb dewarp mbi mbi_dewarp mbi_isp mbi_venc ppu
         libparam.a libvideo.a libaudio.a libmbuffer.a
     )
 endif()
