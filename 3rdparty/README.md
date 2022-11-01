@@ -8,6 +8,7 @@ This documents provides guidelines to install board SDK required by this library
 	- [T31](#t31)
 	- [FH8626V100](#fh8626v100)
 	- [AK3918](#ak3918)
+	- [C302](#c302)
 
 ## FILE
 
@@ -96,3 +97,18 @@ AK3918/
     ├── lib
     └── sample
 ```
+
+## C302
+
+User need to put C302 board SDK under [3rdparty/C302](C302/), including `sysroot` folder:
+
+```
+C302/
+├── include
+├── lib
+│  ├── dynamic
+│  └── static
+└── sysroot
+```
+
+> Other related dependent libraries and header files need to obtain the cross-compiled toolchain of C302.
