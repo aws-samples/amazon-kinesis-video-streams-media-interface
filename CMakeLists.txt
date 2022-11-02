@@ -21,8 +21,12 @@ elseif(BOARD STREQUAL "T31")
     message(STATUS "Selected board T31")
 elseif(BOARD STREQUAL "FH8626V100")
     message(STATUS "Selected board FH8626V100")
+elseif(BOARD STREQUAL "AK3918")
+    message(STATUS "Selected board AK3918")
+elseif(BOARD STREQUAL "C302")
+    message(STATUS "Selected board C302")
 else()
-    message(FATAL "${BOARD} is not implemented yet.")
+    message(FATAL_ERROR "${BOARD} is not implemented yet.")
 endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/${BOARD}.cmake)
@@ -51,9 +55,11 @@ if(NOT BOARD_DESTINATION_PLATFORM OR BOARD_DESTINATION_PLATFORM STREQUAL "")
 endif()
 
 add_library(embedded-media-static STATIC ${SRCS} ${BOARD_SRCS})
-if(BOARD_BUILD_DEPENDS AND NOT (BOARD_BUILD_DEPENDS STREQUAL ""))
+
+if(BOARD_BUILD_DEPENDS AND NOT(BOARD_BUILD_DEPENDS STREQUAL ""))
     add_dependencies(embedded-media-static ${BOARD_BUILD_DEPENDS})
 endif()
+
 target_include_directories(embedded-media-static PRIVATE ${BOARD_INCS_DIR})
 target_include_directories(embedded-media-static PUBLIC ${INCS_DIR})
 target_link_directories(embedded-media-static PUBLIC ${BOARD_LIBS_DIR})
@@ -62,9 +68,11 @@ set_target_properties(embedded-media-static PROPERTIES PUBLIC_HEADER "${INCS}")
 set_target_properties(embedded-media-static PROPERTIES OUTPUT_NAME embedded-media)
 
 add_library(embedded-media-shared SHARED ${SRCS} ${BOARD_SRCS})
-if(BOARD_BUILD_DEPENDS AND NOT (BOARD_BUILD_DEPENDS STREQUAL ""))
+
+if(BOARD_BUILD_DEPENDS AND NOT(BOARD_BUILD_DEPENDS STREQUAL ""))
     add_dependencies(embedded-media-shared ${BOARD_BUILD_DEPENDS})
 endif()
+
 target_include_directories(embedded-media-shared PRIVATE ${BOARD_INCS_DIR})
 target_include_directories(embedded-media-shared PUBLIC ${INCS_DIR})
 target_link_directories(embedded-media-shared PUBLIC ${BOARD_LIBS_DIR})
@@ -76,21 +84,22 @@ if(NOT FRAME_FILE_PATH_PREFIX OR FRAME_FILE_PATH_PREFIX STREQUAL "")
     set(FRAME_FILE_PATH_PREFIX ${CMAKE_CURRENT_LIST_DIR}/resources/frames/)
     message(STATUS "FRAME_FILE_PATH_PREFIX is ${FRAME_FILE_PATH_PREFIX}")
 endif()
+
 target_compile_definitions(embedded-media-static PRIVATE "FRAME_FILE_PATH_PREFIX=\"${FRAME_FILE_PATH_PREFIX}\"")
 target_compile_definitions(embedded-media-shared PRIVATE "FRAME_FILE_PATH_PREFIX=\"${FRAME_FILE_PATH_PREFIX}\"")
 
 include(GNUInstallDirs)
 
 install(TARGETS embedded-media-static
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 install(TARGETS embedded-media-shared
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 install(DIRECTORY ${INCS_DIR}
-        DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+    DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 set(SAMPLES_DIR ${CMAKE_CURRENT_LIST_DIR}/samples/)
 set(AWS_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/aws-dependencies/)
@@ -98,9 +107,11 @@ set(AWS_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/aws-dependencies/)
 if(BUILD_WEBRTC_SAMPLES)
     add_subdirectory(${SAMPLES_DIR}/webrtc)
 endif()
+
 if(BUILD_KVS_SAMPLES)
     add_subdirectory(${SAMPLES_DIR}/kvs)
 endif()
+
 if(BUILD_SAVE_FRAME_SAMPLES)
     add_subdirectory(${SAMPLES_DIR}/saveframe)
 endif()
