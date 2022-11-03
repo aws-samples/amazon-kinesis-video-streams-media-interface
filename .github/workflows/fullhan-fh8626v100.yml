@@ -35,8 +35,8 @@ jobs:
       run: |
         gh auth login --with-token <<< ${{ secrets.PA_TOKEN }}
         gh secret set --env ECR ECR_REGISTRY --body ${{ steps.login-ecr.outputs.registry }} --repo ${{ github.repository }}
-        gh secret set --env ECR ECR_USERNAME --body ${{ steps.login-ecr.outputs.username }} --repo ${{ github.repository }}
-        gh secret set --env ECR ECR_PASSWORD --body ${{ steps.login-ecr.outputs.password }} --repo ${{ github.repository }}
+        gh secret set --env ECR ECR_USERNAME --body ${{ steps.login-ecr.outputs.docker_username }} --repo ${{ github.repository }}
+        gh secret set --env ECR ECR_PASSWORD --body ${{ steps.login-ecr.outputs.docker_password }} --repo ${{ github.repository }}
 
   fullhan:
     environment: ECR
