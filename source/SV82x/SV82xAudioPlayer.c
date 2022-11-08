@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -22,11 +37,11 @@ sv82x_audio_stream_info_t g_audio_player = {
 	.AoDev = 0,
 	.paramDecode.payload_type = PT_MP3,
 	.paramDecode.samplerate = AUDIO_SAMPLE_RATE_48000,
-	.paramDecode.num_per_frm = 512,		/* 每帧采样点数 */
-	.paramDecode.fps = 25,				/* 帧率，建议默认25fps */
+	.paramDecode.num_per_frm = 512,
+	.paramDecode.fps = 25,
 	.paramDecode.sound_mode = AUDIO_SOUND_MODE_MONO,
 	.paramDecode.bitwidth = AUDIO_BIT_WIDTH_16,
-	.paramDecode.volume = 50,			/* mic或者speaker的音量 */
+	.paramDecode.volume = 50,
 	.paramDecode.u32ChnCnt = 1,
 	.bAioReSample = EI_FALSE,
 	.enInSampleRate = AUDIO_SAMPLE_RATE_BUTT,
@@ -61,9 +76,8 @@ AudioPlayerHandle audioPlayerCreate(void)
 
 	memset(sv82xHandle, 0, sizeof(SV82XAudioPlayer));
 
-	// Now implementation supports raw PCM, G.711 ALAW and ULAW, MONO, 8k, 16 bits
 	sv82xHandle->capability.formats = (1 << (AUD_FMT_G711A - 1))
-		| (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1));
+		| (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1)) | (1 << (AUD_FMT_AAC - 1));
 	sv82xHandle->capability.channels = (1 << (AUD_CHN_MONO - 1));
 	sv82xHandle->capability.sampleRates = (1 << (AUD_SAM_8K - 1));
 	sv82xHandle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
@@ -208,7 +222,7 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 
 	s32Ret = SAMPLE_COMM_AUDIO_StartAdec(AdChn, &stAioAttr, g_audio_player.paramDecode.payload_type);
 	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StopAenc failed, ret=%d\n", s32Ret);
+		LOG("SAMPLE_COMM_AUDIO_StopAenc failed, ret=%d\n", s32Ret);
 		return EI_FAILURE;
 	}
 
@@ -227,39 +241,41 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 	s32Ret = SAMPLE_COMM_AUDIO_StartAo(AoDev, s32AoChnCnt, &stAioAttr,
 		g_audio_player.enInSampleRate, g_audio_player.bAioReSample);
 	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StartAo failed, ret=%d\n", s32Ret);
-		goto ADECAO_ERR2;
+		LOG( "SAMPLE_COMM_AUDIO_StartAo failed, ret=%d\n", s32Ret);
+		setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
+		return EI_FAILURE;
 	}
 
 	if (g_audio_player.enUserGetMode == EI_TRUE) {
 		s32Ret = SAMPLE_COMM_AUDIO_CreatTrdAdeAo(AoDev, AoChn, AdChn, pfo);
 		if (s32Ret != EI_SUCCESS) {
-			EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_CreatTrdAdeAo failed, ret=%d\n", s32Ret);
-			goto ADECAO_ERR1;
+			LOG( "SAMPLE_COMM_AUDIO_CreatTrdAdeAo failed, ret=%d\n", s32Ret);
+			s32AoChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
+			s32Ret |= SAMPLE_COMM_AUDIO_StopAo(AoDev, s32AoChnCnt, g_audio_player.bAioReSample);
+			if (s32Ret != EI_SUCCESS) {
+				LOG( "SAMPLE_COMM_AUDIO_StopAo failed, ret=%d\n", s32Ret);
+			}
+			setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
+			return EI_FAILURE;
 		}
 	} else {
 		s32Ret = SAMPLE_COMM_AUDIO_AoLinkAdec(AoDev, AoChn, AdChn);
 		if (s32Ret != EI_SUCCESS) {
-			EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_AoLinkAdec failed, ret=%d\n", s32Ret);
-			goto ADECAO_ERR1;
+			LOG("SAMPLE_COMM_AUDIO_AoLinkAdec failed, ret=%d\n", s32Ret);
+			s32AoChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
+			s32Ret |= SAMPLE_COMM_AUDIO_StopAo(AoDev, s32AoChnCnt, g_audio_player.bAioReSample);
+			if (s32Ret != EI_SUCCESS) {
+				LOG( "SAMPLE_COMM_AUDIO_StopAo failed, ret=%d\n", s32Ret);
+			}
+			setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
+			return EI_FAILURE;
+
 		}
 	}
 
 	setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
 
 	return EI_SUCCESS;
-
-ADECAO_ERR1:
-	printf("%s failed\n", __func__);
-	s32AoChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
-	s32Ret |= SAMPLE_COMM_AUDIO_StopAo(AoDev, s32AoChnCnt, g_audio_player.bAioReSample);
-	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StopAo failed, ret=%d\n", s32Ret);
-	}
-
-ADECAO_ERR2:
-	setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
-	return EI_FAILURE;
 }
 
 int audioPlayerWriteFrame(AudioPlayerHandle handle, void *pData, const size_t size)
@@ -279,9 +295,7 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void *pData, const size_t si
 	if (size <= 0) {
 		s32Ret = EI_MI_ADEC_SendEndOfStream(AdChn, EI_FALSE);
 		if (s32Ret != EI_SUCCESS)
-			EI_TRACE_AUDIO(EI_DBG_ERR, "%s: EI_MI_ADEC_SendEndOfStream failed:%d!\n", __func__, size);
-
-		EI_TRACE_AUDIO(EI_DBG_INFO, "EI_MI_ADEC_SendEndOfStream(%d) ok with %#x!\n", AdChn, s32Ret);
+			LOG("%s: EI_MI_ADEC_SendEndOfStream failed:%d!\n", __func__, size);
 		return s32Ret;
 	}
 
@@ -290,7 +304,7 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void *pData, const size_t si
 	stStream.u32Len = size;
 	s32Ret = EI_MI_ADEC_SendStream(AdChn, &stStream, EI_TRUE);
 	if (s32Ret != EI_SUCCESS)
-		EI_TRACE_AUDIO(EI_DBG_ERR, "EI_MI_ADEC_SendStream(%d) failed with %#x!\n", AdChn, s32Ret);
+		LOG( "EI_MI_ADEC_SendStream(%d) failed with %#x!\n", AdChn, s32Ret);
 
 	return s32Ret;
 }
@@ -312,13 +326,13 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
 	if (g_audio_player.enUserGetMode == EI_TRUE) {
 		s32Ret = SAMPLE_COMM_AUDIO_DestroyTrdAdec(AdChn);
 		if (s32Ret != EI_SUCCESS) {
-			printf("SAMPLE_COMM_AUDIO_DestroyTrdAdec failed %x\n", s32Ret);
+			LOG("SAMPLE_COMM_AUDIO_DestroyTrdAdec failed %x\n", s32Ret);
 			return s32Ret;
 		}
 	} else {
 		s32Ret = SAMPLE_COMM_AUDIO_AoUnbindAdec(AoDev, AoChn, AdChn);
 		if (s32Ret != EI_SUCCESS) {
-			printf("SAMPLE_COMM_AUDIO_AoUnbindAdec failed %x\n", s32Ret);
+			LOG("SAMPLE_COMM_AUDIO_AoUnbindAdec failed %x\n", s32Ret);
 			return s32Ret;
 		}
 	}
@@ -326,12 +340,12 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
 	s32AoChnCnt = g_audio_player.paramDecode.u32ChnCnt >> g_audio_player.paramDecode.sound_mode;
 	s32Ret = SAMPLE_COMM_AUDIO_StopAo(AoDev, s32AoChnCnt, bResampleEn);
 	if (s32Ret != EI_SUCCESS) {
-		printf("SAMPLE_COMM_AUDIO_StopAo failed %x\n", s32Ret);
+		LOG("SAMPLE_COMM_AUDIO_StopAo failed %x\n", s32Ret);
 		return s32Ret;
 	}
 	s32Ret = SAMPLE_COMM_AUDIO_StopAdec(AdChn);
 	if (s32Ret != EI_SUCCESS) {
-		printf("SAMPLE_COMM_AUDIO_StopAdec failed %x\n", s32Ret);
+		LOG("SAMPLE_COMM_AUDIO_StopAdec failed %x\n", s32Ret);
 		return s32Ret;
 	}
 	return setStatus(handle, AUD_PLY_STATUS_STREAM_OFF);

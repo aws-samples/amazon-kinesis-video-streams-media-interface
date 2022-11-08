@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -6,6 +21,7 @@
 #include "SV82xCommon.h"
 
 #define SV82X_HANDLE_GET(x) SV82XAudioCapturer *sv82xHandle = (SV82XAudioCapturer *)((x))
+#define AAC_HEADER_SIZE (7)
 
 typedef struct {
 	AudioCapturerStatus status;
@@ -22,11 +38,11 @@ sv82x_audio_stream_info_t g_audio_capture = {
 	.AencChn = 0,
 	.paramEncode.payload_type = PT_LPCM,
 	.paramEncode.samplerate = AUDIO_SAMPLE_RATE_48000,
-	.paramEncode.num_per_frm = 160,        /* 每帧采样点数 */
-	.paramEncode.fps = 25,                  /* 帧率，建议默认25fps */
+	.paramEncode.num_per_frm = 160,
+	.paramEncode.fps = 25,
 	.paramEncode.sound_mode = AUDIO_SOUND_MODE_MONO,
-	.paramEncode.bitwidth = AUDIO_BIT_WIDTH_8,//AUDIO_BIT_WIDTH_16,
-	.paramEncode.volume = 50,            /* mic或者speaker的音量 */
+	.paramEncode.bitwidth = AUDIO_BIT_WIDTH_8,
+	.paramEncode.volume = 50,
 	.paramEncode.u32ChnCnt = 1,
 	.bAioReSample = EI_FALSE,
 	.enInSampleRate = AUDIO_SAMPLE_RATE_BUTT,
@@ -52,7 +68,6 @@ static int setStatus(AudioCapturerHandle handle, const AudioCapturerStatus newSt
 
 AudioCapturerHandle audioCapturerCreate(void)
 {
-	printf("audioCapturerCreate ############################\n");
 	SV82XAudioCapturer *sv82xHandle =  (SV82XAudioCapturer *)malloc(sizeof(SV82XAudioCapturer));
 
 	if (!sv82xHandle) {
@@ -64,7 +79,7 @@ AudioCapturerHandle audioCapturerCreate(void)
 
 	// Now implementation supports raw PCM, G.711 ALAW and ULAW, MONO, 8k/16k, 16 bits
 	sv82xHandle->capability.formats = (1 << (AUD_FMT_G711A - 1))
-		 | (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1));
+		 | (1 << (AUD_FMT_G711U - 1)) | (1 << (AUD_FMT_PCM - 1)) |(1 << (AUD_FMT_AAC - 1));
 	sv82xHandle->capability.channels = (1 << (AUD_CHN_MONO - 1));
 	sv82xHandle->capability.sampleRates = (1 << (AUD_SAM_8K - 1)) | (1 << (AUD_SAM_16K - 1));
 	sv82xHandle->capability.bitDepths = (1 << (AUD_BIT_16 - 1));
@@ -190,8 +205,12 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
 	s32AencChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
 	s32Ret = SAMPLE_COMM_AUDIO_StartAenc(s32AencChnCnt, &stAioAttr, g_audio_capture.paramEncode.payload_type);
 	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StartAenc failed, s32Ret=%d\n", s32Ret);
-		goto AIAENC_ERR1;
+		LOG( "SAMPLE_COMM_AUDIO_StartAenc failed, s32Ret=%d\n", s32Ret);
+		s32Ret = SAMPLE_COMM_AUDIO_StopAenc(s32AencChnCnt);
+		if (s32Ret != EI_SUCCESS) {
+			LOG( "SAMPLE_COMM_AUDIO_StopAenc failed, s32Ret=%d\n", s32Ret);
+		}
+		return s32Ret;
 	}
 
 	sv82xHandle->format = format;
@@ -199,15 +218,8 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
 	sv82xHandle->sampleRate = sampleRate;
 	sv82xHandle->bitDepth = bitDepth;
 
-	printf("SAMPLE_COMM_AUDIO_StartAenc ok\n");
 	return s32Ret;
 
-AIAENC_ERR1:
-	s32Ret = SAMPLE_COMM_AUDIO_StopAenc(s32AencChnCnt);
-	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StopAenc failed, s32Ret=%d\n", s32Ret);
-	}
-	return s32Ret;
 }
 
 int audioCapturerGetFormat(const AudioCapturerHandle handle, AudioFormat *pFormat,
@@ -253,12 +265,8 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle)
 		memset(&stAiVqeAttr, 0, sizeof(AI_VQE_CONFIG_S));
 		g_audio_capture.audio_vqe.sample_rate = g_audio_capture.paramEncode.samplerate;
 		stAiVqeAttr.s32WorkSampleRate  = g_audio_capture.audio_vqe.sample_rate;
-		stAiVqeAttr.s32FrameSample     = g_audio_capture.paramEncode.num_per_frm;//SAMPLE_AUDIO_PTNUMPERFRM;
+		stAiVqeAttr.s32FrameSample     = g_audio_capture.paramEncode.num_per_frm;
 		stAiVqeAttr.enWorkstate        = VQE_WORKSTATE_COMMON;
-		//stAiVqeAttr.stAnrCfg.bUsrMode  = EI_FALSE;
-		//stAiVqeAttr.stAgcCfg.bUsrMode  = EI_FALSE;
-		//stAiVqeAttr.stHpfCfg.bUsrMode  = EI_TRUE;
-		//stAiVqeAttr.stHpfCfg.enHpfFreq = AUDIO_HPF_FREQ_80;
 		stAiVqeAttr.u32OpenMask = g_audio_capture.audio_vqe.open_mask;
 		pAiVqeAttr = (EI_VOID *)&stAiVqeAttr;
 	}
@@ -266,28 +274,21 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle)
 	s32Ret = SAMPLE_COMM_AUDIO_StartAi(AiDev, s32AiChnCnt, &stAioAttr,
 		g_audio_capture.enOutSampleRate, g_audio_capture.bAioReSample, pAiVqeAttr);
 	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StartAi failed, s32Ret=%d\n", s32Ret);
-		goto AIAENC_ERR2;
+		LOG( "SAMPLE_COMM_AUDIO_StartAi failed, s32Ret=%d\n", s32Ret);
+		return setStatus(handle, AUD_CAP_STATUS_STREAM_ON);
 	}
 
 	s32Ret = SAMPLE_COMM_AUDIO_CreatTrdAiAenc(AiDev, AiChn, AeChn);
 	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_AUDIO_OpenSaveFile failed, s32Ret=%d\n", s32Ret);
-		goto AIAENC_ERR1;
+		LOG( "SAMPLE_AUDIO_OpenSaveFile failed, s32Ret=%d\n", s32Ret);
+		s32AiChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
+		s32Ret |= SAMPLE_COMM_AUDIO_StopAi(AiDev, s32AiChnCnt, g_audio_capture.bAioReSample, g_audio_capture.enVqe);
+		if (s32Ret != EI_SUCCESS) {
+			LOG( "SAMPLE_COMM_AUDIO_StopAi failed, s32Ret=%d\n", s32Ret);
+		}
 	}
 
-	printf("SAMPLE_COMM_AUDIO_StartAi OK,AI(%d,%d),AencChn:%d\n", AiDev, AiChn, AeChn);
-
-	return setStatus(handle, AUD_CAP_STATUS_STREAM_ON);
-
-AIAENC_ERR1:
-	s32AiChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
-	s32Ret |= SAMPLE_COMM_AUDIO_StopAi(AiDev, s32AiChnCnt, g_audio_capture.bAioReSample, g_audio_capture.enVqe);
-	if (s32Ret != EI_SUCCESS) {
-		EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_StopAi failed, s32Ret=%d\n", s32Ret);
-	}
-
-AIAENC_ERR2:
+	LOG("SAMPLE_COMM_AUDIO_StartAi OK,AI(%d,%d),AencChn:%d\n", AiDev, AiChn, AeChn);
 
 	return setStatus(handle, AUD_CAP_STATUS_STREAM_ON);
 }
@@ -310,13 +311,13 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void *pFrameDataBuffer,
 	while (handle) {
 		s32Ret = EI_MI_AENC_GetStream(AeChn, &stStream, -1);
 		if (s32Ret != EI_SUCCESS) {
-			EI_TRACE_AUDIO(EI_DBG_ERR, "EI_MI_AENC_GetStream failed. s32Ret=%x\n", s32Ret);
+			LOG( "EI_MI_AENC_GetStream failed. s32Ret=%x\n", s32Ret);
 			continue;
 		}
 		if( PT_AAC == g_audio_capture.paramEncode.payload_type ){
 			if (stStream.u32Len > 0 && stStream.u32Len <= frameDataBufferSize) {
-				memcpy(pFrameDataBuffer, stStream.pStream+7, stStream.u32Len-7);
-				*pFrameSize = stStream.u32Len-7;
+				memcpy(pFrameDataBuffer, stStream.pStream + AAC_HEADER_SIZE, stStream.u32Len - AAC_HEADER_SIZE );
+				*pFrameSize = stStream.u32Len - AAC_HEADER_SIZE;
 				*pTimestamp = stStream.u64TimeStamp;
 				EI_MI_AENC_ReleaseStream(AeChn, &stStream);
 				return EI_SUCCESS;
@@ -334,7 +335,7 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void *pFrameDataBuffer,
 
 		s32Ret = EI_MI_AENC_ReleaseStream(AeChn, &stStream);
 		if (s32Ret != EI_SUCCESS) {
-			EI_TRACE_AUDIO(EI_DBG_ERR, "EI_MI_AENC_ReleaseStream(%d), failed with %#x!\n", AeChn, s32Ret);
+			LOG("EI_MI_AENC_ReleaseStream(%d), failed with %#x!\n", AeChn, s32Ret);
 		}
 		return s32Ret;
 	}
@@ -371,27 +372,26 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
 		AiChn = i;
 		s32Ret = SAMPLE_COMM_AUDIO_DestroyTrdAi(AiDev, AiChn);
 		if (s32Ret != EI_SUCCESS) {
-			EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_DestroyTrdAi failed, s32Ret=%d\n", s32Ret);
+			LOG( "SAMPLE_COMM_AUDIO_DestroyTrdAi failed, s32Ret=%d\n", s32Ret);
 		}
 
 		s32Ret = SAMPLE_COMM_AUDIO_DestroyTrdAencAdec(AdChn);
 		if (s32Ret != EI_SUCCESS) {
-			EI_TRACE_AUDIO(EI_DBG_ERR, "SAMPLE_COMM_AUDIO_DestroyTrdAencAdec failed, s32Ret=%d\n", s32Ret);
+			LOG( "SAMPLE_COMM_AUDIO_DestroyTrdAencAdec failed, s32Ret=%d\n", s32Ret);
 	}
 	}
 
 	s32Ret = SAMPLE_COMM_AUDIO_StopAenc(s32AencChnCnt);
 	if (s32Ret != EI_SUCCESS) {
-		printf("SAMPLE_COMM_AUDIO_StopAenc failed %x\n", s32Ret);
+		LOG("SAMPLE_COMM_AUDIO_StopAenc failed %x\n", s32Ret);
 		return s32Ret;
 	}
 
 	s32Ret = SAMPLE_COMM_AUDIO_StopAi(AiDev, s32AiChncnt, bAioReSample, bVqeEn);
 	if (s32Ret != EI_SUCCESS) {
-		printf("SAMPLE_COMM_AUDIO_StopAi failed %x\n", s32Ret);
+		LOG("SAMPLE_COMM_AUDIO_StopAi failed %x\n", s32Ret);
 		return s32Ret;
 	}
-	printf("%d %s ok\n", __LINE__, __func__);
 
 	return setStatus(handle, AUD_CAP_STATUS_STREAM_OFF);
 }

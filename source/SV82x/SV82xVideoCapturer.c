@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -21,18 +36,27 @@
 #define SV82X_IPPU_DEV                 (0)
 #define SV82X_ISP_DEV                  (0)
 
+#define LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__)
+
+#define SV82X_HANDLE_NULL_CHECK_RET_VOID(x) \
+		do { \
+		if (x == EI_NULL) { \
+			LOG("Null Pointer!\n"); \
+			return; \
+		} \
+	} while (0)
 #define SV82X_HANDLE_NULL_CHECK(x) \
 		do { \
 		if (x == EI_NULL) { \
-			printf("Null Pointer!\n"); \
-			goto exit; \
+			LOG("Null Pointer!\n"); \
+			return -EINVAL; \
 		} \
 	} while (0)
 
 #define SV82X_HANDLE_GET(x) Sv82xVideoCapturer_t* Sv82xHandle = (Sv82xVideoCapturer_t*) ((x))
 #define SV82X_HANDLE_STATUS_CHECK(Handle, expectedStatus) if ((Handle)->status != (expectedStatus)) {return -EAGAIN;}
 
-#define LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__)
+
 
 typedef struct {
 	VideoCapturerStatus status;
@@ -53,14 +77,6 @@ typedef struct {
 static Sv82xVideoInfo_t VideoAttrs = {0};
 static int SystemInitFlag = 0;
 
-static long long GetSystimeUs(void)
-{
-	struct timeval tv;
-
-	gettimeofday(&tv, NULL);
-
-	return (long long)tv.tv_sec * 1000000 + tv.tv_usec;
-}
 
 static int SystemInit(void)
 {
@@ -86,7 +102,6 @@ static int SystemInit(void)
 	stVissConfig.astVissInfo[0].stIspInfo.IspDev = SV82X_ISP_DEV;
 	stVissConfig.astVissInfo[0].stIspInfo.enRunningMode = ISP_MODE_RUNNING_ONLINE;
 	stVissConfig.astVissInfo[0].stSnsInfo.enSnsType = enSnsType;
-	//stVissConfig.astVissInfo[0].stExtDevInfo.enType = ELF_EXTDEV;
 	stVissConfig.s32WorkingVissNum = 1;
 
 	s32Ret = SAMPLE_COMM_ISP_Start(&stVissConfig.astVissInfo[0]);
@@ -174,8 +189,6 @@ static int setStatus(VideoCapturerHandle handle, const VideoCapturerStatus newSt
 	}
 
 	return 0;
-exit:
-	return -1;
 }
 
 static int _Sv82xVideoBufPoolCreat(VideoCapturerHandle handle, VIDEO_FRAME_INFO_S *pstVideoFrameInfo)
@@ -198,7 +211,6 @@ static int _Sv82xVideoBufPoolCreat(VideoCapturerHandle handle, VIDEO_FRAME_INFO_
 		return s32Ret;
 	}
 
-exit:
 	return s32Ret;
 }
 
@@ -213,8 +225,6 @@ static int _Sv82xVideoBufPoolDestory(VideoCapturerHandle handle)
 		LOG("EI_MI_VBUF_DestroyPool error s32Ret：%d\n", s32Ret);
 		return s32Ret;
 	}
-
-exit:
 	return s32Ret;
 }
 
@@ -228,21 +238,18 @@ static int _Sv82xIppuStart(VideoCapturerHandle handle, const IPPU_CHN_ATTR_S *ps
 	s32Ret = EI_MI_IPPU_SetChnAttr(dev, Sv82xHandle->channel, pstChnAttr);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("%s:%d EI_MI_IPPU_SetChnAttr failed\n", __func__, __LINE__);
+		EI_MI_IPPU_Destroy(dev);
 		return s32Ret;
 	}
 	s32Ret = EI_MI_IPPU_EnableChn(dev, Sv82xHandle->channel);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("%s:%d EI_MI_IPPU_EnableChn failed\n", __func__, __LINE__);
-		goto ippu_enable_failed;
+		EI_MI_IPPU_Destroy(dev);
+		return s32Ret;
 	}
 	Sv82xHandle->enable = 1;
 	VideoAttrs.IppuEnableCnt++;
 
-exit:
-	return s32Ret;
-
-ippu_enable_failed:
-	EI_MI_IPPU_Destroy(dev);
 	return s32Ret;
 }
 
@@ -271,7 +278,7 @@ static int _Sv82xIppuStop(VideoCapturerHandle handle)
 	}
 	Sv82xHandle->enable = 0;
 	VideoAttrs.IppuEnableCnt--;
-exit:
+
 	return s32Ret;
 }
 
@@ -299,21 +306,18 @@ static int _Sv82xVideoCreat(VideoCapturerHandle handle, const VideoFormat format
 		s32Ret = SAMPLE_COMM_VENC_Creat(Sv82xHandle->channel, PayloadType,
 			RcMode, pstSamplVenc, COMPRESS_MODE_NONE, GopMode);
 		if (EI_SUCCESS != s32Ret) {
-			EI_TRACE_VENC(EI_DBG_ERR, "SAMPLE_COMM_VENC_Creat faild with%#x! \n", s32Ret);
+			LOG( "SAMPLE_COMM_VENC_Creat faild with%#x! \n", s32Ret);
 			return EI_FAILURE;
 		}
 
 		s32Ret = SAMPLE_COMM_IPPU_Link_VPU(0, Sv82xHandle->channel, Sv82xHandle->channel);
 		if (s32Ret != EI_SUCCESS) {
 			LOG("SAMPLE_COMM_IPPU_Link_VPU failed with %#x\n", s32Ret);
-			goto ippu_link_failed;
+			EI_MI_VENC_DestroyChn(Sv82xHandle->channel);
+			return s32Ret;
 		}
 	}
 	Sv82xHandle->VideoCreatFlag = 1;
-exit:
-	return s32Ret;
-ippu_link_failed:
-	EI_MI_VENC_DestroyChn(Sv82xHandle->channel);
 	return s32Ret;
 }
 
@@ -335,7 +339,7 @@ static int _Sv82xVideoDestory(VideoCapturerHandle handle)
 		return s32Ret;
 	}
 	Sv82xHandle->VideoCreatFlag = 0;
-exit:
+
 	return s32Ret;
 }
 
@@ -355,7 +359,6 @@ static int _Sv82xVideoStart(VideoCapturerHandle handle)
 	}
 	setStatus(handle, VID_CAP_STATUS_STREAM_ON);
 
-exit:
 	return s32Ret;
 }
 
@@ -373,15 +376,9 @@ static int _Sv82xVideoStop(VideoCapturerHandle handle) {
 
 	setStatus(handle, VID_CAP_STATUS_STREAM_OFF);
 
-exit:
 	return s32Ret;
 }
 
-/**
- * @brief Create and init VideoCapturer.
- *
- * @return VideoCapturerHandle NULL or handle of created VideoCapturer.
- */
 VideoCapturerHandle videoCapturerCreate(void)
 {
 	EI_S32 s32Ret = EI_SUCCESS;
@@ -414,12 +411,7 @@ VideoCapturerHandle videoCapturerCreate(void)
 	return (VideoCapturerHandle) Handle;
 }
 
-/**
- * @brief Get capturer status.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @return VideoCapturerStatus Status of VideoCapturer.
- */
+
 VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle)
 {
 	if (!handle) {
@@ -430,13 +422,7 @@ VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handl
 	return Sv82xHandle->status;
 }
 
-/**
- * @brief Get capturer capability.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @param[out] pCapability Capturer capability.
- * @return int 0 or error code.
- */
+
 int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapability* pCapability)
 {
 	EI_S32 s32Ret = EI_SUCCESS;
@@ -448,19 +434,10 @@ int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapa
 
 	*pCapability = Sv82xHandle->capability;
 
-exit:
 	return s32Ret;
-
 }
 
-/**
- * @brief Set capturer format and resolution.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @param[in] format Frame format.
- * @param[in] resolution Frame resolution.
- * @return int 0 or error code.
- */
+
 int videoCapturerSetFormat(VideoCapturerHandle const handle, const VideoFormat format, const VideoResolution resolution)
 {
 	EI_S32 s32Ret = EI_FAILURE;
@@ -552,18 +529,10 @@ int videoCapturerSetFormat(VideoCapturerHandle const handle, const VideoFormat f
 	Sv82xHandle->format = format;
 	Sv82xHandle->resolution = resolution;
 
-exit:
 	return s32Ret;
 }
 
-/**
- * @brief Get capturer format and resolution.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @param[out] pFormat Frame format.
- * @param[out] pResolution Frame resolution.
- * @return int 0 or error code.
- */
+
 int videoCapturerGetFormat(const VideoCapturerHandle const handle, VideoFormat* pFormat, VideoResolution* pResolution)
 {
 	SV82X_HANDLE_NULL_CHECK(handle);
@@ -572,16 +541,8 @@ int videoCapturerGetFormat(const VideoCapturerHandle const handle, VideoFormat* 
 	*pFormat = Sv82xHandle->format;
 	*pResolution = Sv82xHandle->resolution;
 	return 0;
-exit:
-	return -1;
 }
 
-/**
- * @brief Acquire and turn on video stream.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @return int 0 or error code.
- */
 int videoCapturerAcquireStream(VideoCapturerHandle handle)
 {
 	EI_S32 s32Ret = EI_FAILURE;
@@ -595,16 +556,6 @@ int videoCapturerAcquireStream(VideoCapturerHandle handle)
 	return s32Ret;
 }
 
-/**
- * @brief Blocking get frame from capturer.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @param[in,out] pFrameDataBuffer Target frame data buffer.
- * @param[in] frameDataBufferSize Frame data buffer size.
- * @param[out] pTimestamp Frame timestamp in microseconds(usec).
- * @param[out] pFrameSize Frame data size in bytes.
- * @return int 0 or error code.
- */
 int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer,
 	const size_t frameDataBufferSize, uint64_t* pTimestamp, size_t* pFrameSize)
 {
@@ -627,8 +578,6 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer,
 		}
 
 		EI_MI_VBUF_FrameMmap(&stVFrameInfo, VBUF_REMAP_MODE_CACHED);
-//		LOG("Get frame success, BV: %d, PTS: %lld!\n",
-//			stVFrameInfo.stIspFrameInfo.s32BV, stVFrameInfo.stVFrame.u64PTS);
 		if (((char *)stVFrameInfo.stVFrame.ulPlaneVirAddr[0] != NULL) &&
 			(stVFrameInfo.stVFrame.u32PlaneSize[0] != 0) &&
 			((char *)stVFrameInfo.stVFrame.ulPlaneVirAddr[1] != NULL) &&
@@ -637,7 +586,6 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer,
 				stVFrameInfo.stCommFrameInfo.u32Height * 1.5;
 		}
 		memset(pFrameDataBuffer, 0, frameDataBufferSize);
-		//printf("pFrameSize:%d frameDataBufferSize:%d\n", *pFrameSize, frameDataBufferSize);
 		if (*pFrameSize <= frameDataBufferSize) {
 			if (((char *)stVFrameInfo.stVFrame.ulPlaneVirAddr[0] != NULL) &&
 				(stVFrameInfo.stVFrame.u32PlaneSize[0] != 0)) {
@@ -655,7 +603,6 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer,
 			}
 		} else
 			LOG("ch:%d data len is to big datalen:%d buflen:%d\n", channel, *pFrameSize, frameDataBufferSize);
-		//*pTimestamp = GetSystimeUs();
 		*pTimestamp = stVFrameInfo.stVFrame.u64PTS;
 		EI_MI_IPPU_ReleaseChnFrame(0, channel, &stVFrameInfo);
 	}else if (Sv82xHandle->format == VID_FMT_H264 ||
@@ -712,16 +659,9 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer,
 		}
 	}
 
-exit:
 	return s32Ret;
 }
 
-/**
- * @brief Release acquired video stream.
- *
- * @param[in] handle Handle of VideoCapturer.
- * @return int 0 or error code.
- */
 int videoCapturerReleaseStream(VideoCapturerHandle handle)
 {
 	EI_S32 s32Ret = EI_FAILURE;
@@ -735,16 +675,11 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
 	return s32Ret;
 }
 
-/**
- * @brief Destroy created VideoCapturer.
- *
- * @param[in] handle Handle of VideoCapturer.
- */
 void videoCapturerDestory(VideoCapturerHandle handle)
 {
 	EI_S32 s32Ret = EI_FAILURE;
 
-	SV82X_HANDLE_NULL_CHECK(handle);
+	SV82X_HANDLE_NULL_CHECK_RET_VOID(handle);
 	SV82X_HANDLE_GET(handle);
 
 	if (Sv82xHandle->status == VID_CAP_STATUS_STREAM_ON) {
@@ -785,6 +720,6 @@ void videoCapturerDestory(VideoCapturerHandle handle)
 	}
 
 	SystemInitFlag = 0;
-exit:
+
 	return;
 }
