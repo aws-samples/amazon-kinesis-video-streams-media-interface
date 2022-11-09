@@ -13,8 +13,6 @@
  * permissions and limitations under the License.
  */
 
-#ifndef __SV82XCOMMON_H__
-#define __SV82XCOMMON_H__
 
 #pragma once
 
@@ -49,31 +47,15 @@ typedef enum {
 } sv82x_audio_stream_e;
 
 typedef struct {
-	PAYLOAD_TYPE_E payload_type;          /* PAYLOAD_TYPE_E */
+	PAYLOAD_TYPE_E payload_type;          /* payload type */
 	AUDIO_SAMPLE_RATE_E samplerate;
-	unsigned int num_per_frm;            /* 每帧采样点数 */
-	unsigned int fps;                   /* 帧率，建议默认25fps */
+	unsigned int num_per_frm;            /* sample per frame */
+	unsigned int fps;                   /* frame rate ;default 25*/
 	AUDIO_SOUND_MODE_E sound_mode;
 	AUDIO_BIT_WIDTH_E bitwidth;
-	int volume;                        /* mic或者speaker的音量 */
+	int volume;
 	unsigned int u32ChnCnt;
 } sv82x_audio_param_t;
-
-typedef struct {
-	PAYLOAD_TYPE_E       codectype;               /* 帧编码格式 */
-	char                *buf;                      /* 帧数据 */
-	unsigned int         buf_len;                  /* buffer长度 */
-	unsigned int         data_len;                 /* 数据长度 */
-	unsigned long long   pts;                      /* pts，单位ums */
-	unsigned long long   timestamp;                /* 时间戳，单位ums */
-	AUDIO_SAMPLE_RATE_E  sample_rate;              /* 采样率 */
-	unsigned int         seq;                      /* 帧序号 */
-} sv82x_audio_frame_t;
-
-typedef struct {
-	unsigned char mute;             /* 静音 */
-	unsigned char volume;          /* [0, 99] 0 静音 */
-} sv82x_audio_volume_t;
 
 typedef struct {
 	int sample_rate;
@@ -103,4 +85,3 @@ typedef struct VIDEO_STREAM_CTX {
 	EI_CHAR playFileName[512];
 } sv82x_audio_stream_info_t;
 
-#endif //__SV82XCOMMON_H__

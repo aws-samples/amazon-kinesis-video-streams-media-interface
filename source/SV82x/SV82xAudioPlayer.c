@@ -61,7 +61,7 @@ static int setStatus(AudioPlayerHandle handle, const AudioPlayerStatus newStatus
 		LOG("AudioPlayer new status[%d]", newStatus);
 	}
 
-	return EI_SUCCESS;
+	return 0;
 }
 
 AudioPlayerHandle audioPlayerCreate(void)
@@ -93,7 +93,7 @@ int audioPlayerGetCapability(const AudioPlayerHandle handle, AudioCapability *pC
 	SV82X_HANDLE_GET(handle);
 
 	if (!pCapability) {
-		return -EAGAIN;
+		return -EINVAL;
 	}
 
 	*pCapability = sv82xHandle->capability;
@@ -223,7 +223,7 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 	s32Ret = SAMPLE_COMM_AUDIO_StartAdec(AdChn, &stAioAttr, g_audio_player.paramDecode.payload_type);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("SAMPLE_COMM_AUDIO_StopAenc failed, ret=%d\n", s32Ret);
-		return EI_FAILURE;
+		return -EAGAIN;
 	}
 
 
@@ -235,19 +235,16 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 	stAioAttr.u32PtNumPerFrm = g_audio_player.paramDecode.num_per_frm;
 	stAioAttr.u32ChnCnt	  = g_audio_player.paramDecode.u32ChnCnt;
 
-	FILE *pfo = NULL;
-
 	s32AoChnCnt = stAioAttr.u32ChnCnt;
 	s32Ret = SAMPLE_COMM_AUDIO_StartAo(AoDev, s32AoChnCnt, &stAioAttr,
 		g_audio_player.enInSampleRate, g_audio_player.bAioReSample);
 	if (s32Ret != EI_SUCCESS) {
 		LOG( "SAMPLE_COMM_AUDIO_StartAo failed, ret=%d\n", s32Ret);
-		setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
-		return EI_FAILURE;
+		return -EAGAIN;
 	}
 
 	if (g_audio_player.enUserGetMode == EI_TRUE) {
-		s32Ret = SAMPLE_COMM_AUDIO_CreatTrdAdeAo(AoDev, AoChn, AdChn, pfo);
+		s32Ret = SAMPLE_COMM_AUDIO_CreatTrdAdeAo(AoDev, AoChn, AdChn, NULL);
 		if (s32Ret != EI_SUCCESS) {
 			LOG( "SAMPLE_COMM_AUDIO_CreatTrdAdeAo failed, ret=%d\n", s32Ret);
 			s32AoChnCnt = stAioAttr.u32ChnCnt >> stAioAttr.enSoundmode;
@@ -255,8 +252,7 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 			if (s32Ret != EI_SUCCESS) {
 				LOG( "SAMPLE_COMM_AUDIO_StopAo failed, ret=%d\n", s32Ret);
 			}
-			setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
-			return EI_FAILURE;
+			return -EAGAIN;
 		}
 	} else {
 		s32Ret = SAMPLE_COMM_AUDIO_AoLinkAdec(AoDev, AoChn, AdChn);
@@ -267,15 +263,14 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
 			if (s32Ret != EI_SUCCESS) {
 				LOG( "SAMPLE_COMM_AUDIO_StopAo failed, ret=%d\n", s32Ret);
 			}
-			setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
-			return EI_FAILURE;
+			return -EAGAIN;
 
 		}
 	}
 
 	setStatus(handle, AUD_PLY_STATUS_STREAM_ON);
 
-	return EI_SUCCESS;
+	return 0;
 }
 
 int audioPlayerWriteFrame(AudioPlayerHandle handle, void *pData, const size_t size)
@@ -294,19 +289,23 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void *pData, const size_t si
 
 	if (size <= 0) {
 		s32Ret = EI_MI_ADEC_SendEndOfStream(AdChn, EI_FALSE);
-		if (s32Ret != EI_SUCCESS)
+		if (s32Ret != EI_SUCCESS){
 			LOG("%s: EI_MI_ADEC_SendEndOfStream failed:%d!\n", __func__, size);
-		return s32Ret;
+			return -EAGAIN;
+		}
+		return 0;
 	}
 
 	memset(&stStream, 0, sizeof(AUDIO_STREAM_S));
 	stStream.pStream = (EI_U8 ATTRIBUTE *)pData;
 	stStream.u32Len = size;
 	s32Ret = EI_MI_ADEC_SendStream(AdChn, &stStream, EI_TRUE);
-	if (s32Ret != EI_SUCCESS)
+	if (s32Ret != EI_SUCCESS){
 		LOG( "EI_MI_ADEC_SendStream(%d) failed with %#x!\n", AdChn, s32Ret);
+		return -EAGAIN;
+	}
 
-	return s32Ret;
+	return 0;
 }
 
 int audioPlayerReleaseStream(AudioPlayerHandle handle)
@@ -327,13 +326,13 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
 		s32Ret = SAMPLE_COMM_AUDIO_DestroyTrdAdec(AdChn);
 		if (s32Ret != EI_SUCCESS) {
 			LOG("SAMPLE_COMM_AUDIO_DestroyTrdAdec failed %x\n", s32Ret);
-			return s32Ret;
+			return -EAGAIN;
 		}
 	} else {
 		s32Ret = SAMPLE_COMM_AUDIO_AoUnbindAdec(AoDev, AoChn, AdChn);
 		if (s32Ret != EI_SUCCESS) {
 			LOG("SAMPLE_COMM_AUDIO_AoUnbindAdec failed %x\n", s32Ret);
-			return s32Ret;
+			return -EAGAIN;
 		}
 	}
 
@@ -341,12 +340,12 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
 	s32Ret = SAMPLE_COMM_AUDIO_StopAo(AoDev, s32AoChnCnt, bResampleEn);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("SAMPLE_COMM_AUDIO_StopAo failed %x\n", s32Ret);
-		return s32Ret;
+		return -EAGAIN;
 	}
 	s32Ret = SAMPLE_COMM_AUDIO_StopAdec(AdChn);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("SAMPLE_COMM_AUDIO_StopAdec failed %x\n", s32Ret);
-		return s32Ret;
+		return -EAGAIN;
 	}
 	return setStatus(handle, AUD_PLY_STATUS_STREAM_OFF);
 }

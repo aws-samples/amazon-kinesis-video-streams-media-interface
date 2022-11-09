@@ -210,7 +210,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
 		if (s32Ret != EI_SUCCESS) {
 			LOG( "SAMPLE_COMM_AUDIO_StopAenc failed, s32Ret=%d\n", s32Ret);
 		}
-		return s32Ret;
+		return -EAGAIN;
 	}
 
 	sv82xHandle->format = format;
@@ -218,7 +218,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
 	sv82xHandle->sampleRate = sampleRate;
 	sv82xHandle->bitDepth = bitDepth;
 
-	return s32Ret;
+	return 0;
 
 }
 
@@ -275,7 +275,7 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle)
 		g_audio_capture.enOutSampleRate, g_audio_capture.bAioReSample, pAiVqeAttr);
 	if (s32Ret != EI_SUCCESS) {
 		LOG( "SAMPLE_COMM_AUDIO_StartAi failed, s32Ret=%d\n", s32Ret);
-		return setStatus(handle, AUD_CAP_STATUS_STREAM_ON);
+		return -EAGAIN;
 	}
 
 	s32Ret = SAMPLE_COMM_AUDIO_CreatTrdAiAenc(AiDev, AiChn, AeChn);
@@ -286,6 +286,7 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle)
 		if (s32Ret != EI_SUCCESS) {
 			LOG( "SAMPLE_COMM_AUDIO_StopAi failed, s32Ret=%d\n", s32Ret);
 		}
+		return -EAGAIN;
 	}
 
 	LOG("SAMPLE_COMM_AUDIO_StartAi OK,AI(%d,%d),AencChn:%d\n", AiDev, AiChn, AeChn);
@@ -320,7 +321,7 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void *pFrameDataBuffer,
 				*pFrameSize = stStream.u32Len - AAC_HEADER_SIZE;
 				*pTimestamp = stStream.u64TimeStamp;
 				EI_MI_AENC_ReleaseStream(AeChn, &stStream);
-				return EI_SUCCESS;
+				return 0;
 			}
 		}else{
 			if (stStream.u32Len > 0 && stStream.u32Len <= frameDataBufferSize) {
@@ -328,7 +329,7 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void *pFrameDataBuffer,
 				*pFrameSize = stStream.u32Len;
 				*pTimestamp = stStream.u64TimeStamp;
 				EI_MI_AENC_ReleaseStream(AeChn, &stStream);
-				return EI_SUCCESS;
+				return 0;
 			}
 
 		}
@@ -337,10 +338,10 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void *pFrameDataBuffer,
 		if (s32Ret != EI_SUCCESS) {
 			LOG("EI_MI_AENC_ReleaseStream(%d), failed with %#x!\n", AeChn, s32Ret);
 		}
-		return s32Ret;
+		return -EAGAIN;
 	}
 
-	return s32Ret;
+	return -EAGAIN;
 }
 
 int audioCapturerReleaseStream(AudioCapturerHandle handle)
@@ -362,7 +363,7 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
 	SV82X_HANDLE_STATUS_CHECK(sv82xHandle, AUD_CAP_STATUS_STREAM_ON);
 
 	if (g_audio_capture.enAencCreate == EI_FALSE)
-		return s32Ret;
+		return -EINVAL;
 
 	g_audio_capture.enAencCreate = EI_FALSE;
 
@@ -384,13 +385,13 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
 	s32Ret = SAMPLE_COMM_AUDIO_StopAenc(s32AencChnCnt);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("SAMPLE_COMM_AUDIO_StopAenc failed %x\n", s32Ret);
-		return s32Ret;
+		return -EAGAIN;
 	}
 
 	s32Ret = SAMPLE_COMM_AUDIO_StopAi(AiDev, s32AiChncnt, bAioReSample, bVqeEn);
 	if (s32Ret != EI_SUCCESS) {
 		LOG("SAMPLE_COMM_AUDIO_StopAi failed %x\n", s32Ret);
-		return s32Ret;
+		return -EAGAIN;
 	}
 
 	return setStatus(handle, AUD_CAP_STATUS_STREAM_OFF);
