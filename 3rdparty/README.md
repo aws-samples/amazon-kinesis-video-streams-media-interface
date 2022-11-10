@@ -9,6 +9,7 @@ This documents provides guidelines to install board SDK required by this library
 	- [FH8626V100](#fh8626v100)
 	- [AK3918](#ak3918)
 	- [C302](#c302)
+	- [SV82x](#sv82x)
 
 ## FILE
 
@@ -49,18 +50,6 @@ ioctl: VIDIOC_ENUM_FMT
 > ![](../doc/pi-legacy-camera-support.png)
 
 It doesn't require other manually installation because CMake will download and build dependencies automatically.
-
-## SV82x
-
-User need to put SV82x board SDK under [3rdparty/SV82x/](SV82x/):
-
-```
-SV82x/
-├── common
-├── include
-├── lib
-└── sample
-```
 
 ## T31
 
@@ -124,3 +113,15 @@ C302/
 ```
 
 > Other related dependent libraries and header files need to obtain the cross-compiled toolchain of C302.
+
+## SV82x
+
+User need to put SV82x board SDK under [3rdparty/SV82x/](SV82x/):
+
+```
+SV82x/
+├── common
+├── include
+├── lib
+└── sample
+```

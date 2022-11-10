@@ -1,34 +1,36 @@
 if(BOARD STREQUAL "SV82x")
-    set(BOARD_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/${BOARD})
-    set(BOARD_SRCS
-        ${BOARD_SDK_DIR}/common/sample_comm_audio.c
-        ${BOARD_SDK_DIR}/common/sample_comm_doss.c
-        ${BOARD_SDK_DIR}/common/sample_comm_ippu.c
-        ${BOARD_SDK_DIR}/common/sample_comm_isp.c
-        ${BOARD_SDK_DIR}/common/sample_comm_sys.c
-        ${BOARD_SDK_DIR}/common/sample_comm_vdec.c
-        ${BOARD_SDK_DIR}/common/sample_comm_venc.c
-        ${BOARD_SDK_DIR}/common/sample_comm_video.c
-        ${BOARD_SDK_DIR}/common/sample_comm_viss.c
-    )
-    set(BOARD_INCS_DIR
-        ${BOARD_SDK_DIR}/include/
-        ${BOARD_SDK_DIR}/common/
-    )
-    if(USE_MUCLIBC)
-        set(BOARD_LIBS_DIR
-            ${BOARD_SDK_DIR}/lib/uclibc
-        )
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -muclibc")
-        set(BOARD_DESTINATION_PLATFORM arm-ez-linux-uclibcgnueabihf)
-    else()
-        set(BOARD_LIBS_DIR
-            ${BOARD_SDK_DIR}/lib/glibc
-        )
-        set(BOARD_DESTINATION_PLATFORM arm-linux-gnueabihf)
-    endif()
-    set(BOARD_LIBS_SHARED
-        i2cops 
+	set(BOARD_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/${BOARD})
+	set(BOARD_SRCS
+		${BOARD_SDK_DIR}/common/sample_comm_audio.c
+		${BOARD_SDK_DIR}/common/sample_comm_doss.c
+		${BOARD_SDK_DIR}/common/sample_comm_ippu.c
+		${BOARD_SDK_DIR}/common/sample_comm_isp.c
+		${BOARD_SDK_DIR}/common/sample_comm_sys.c
+		${BOARD_SDK_DIR}/common/sample_comm_vdec.c
+		${BOARD_SDK_DIR}/common/sample_comm_venc.c
+		${BOARD_SDK_DIR}/common/sample_comm_video.c
+		${BOARD_SDK_DIR}/common/sample_comm_viss.c
+	)
+	set(BOARD_INCS_DIR
+		${BOARD_SDK_DIR}/include/
+		${BOARD_SDK_DIR}/common/
+	)
+
+	if(USE_MUCLIBC)
+		set(BOARD_LIBS_DIR
+			${BOARD_SDK_DIR}/lib/uclibc
+		)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -muclibc")
+		set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-uclibc)
+	else()
+		set(BOARD_LIBS_DIR
+			${BOARD_SDK_DIR}/lib/glibc
+		)
+		set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-gnu)
+	endif()
+
+	set(BOARD_LIBS_SHARED
+		i2cops
 		cam_gc4653_mipi
 		ext_drv_ms41929
 		extops
@@ -98,14 +100,14 @@ if(BOARD STREQUAL "SV82x")
 		cam_clb
 		panel_lt8912b_mipi
 		pthread dl
-    )
-    set(BOARD_LIBS_STATIC
-        libmbase.a 
-		libmlink.a 
-		libmfake.a 
-		libviss.a 
-		libvbuf.a 
-		libupvqe.a 
+	)
+	set(BOARD_LIBS_STATIC
+		libmbase.a
+		libmlink.a
+		libmfake.a
+		libviss.a
+		libvbuf.a
+		libupvqe.a
 		libdnvqe.a
 		libaudioin.a
 		libaudioout.a
@@ -160,5 +162,5 @@ if(BOARD STREQUAL "SV82x")
 		libcam_tp2850_mipi.a
 		libcam_tp2815_mipi.a
 		pthread dl
-    )
+	)
 endif()
