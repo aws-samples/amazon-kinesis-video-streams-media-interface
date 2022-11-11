@@ -99,7 +99,7 @@ if(BOARD STREQUAL "SV82x")
 		upvqe
 		cam_clb
 		panel_lt8912b_mipi
-		pthread dl
+		m pthread dl
 	)
 	set(BOARD_LIBS_STATIC
 		cam_gc4653_mipi.a
@@ -172,6 +172,6 @@ if(BOARD STREQUAL "SV82x")
 		upvqe.a
 		cam_clb.a
 		panel_lt8912b_mipi.a
-		pthread dl
+		libm.a pthread dl
 	)
 endif()
