@@ -38,6 +38,7 @@ typedef enum IPC_PPU_PIXEL_FORMAT {
     PPU_PIXEL_FORMAT_RGB_BAYER_8BPP,
     PPU_PIXEL_FORMAT_RGB_BAYER_16BPP,
     PPU_PIXEL_FORMAT_YVU_SEMIPLANAR_420,   //nv21
+    //PPU_PIXEL_FORMAT_YUYV_PACKAGE_422,
     PPU_PIXEL_FORMAT_BUTT
 } IPC_PPU_PIXEL_FORMAT;
 
@@ -71,7 +72,7 @@ typedef struct IPC_VIDEO_FRAME
     unsigned long long   u64pts;
 } IPC_VIDEO_FRAME;
 
-//=====================================combo info=============================================
+//=====================================sensor api=============================================
 int IPC_SENSOR_TypeCheck(IPC_VIDEO_CONFIG *pstVideoConfig);
 IPC_SNS_TYPE IPC_VIDEO_GetSnsType(char *pSnsName);
 int IPC_VIDEO_GetSnsSize(IPC_SNS_TYPE enSnsType, IPC_RESOLUTION_SIZE *pstSize);
@@ -80,22 +81,42 @@ unsigned int IPC_VIDEO_GetMipiLane(IPC_INPUT_LANE enInLane);
 int IPC_VIDEO_GetResolution(IPC_RESOLUTION enResolution, IPC_RESOLUTION_SIZE *pstSize);
 IPC_RESOLUTION IPC_VIDEO_GetResItem(IPC_RESOLUTION_SIZE *pstSize);
 
-int IPC_PPU_GetChn(int sViId, int sIspId);
-int IPC_PPU_SetMirror(int sChn, unsigned char uMirror);
-int IPC_PPU_SetFlip(int sChn, unsigned char uFlip);
+//=====================================isp api=============================================
+int IPC_ISP_SetSnsBus(int nViPipe, IPC_SNS_TYPE enSnsType, char s8SnsDev);
+int IPC_ISP_SnsRegisterCallback(int nViPipe, IPC_SNS_TYPE enSnsType);
+int IPC_ISP_SnsUnRegisterCallback(int nViPipe);
+int IPC_ISP_AelibCallback(int nViPipe);
+int IPC_ISP_AelibUnCallback(int nViPipe);
+int IPC_ISP_AwblibCallback(int nViPipe);
+int IPC_ISP_AwblibUnCallback(int nViPipe);
+int IPC_ISP_AlglibCallback(int nViPipe);
+int IPC_ISP_AlglibUnCallback(int nViPipe);
+
 int IPC_ISP_SetCSCAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
-int IPC_ISP_SetWBAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
-int IPC_ISP_SetWDRExpAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
-int IPC_ISP_SetExpAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetHLCAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
+int IPC_ISP_SetExpAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
+int IPC_ISP_SetWBAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
+int IPC_ISP_SetMirror(int sChn, unsigned char uMirror);
+int IPC_ISP_SetFlip(int sChn, unsigned char uFlip);
 
-int IPC_VI_GetViPipe(int sViId, int sPipeId);
+//=====================================ppu api=============================================
+int IPC_PPU_GetChnStatus(int sViId, int sPpuId);
+int IPC_PPU_GetChn(int sViId, int sPpuId);
+
+//=====================================vi api=============================================
+int IPC_VI_GetViNum();
+int IPC_VI_GetViChn(int sViId);
+int IPC_VI_GetViPipe(int sViId);
 unsigned int IPC_VI_GetInputFps(int sViId);
-int IPC_VI_GetWdrEnable(int sViId);
+int IPC_VI_SetInputFps(int sViId, unsigned int uFps);
+int IPC_VI_GetWdr(int sViId);
+int IPC_VI_SetWdr(int sViId, int sWDR);
 
+//=====================================ircut api=============================================
 int IPC_IRCUT_SetCfg(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 
-//=======================================api=================================================
+
+//=======================================base api=================================================
 int IPC_SYS_Init(IPC_VIDEO_CONFIG *pstVideoConfig, int sIsEncode);
 void IPC_SYS_UnInit();
 
@@ -104,13 +125,23 @@ void IPC_VI_Stop();
 int IPC_VI_Init(IPC_VIDEO_CONFIG *pstVideoConfig);
 void IPC_VI_UnInit();
 
-unsigned int IPC_PPU_CalcFrameSize(int sViId, int sIspId);
-int IPC_PPU_GetFrame(int sViId, int sIspId, void* pdata, unsigned int u32size,
+int IPC_ISP_RestartSns(int nViPipe, IPC_SNS_TYPE enSnsType);
+int IPC_ISP_StandbySns(int nViPipe, IPC_SNS_TYPE enSnsType);
+unsigned int IPC_ISP_CalcFrameSize(int sViId, int sPpuId);
+int IPC_ISP_ChnStart();
+void IPC_ISP_ChnStop();
+int IPC_ISP_ChnInit(IPC_VIDEO_CONFIG *pstVideoCfg);
+void IPC_ISP_ChnUnInit();
+
+int IPC_PPU_GetFrame(int sViId, int sPpuId, void* pdata, unsigned int u32size,
                              unsigned int *u32len, unsigned long long *u64pts);
 int IPC_PPU_Start();
 void IPC_PPU_Stop();
 int IPC_PPU_Init(IPC_VIDEO_CONFIG *pstVideoCfg);
 void IPC_PPU_UnInit();
+
+int IPC_IRCUT_Init(IPC_VIDEO_CONFIG *pstVideoCfg);
+void IPC_IRCUT_UnInit();
 
 void IPC_VFRAME_Init(IPC_VIDEO_FRAME *pvframe);
 int IPC_VFRAME_Alloc(IPC_VIDEO_FRAME *pvframe, unsigned int nsize);
@@ -120,11 +151,6 @@ int IPC_VENC_Start();
 void IPC_VENC_Stop();
 int IPC_VENC_Init(IPC_VIDEO_CONFIG *pstVideoCfg, IPC_MEDIA_BUFFER *pmbuffer[]);
 void IPC_VENC_UnInit();
-
-int IPC_IRCUT_Start(int sChn);
-void IPC_IRCUT_Stop(int sChn);
-int IPC_IRCUT_Init(IPC_VIDEO_CONFIG *pstVideoCfg);
-void IPC_IRCUT_UnInit();
 
 #ifdef __cplusplus
 #if __cplusplus
