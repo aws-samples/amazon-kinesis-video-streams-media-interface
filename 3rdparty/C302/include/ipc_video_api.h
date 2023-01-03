@@ -18,6 +18,7 @@ int IPC_VIDEO_SetStreamConfig(int nStreamId, IPC_VFORMAT_TYPE fmt, IPC_RESOLUTIO
                                            IPC_VCODEC_TYPE codec, unsigned int framerate, unsigned int profile);
 
 int IPC_VIDEO_ReqIFrame(int sStreamId);
+int IPC_VIDEO_CheckFrame(int sStreamId);
 int IPC_VIDEO_GetFrame(IPC_VIDEO_FRAME *pvframe, int sStreamId, unsigned int uYuvSize);
 
 void IPC_VIDEO_UpdateIspAttr();

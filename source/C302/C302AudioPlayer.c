@@ -23,7 +23,7 @@
 
 #define C302_HANDLE_GET(x) C302AudioPlayer* audioHandle = (C302AudioPlayer*) ((x))
 
-#define DEFAULT_VOLUME 50
+#define DEFAULT_VOLUME      50
 
 typedef struct {
     AudioPlayerStatus status;
@@ -67,7 +67,7 @@ AudioPlayerHandle audioPlayerCreate(void)
     setStatus((AudioPlayerHandle) audioHandle, AUD_PLY_STATUS_STREAM_OFF);
 
 #ifdef USING_HARD_STREAM_AUDIO
-    if (IPC_CFG_Init(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG) < 0) {
+    if (IPC_CFG_Init(CFG_AO_FLAG) < 0) {
         KVS_LOG("IPC_CFG_Init AO err\n");
         return NULL;
     }
@@ -114,66 +114,66 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
     unsigned int bit_width;
 
     switch (format) {
-        case AUD_FMT_G711A:
-            enc_type = CODEC_G711A;
-            break;
-        case AUD_FMT_G711U:
-            enc_type = CODEC_G711U;
-            break;
-        default:
-            KVS_LOG("Unsupported format %d", format);
-            return -EINVAL;
+    case AUD_FMT_G711A:
+        enc_type = CODEC_G711A;
+        break;
+    case AUD_FMT_G711U:
+        enc_type = CODEC_G711U;
+        break;
+    default:
+        KVS_LOG("Unsupported format %d", format);
+        return -EINVAL;
     }
 
     switch (channel) {
-        case AUD_CHN_MONO:
-            channels = 1;
-            break;
-        case AUD_CHN_STEREO:
-            channels = 2;
-            break;
-        default:
-            KVS_LOG("Unsupported channel num %d", channel);
-            return -EINVAL;
+    case AUD_CHN_MONO:
+        channels = 1;
+        break;
+    case AUD_CHN_STEREO:
+        channels = 2;
+        break;
+    default:
+        KVS_LOG("Unsupported channel num %d", channel);
+        return -EINVAL;
     }
 
     switch (sampleRate) {
-        case AUD_SAM_8K:
-            sample_rate = AUDIO_SAMPLERATE_8K;
-            break;
-        case AUD_SAM_16K:
-            sample_rate = AUDIO_SAMPLERATE_16K;
-            break;
-        case AUD_SAM_32K:
-            sample_rate = AUDIO_SAMPLERATE_32K;
-            break;
-        case AUD_SAM_48K:
-            sample_rate = AUDIO_SAMPLERATE_48K;
-            break;
-        default:
-            KVS_LOG("Unsupported sample rate %d", sampleRate);
-            return -EINVAL;
+    case AUD_SAM_8K:
+        sample_rate = AUDIO_SAMPLERATE_8K;
+        break;
+    case AUD_SAM_16K:
+        sample_rate = AUDIO_SAMPLERATE_16K;
+        break;
+    case AUD_SAM_32K:
+        sample_rate = AUDIO_SAMPLERATE_32K;
+        break;
+    case AUD_SAM_48K:
+        sample_rate = AUDIO_SAMPLERATE_48K;
+        break;
+    default:
+        KVS_LOG("Unsupported sample rate %d", sampleRate);
+        return -EINVAL;
     }
 
     switch (bitDepth) {
-        case AUD_BIT_16:
-            bit_width = AUDIO_BITWIDTH_16;
-            break;
-        default:
-            KVS_LOG("Unsupported bit depth %d", bitDepth);
-            return -EINVAL;
+    case AUD_BIT_16:
+        bit_width = AUDIO_BITWIDTH_16;
+        break;
+    default:
+        KVS_LOG("Unsupported bit depth %d", bitDepth);
+        return -EINVAL;
     }
 
     int ret = IPC_AUDIO_SetConfig(CFG_AO_FLAG, enc_type, channels, sample_rate, bit_width, DEFAULT_VOLUME);
     if (ret < 0) {
         KVS_LOG("IPC_AUDIO_SetConfig AO failed: %d\n", ret);
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_AO_FLAG);
         return -EAGAIN;
     }
     ret = IPC_AUDIO_Init(CFG_AO_FLAG);
     if (ret < 0) {
         KVS_LOG("IPC_AUDIO_Init AO failed: %d\n", ret);
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_AO_FLAG);
         return -EAGAIN;
     }
 #endif
@@ -220,7 +220,7 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
         KVS_LOG("AO device alloc failed");
         IPC_AUDIO_Disable(CFG_AO_FLAG);
         IPC_AUDIO_UnInit(CFG_AO_FLAG);
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_AO_FLAG);
         return -EAGAIN;
     }
 #endif
@@ -277,7 +277,7 @@ void audioPlayerDestory(AudioPlayerHandle handle)
         IPC_AUDIO_Disable(CFG_AO_FLAG);
     }
     IPC_AUDIO_UnInit(CFG_AO_FLAG);
-    IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+    IPC_CFG_UnInit(CFG_AO_FLAG);
 #endif
 
     setStatus(audioHandle, AUD_PLY_STATUS_NOT_READY);

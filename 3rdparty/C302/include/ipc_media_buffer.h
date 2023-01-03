@@ -12,6 +12,7 @@ extern "C" {
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <pthread.h>
 
 typedef enum IPC_MEDIA_FRAME_TYPE
 {
@@ -44,14 +45,16 @@ typedef struct IPC_MEDIA_BUFFER
     int             s32EndOffset;
     int             s32DeadlineOffset;
     pthread_mutex_t mutex;
-    pthread_cond_t  cond;
+    //pthread_cond_t  cond;
 } IPC_MEDIA_BUFFER;
 
+int IPC_MEDIA_BUFFER_Empty(IPC_MEDIA_BUFFER *pmbuffer);
 int IPC_MEDIA_BUFFER_Read(IPC_MEDIA_BUFFER *pmbuffer, void* pdata, unsigned int u32size,
                                     unsigned int *u32len, unsigned long long *u64pts);
 int IPC_MEDIA_BUFFER_Write(IPC_MEDIA_BUFFER *pmbuffer, IPC_MEDIA_FRAME_TYPE mft,
                                       void* pdata, unsigned int u32len, unsigned long long u64pts);
 
+void IPC_MEDIA_BUFFER_Clear(IPC_MEDIA_BUFFER *pmbuffer);
 IPC_MEDIA_BUFFER *IPC_MEDIA_BUFFER_Init(int s32Size);
 void IPC_MEDIA_BUFFER_UnInit(IPC_MEDIA_BUFFER *pmbuffer);
 
