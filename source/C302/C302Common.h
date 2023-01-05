@@ -44,13 +44,13 @@
 #define KVS_LOG(format, args...) printf("[kvs %s:%d] " format, __func__, __LINE__, ##args)
 #endif
 
-#define HANDLE_NULL_CHECK(x)                   \
-    if (!(x)) {                                \
-        KVS_LOG("HANDLE_STATUS_CHECK err\n");  \
-        return -EINVAL;                        \
+#define HANDLE_NULL_CHECK(x)                                                                                                                         \
+    if (!(x)) {                                                                                                                                      \
+        KVS_LOG("HANDLE_STATUS_CHECK err\n");                                                                                                        \
+        return -EINVAL;                                                                                                                              \
     }
-#define HANDLE_STATUS_CHECK(C302Handle, expectedStatus)  \
-    if ((C302Handle)->status != (expectedStatus)) {      \
-        KVS_LOG("HANDLE_STATUS_CHECK err\n");            \
-        return -EAGAIN;                                  \
+#define HANDLE_STATUS_CHECK(C302Handle, expectedStatus)                                                                                              \
+    if ((C302Handle)->status != (expectedStatus)) {                                                                                                  \
+        KVS_LOG("HANDLE_STATUS_CHECK err\n");                                                                                                        \
+        return -EAGAIN;                                                                                                                              \
     }

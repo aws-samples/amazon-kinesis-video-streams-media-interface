@@ -21,7 +21,7 @@
 
 #define USING_HARD_STREAM_AUDIO
 
-#define DEFAULT_VOLUME      50
+#define DEFAULT_VOLUME 50
 
 #define C302_HANDLE_GET(x) C302AudioCapturer* audioHandle = (C302AudioCapturer*) ((x))
 
@@ -32,7 +32,7 @@ typedef struct {
     AudioChannel channel;
     AudioBitDepth bitDepth;
     AudioSampleRate sampleRate;
-    IPC_AUDIO_FRAME *aframe;
+    IPC_AUDIO_FRAME* aframe;
 } C302AudioCapturer;
 
 static int setStatus(AudioCapturerHandle handle, const AudioCapturerStatus newStatus)
@@ -115,57 +115,57 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     unsigned int bit_width;
 
     switch (format) {
-    case AUD_FMT_G711A:
-        enc_type = CODEC_G711A;
-    break;
-    case AUD_FMT_G711U:
-        enc_type = CODEC_G711U;
-        break;
-    case AUD_FMT_AAC:
-        enc_type = CODEC_AAC;
-        break;
-    default:
-        KVS_LOG("Unsupported format %d", format);
-        return -EINVAL;
+        case AUD_FMT_G711A:
+            enc_type = CODEC_G711A;
+            break;
+        case AUD_FMT_G711U:
+            enc_type = CODEC_G711U;
+            break;
+        case AUD_FMT_AAC:
+            enc_type = CODEC_AAC;
+            break;
+        default:
+            KVS_LOG("Unsupported format %d", format);
+            return -EINVAL;
     }
 
     switch (channel) {
-    case AUD_CHN_MONO:
-        channels = 1;
-        break;
-    case AUD_CHN_STEREO:
-        channels = 2;
-        break;
-    default:
-        KVS_LOG("Unsupported channel num %d", channel);
-        return -EINVAL;
+        case AUD_CHN_MONO:
+            channels = 1;
+            break;
+        case AUD_CHN_STEREO:
+            channels = 2;
+            break;
+        default:
+            KVS_LOG("Unsupported channel num %d", channel);
+            return -EINVAL;
     }
 
     switch (sampleRate) {
-    case AUD_SAM_8K:
-        sample_rate = AUDIO_SAMPLERATE_8K;
-        break;
-    case AUD_SAM_16K:
-        sample_rate = AUDIO_SAMPLERATE_16K;
-        break;
-    case AUD_SAM_32K:
-        sample_rate = AUDIO_SAMPLERATE_32K;
-        break;
-    case AUD_SAM_48K:
-    sample_rate = AUDIO_SAMPLERATE_48K;
-        break;
-    default:
-        KVS_LOG("Unsupported sample rate %d", sampleRate);
-        return -EINVAL;
+        case AUD_SAM_8K:
+            sample_rate = AUDIO_SAMPLERATE_8K;
+            break;
+        case AUD_SAM_16K:
+            sample_rate = AUDIO_SAMPLERATE_16K;
+            break;
+        case AUD_SAM_32K:
+            sample_rate = AUDIO_SAMPLERATE_32K;
+            break;
+        case AUD_SAM_48K:
+            sample_rate = AUDIO_SAMPLERATE_48K;
+            break;
+        default:
+            KVS_LOG("Unsupported sample rate %d", sampleRate);
+            return -EINVAL;
     }
 
     switch (bitDepth) {
-    case AUD_BIT_16:
-        bit_width = AUDIO_BITWIDTH_16;
-        break;
-    default:
-        KVS_LOG("Unsupported bit depth %d", bitDepth);
-        return -EINVAL;
+        case AUD_BIT_16:
+            bit_width = AUDIO_BITWIDTH_16;
+            break;
+        default:
+            KVS_LOG("Unsupported bit depth %d", bitDepth);
+            return -EINVAL;
     }
 
     int ret = IPC_AUDIO_SetConfig(CFG_AI_FLAG, enc_type, channels, sample_rate, bit_width, DEFAULT_VOLUME);
@@ -217,7 +217,7 @@ int audioCapturerAcquireStream(AudioCapturerHandle handle)
         IPC_CFG_UnInit(CFG_AI_FLAG);
         return -EAGAIN;
     }
-    audioHandle->aframe = (IPC_AUDIO_FRAME *)malloc(sizeof(IPC_AUDIO_FRAME));
+    audioHandle->aframe = (IPC_AUDIO_FRAME*) malloc(sizeof(IPC_AUDIO_FRAME));
     if (!audioHandle->aframe) {
         KVS_LOG("AI device alloc aframe failed");
         IPC_AUDIO_UnInit(CFG_AI_FLAG);
@@ -247,10 +247,10 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
 
     ret = IPC_AUDIO_GetFrame(audioHandle->aframe);
     if (ret <= 0) {
-        //KVS_LOG("IPC_AUDIO_GetFrame failed");
+        // KVS_LOG("IPC_AUDIO_GetFrame failed");
         return -EAGAIN;
     }
-    memcpy(pFrameDataBuffer, (void*)audioHandle->aframe->u8data, audioHandle->aframe->u32len);
+    memcpy(pFrameDataBuffer, (void*) audioHandle->aframe->u8data, audioHandle->aframe->u32len);
     *pFrameSize = audioHandle->aframe->u32len;
     *pTimestamp = audioHandle->aframe->u64pts;
 #endif
