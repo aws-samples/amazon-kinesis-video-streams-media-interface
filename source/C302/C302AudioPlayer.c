@@ -67,7 +67,7 @@ AudioPlayerHandle audioPlayerCreate(void)
     setStatus((AudioPlayerHandle) audioHandle, AUD_PLY_STATUS_STREAM_OFF);
 
 #ifdef USING_HARD_STREAM_AUDIO
-    if (IPC_CFG_Init(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG) < 0) {
+    if (IPC_CFG_Init(CFG_AO_FLAG) < 0) {
         KVS_LOG("IPC_CFG_Init AO err\n");
         return NULL;
     }
@@ -167,13 +167,13 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
     int ret = IPC_AUDIO_SetConfig(CFG_AO_FLAG, enc_type, channels, sample_rate, bit_width, DEFAULT_VOLUME);
     if (ret < 0) {
         KVS_LOG("IPC_AUDIO_SetConfig AO failed: %d\n", ret);
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_AO_FLAG);
         return -EAGAIN;
     }
     ret = IPC_AUDIO_Init(CFG_AO_FLAG);
     if (ret < 0) {
         KVS_LOG("IPC_AUDIO_Init AO failed: %d\n", ret);
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_AO_FLAG);
         return -EAGAIN;
     }
 #endif
@@ -220,7 +220,7 @@ int audioPlayerAcquireStream(AudioPlayerHandle handle)
         KVS_LOG("AO device alloc failed");
         IPC_AUDIO_Disable(CFG_AO_FLAG);
         IPC_AUDIO_UnInit(CFG_AO_FLAG);
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_AO_FLAG);
         return -EAGAIN;
     }
 #endif
@@ -277,7 +277,7 @@ void audioPlayerDestory(AudioPlayerHandle handle)
         IPC_AUDIO_Disable(CFG_AO_FLAG);
     }
     IPC_AUDIO_UnInit(CFG_AO_FLAG);
-    IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+    IPC_CFG_UnInit(CFG_AO_FLAG);
 #endif
 
     setStatus(audioHandle, AUD_PLY_STATUS_NOT_READY);
