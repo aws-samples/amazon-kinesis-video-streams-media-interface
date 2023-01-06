@@ -101,7 +101,7 @@ VideoCapturerHandle videoCapturerCreate(void)
     memset(videoHandle, 0, sizeof(C302VideoCapturer));
 
 #ifdef USING_HARD_STREAM_VIDEO
-    if (IPC_CFG_Init(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG) < 0) {
+    if (IPC_CFG_Init(CFG_VIDEO_FLAG) < 0) {
         KVS_LOG("IPC_CFG_Init video failed\n");
         free(videoHandle);
         return NULL;
@@ -178,12 +178,12 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
 
     int ret = IPC_VIDEO_SetStreamConfig(DEFAULT_STREAM_CHN, FORMAT_NONE, &vresolution, vcodec, DEFAULT_STREAM_FPS, DEFAULT_STREAM_PRO);
     if (ret < 0) {
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_VIDEO_FLAG);
         return -EAGAIN;
     }
     ret = IPC_VIDEO_Init();
     if (ret < 0) {
-        IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+        IPC_CFG_UnInit(CFG_VIDEO_FLAG);
         return -EAGAIN;
     }
 #endif
@@ -232,6 +232,7 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
     if (videoHandle->format == VID_FMT_H264) {
         ret = IPC_VIDEO_GetFrame(&videoHandle->vframe, DEFAULT_STREAM_CHN, 0);
         if (ret > 0) {
+            // KVS_LOG("IPC_VIDEO_GetFrame:%u\n", videoHandle->vframe.u32len);
             memcpy(pFrameDataBuffer, videoHandle->vframe.u8data, videoHandle->vframe.u32len);
             *pFrameSize = videoHandle->vframe.u32len;
             *pTimestamp = videoHandle->vframe.u64pts;
@@ -269,7 +270,7 @@ void videoCapturerDestory(VideoCapturerHandle handle)
         videoCapturerReleaseStream(videoHandle);
     }
     IPC_VIDEO_UnInit();
-    IPC_CFG_UnInit(CFG_AI_FLAG | CFG_AO_FLAG | CFG_VIDEO_FLAG);
+    IPC_CFG_UnInit(CFG_VIDEO_FLAG);
 #endif
 
     setStatus(videoHandle, VID_CAP_STATUS_NOT_READY);
