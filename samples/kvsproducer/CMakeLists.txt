@@ -68,3 +68,11 @@ if(HAVE_SIGNAL_H)
     target_compile_definitions(kvsproducer-shared PRIVATE HAVE_SIGNAL_H)
     target_compile_definitions(kvsproducer-static PRIVATE HAVE_SIGNAL_H)
 endif()
+
+include(GNUInstallDirs)
+
+install(TARGETS kvsproducer-shared
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+
+install(TARGETS kvsproducer-static
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
