@@ -24,3 +24,11 @@ add_dependencies(saveframe-static embedded-media-static)
 target_include_directories(saveframe-static PRIVATE ${EMBEDDED_MEDIA_INCLUDES_DIR})
 target_link_directories(saveframe-static PRIVATE ${EMBEDDED_MEDIA_LINK_DIR} ${BOARD_LIBS_DIR})
 target_link_libraries(saveframe-static embedded-media-static ${BOARD_LIBS_STATIC})
+
+include(GNUInstallDirs)
+
+install(TARGETS saveframe-shared
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+
+install(TARGETS saveframe-static
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})

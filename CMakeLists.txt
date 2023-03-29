@@ -111,7 +111,7 @@ if(BUILD_WEBRTC_SAMPLES)
 endif()
 
 if(BUILD_KVS_SAMPLES)
-    add_subdirectory(${SAMPLES_DIR}/kvs)
+    add_subdirectory(${SAMPLES_DIR}/kvsproducer)
 endif()
 
 if(BUILD_SAVE_FRAME_SAMPLES)
