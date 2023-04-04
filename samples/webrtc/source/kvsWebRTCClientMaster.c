@@ -343,11 +343,20 @@ PVOID sendVideoPackets(PVOID args)
         goto CleanUp;
     }
 
+    int getFrameStatus = 0;
     while (!ATOMIC_LOAD_BOOL(&pSampleConfiguration->appTerminateFlag)) {
-        if (videoCapturerGetFrame(videoCapturerHandle, pFrameBuffer, VIDEO_FRAME_BUFFER_SIZE_BYTES, &timestamp, &frameSize)) {
-            printf("videoCapturerGetFrame failed\n");
-        } else {
-            writeFrameToAllSessions(timestamp * HUNDREDS_OF_NANOS_IN_A_MICROSECOND, pFrameBuffer, frameSize, SAMPLE_VIDEO_TRACK_ID);
+        getFrameStatus = videoCapturerGetFrame(videoCapturerHandle, pFrameBuffer, VIDEO_FRAME_BUFFER_SIZE_BYTES, &timestamp, &frameSize);
+        switch (getFrameStatus) {
+            case 0:
+                // successfully get a frame
+                writeFrameToAllSessions(timestamp * HUNDREDS_OF_NANOS_IN_A_MICROSECOND, pFrameBuffer, frameSize, SAMPLE_VIDEO_TRACK_ID);
+                break;
+            case -EAGAIN:
+                // frame is not ready yet
+                usleep(1000);
+                break;
+            default:
+                printf("videoCapturerGetFrame failed\n");
         }
     }
 
@@ -387,11 +396,20 @@ PVOID sendAudioPackets(PVOID args)
         goto CleanUp;
     }
 
+    int getFrameStatus = 0;
     while (!ATOMIC_LOAD_BOOL(&pSampleConfiguration->appTerminateFlag)) {
-        if (audioCapturerGetFrame(audioCapturerHandle, pFrameBuffer, AUDIO_FRAME_BUFFER_SIZE_BYTES, &timestamp, &frameSize)) {
-            printf("audioCapturerGetFrame failed\n");
-        } else {
-            writeFrameToAllSessions(timestamp * HUNDREDS_OF_NANOS_IN_A_MICROSECOND, pFrameBuffer, frameSize, SAMPLE_AUDIO_TRACK_ID);
+        getFrameStatus = audioCapturerGetFrame(audioCapturerHandle, pFrameBuffer, AUDIO_FRAME_BUFFER_SIZE_BYTES, &timestamp, &frameSize);
+        switch (getFrameStatus) {
+            case 0:
+                // successfully get a frame
+                writeFrameToAllSessions(timestamp * HUNDREDS_OF_NANOS_IN_A_MICROSECOND, pFrameBuffer, frameSize, SAMPLE_AUDIO_TRACK_ID);
+                break;
+            case -EAGAIN:
+                // frame is not ready yet
+                usleep(1000);
+                break;
+            default:
+                printf("audioCapturerGetFrame failed\n");
         }
     }
 
