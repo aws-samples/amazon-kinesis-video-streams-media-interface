@@ -96,8 +96,7 @@ int IPC_ISP_SetCSCAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetHLCAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetExpAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetWBAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
-int IPC_ISP_SetMirror(int sChn, unsigned char uMirror);
-int IPC_ISP_SetFlip(int sChn, unsigned char uFlip);
+int IPC_ISP_SetMirrorAndFlip(int sChn, unsigned char uMirror, unsigned char uFlip);
 
 //=====================================ppu api=============================================
 int IPC_PPU_GetChnStatus(int sViId, int sPpuId);
