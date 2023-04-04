@@ -160,13 +160,13 @@ typedef enum IPC_IRCUT_TYPE
 typedef enum IPC_AUDIO_SAMPLERATE
 {
     AUDIO_SAMPLERATE_8K = 0,
-    AUDIO_SAMPLERATE_12K,
+    //AUDIO_SAMPLERATE_12K,
     AUDIO_SAMPLERATE_16K,
-    AUDIO_SAMPLERATE_24K,
+    //AUDIO_SAMPLERATE_24K,
     AUDIO_SAMPLERATE_32K,
     AUDIO_SAMPLERATE_48K,
-    AUDIO_SAMPLERATE_64K,
-    AUDIO_SAMPLERATE_96K,
+    //AUDIO_SAMPLERATE_64K,
+    //AUDIO_SAMPLERATE_96K,
     AUDIO_SAMPLERATE_BUTT
 } IPC_AUDIO_SAMPLERATE;
 
@@ -235,6 +235,7 @@ typedef struct IPC_IMAGE_CONFIG
     unsigned char               u8WDR;                                              // WDR
     unsigned char               u8LDC;                                              // distortion correction
     unsigned char               u8HLC;                                              // strong light suppression
+    unsigned char               u8HLCLevel;                                         // strong light suppression level:0-close 1-low 2-mid 3-high
     IPC_IRCUT_TYPE              enIrcutType;                                        // IRCUT type
     unsigned int                u32DayToNight;                                      // day to night time, valid only in timed mode
     unsigned int                u32NightToDay;                                      // night to day time, valid only in timed mode
