@@ -11,7 +11,7 @@ if(BOARD STREQUAL "C302")
     # User MUST copy the sysroot folder provided by amlogic into ${BOARD_SDK_DIR}
     set(CMAKE_SYSROOT ${BOARD_SDK_DIR}/sysroot/)
 
-    set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-glibc)
+    set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-gnu)
 
     link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
 
