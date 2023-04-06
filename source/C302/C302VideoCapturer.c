@@ -237,7 +237,7 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
             *pFrameSize = videoHandle->vframe.u32len;
             *pTimestamp = videoHandle->vframe.u64pts;
         } else {
-            return -EINVAL;
+            return -EAGAIN;
         }
     } else {
         KVS_LOG("format not support");
