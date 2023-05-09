@@ -102,13 +102,36 @@ mkdir build; cd build; cmake .. -DBUILD_WEBRTC_SAMPLES=OFF -DBUILD_KVS_SAMPLES=O
 make
 ```
 4. Upload built artifacts(i.e kvsproducer-static) at *amazon-kinesis-video-streams-media-interface/build/samples/kvs/* to your board.
-5. Setup AWS credentials in environment variables. The sample is using AWS access key/secret key by default:
-```
-export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
-export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-export AWS_DEFAULT_REGION=us-east-1
-export AWS_KVS_HOST=kinesisvideo.us-east-1.amazonaws.com
-```
+5. Setup AWS credentials.
+  - If you want to use AWS access key id/access key secrets, use following commands to setup environment variables:
+  ```bash
+  export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
+  export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  export AWS_DEFAULT_REGION=us-east-1
+  ```
+  - Alternatively if you want to use AWS IoT Certificate, add IoT Certificate into [samples/kvsproducer/source/sample_config.h](samples/kvsproducer/source/sample_config.h):
+  ```c
+  #define ENABLE_IOT_CREDENTIAL           1
+  #if ENABLE_IOT_CREDENTIAL
+  #define CREDENTIALS_HOST                "xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com"
+  #define ROLE_ALIAS                      "KvsCameraIoTRoleAlias"
+  #define THING_NAME                      KVS_STREAM_NAME
+  #define ROOT_CA \
+  "-----BEGIN CERTIFICATE-----\n" \
+  "......\n" \
+  "-----END CERTIFICATE-----\n"
+
+  #define CERTIFICATE \
+  "-----BEGIN CERTIFICATE-----\n" \
+  "......\n" \
+  "-----END CERTIFICATE-----\n"
+
+  #define PRIVATE_KEY \
+  "-----BEGIN RSA PRIVATE KEY-----\n" \
+  "......\n" \
+  "-----END RSA PRIVATE KEY-----\n"
+  #endif /* ENABLE_IOT_CREDENTIAL */
+  ```
 6. Make sure your the system time on your board has been synchronized. You may set it manually or use ntp client.
 7. Execute sample on your board: `./kvsproducer-static $YOUR_STREAM_NAME`
 8. Check DASH live stream via [AWS KVS test page](https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/)
