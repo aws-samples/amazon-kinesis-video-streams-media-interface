@@ -36,12 +36,12 @@ AudioCapturerHandle audioCapturerCreate(void)
     return NULL;
 }
 
-AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle const handle)
+AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle handle)
 {
     return AUD_CAP_STATUS_NOT_READY;
 }
 
-int audioCapturerGetCapability(const AudioCapturerHandle const handle, AudioCapability* pCapability)
+int audioCapturerGetCapability(const AudioCapturerHandle handle, AudioCapability* pCapability)
 {
     return -EAGAIN;
 }
@@ -52,7 +52,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
     return -EAGAIN;
 }
 
-int audioCapturerGetFormat(const AudioCapturerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
+int audioCapturerGetFormat(const AudioCapturerHandle handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                            AudioBitDepth* pBitDepth)
 {
     return -EAGAIN;

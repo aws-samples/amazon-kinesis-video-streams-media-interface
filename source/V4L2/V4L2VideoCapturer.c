@@ -78,7 +78,7 @@ VideoCapturerHandle videoCapturerCreate(void)
     return (VideoCapturerHandle) v4l2Handle;
 }
 
-VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle)
+VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle handle)
 {
     if (!handle) {
         return VID_CAP_STATUS_NOT_READY;
@@ -88,7 +88,7 @@ VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handl
     return v4l2Handle->status;
 }
 
-int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapability* pCapability)
+int videoCapturerGetCapability(const VideoCapturerHandle handle, VideoCapability* pCapability)
 {
     V4L2_HANDLE_NULL_CHECK(handle);
     V4L2_HANDLE_GET(handle);
@@ -160,7 +160,7 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
     return 0;
 }
 
-int videoCapturerGetFormat(const VideoCapturerHandle const handle, VideoFormat* pFormat, VideoResolution* pResolution)
+int videoCapturerGetFormat(const VideoCapturerHandle handle, VideoFormat* pFormat, VideoResolution* pResolution)
 {
     V4L2_HANDLE_NULL_CHECK(handle);
     V4L2_HANDLE_GET(handle);

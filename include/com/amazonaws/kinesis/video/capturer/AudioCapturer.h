@@ -46,7 +46,7 @@ AudioCapturerHandle audioCapturerCreate(void);
  * @param[in] handle Handle of AudioCapturer.
  * @return AudioCapturerStatus
  */
-AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle const handle);
+AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle handle);
 
 /**
  * @brief Get capturer capability.
@@ -55,7 +55,7 @@ AudioCapturerStatus audioCapturerGetStatus(const AudioCapturerHandle const handl
  * @param[out] pCapability Capturer capability.
  * @return int 0 or error code.
  */
-int audioCapturerGetCapability(const AudioCapturerHandle const handle, AudioCapability* pCapability);
+int audioCapturerGetCapability(const AudioCapturerHandle handle, AudioCapability* pCapability);
 
 /**
  * @brief Set capturer format, channel number, bit depth and sample rate.
@@ -80,7 +80,7 @@ int audioCapturerSetFormat(AudioCapturerHandle handle, const AudioFormat format,
  * @param[in] pBitDepth Frame bit depth.
  * @return int 0 or error code.
  */
-int audioCapturerGetFormat(const AudioCapturerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
+int audioCapturerGetFormat(const AudioCapturerHandle handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                            AudioBitDepth* pBitDepth);
 
 /**

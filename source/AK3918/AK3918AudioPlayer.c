@@ -67,7 +67,7 @@ AudioPlayerHandle audioPlayerCreate(void)
     return (AudioPlayerHandle) AK3918Handle;
 }
 
-AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
+AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle handle)
 {
     if (!handle) {
         return AUD_PLY_STATUS_NOT_READY;
@@ -78,7 +78,7 @@ AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
     return AK3918Handle->status;
 }
 
-int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability)
+int audioPlayerGetCapability(const AudioPlayerHandle handle, AudioCapability* pCapability)
 {
     AK3918_HANDLE_NULL_CHECK(handle);
     AK3918_HANDLE_GET(handle);
@@ -155,7 +155,7 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
     return 0;
 }
 
-int audioPlayerGetFormat(const AudioPlayerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
+int audioPlayerGetFormat(const AudioPlayerHandle handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                          AudioBitDepth* pBitDepth)
 {
     AK3918_HANDLE_NULL_CHECK(handle);

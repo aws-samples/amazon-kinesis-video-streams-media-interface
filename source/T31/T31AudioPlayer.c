@@ -91,7 +91,7 @@ AudioPlayerHandle audioPlayerCreate(void)
     return (AudioPlayerHandle) t31Handle;
 }
 
-int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability)
+int audioPlayerGetCapability(const AudioPlayerHandle handle, AudioCapability* pCapability)
 {
     T31_HANDLE_NULL_CHECK(handle);
     T31_HANDLE_GET(handle);
@@ -201,7 +201,7 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
     return 0;
 }
 
-int audioPlayerGetFormat(const AudioPlayerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
+int audioPlayerGetFormat(const AudioPlayerHandle handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                          AudioBitDepth* pBitDepth)
 {
     T31_HANDLE_NULL_CHECK(handle);
