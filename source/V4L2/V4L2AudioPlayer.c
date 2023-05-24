@@ -35,12 +35,12 @@ AudioPlayerHandle audioPlayerCreate(void)
     return NULL;
 }
 
-AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle)
+AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle handle)
 {
     return AUD_PLY_STATUS_NOT_READY;
 }
 
-int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability)
+int audioPlayerGetCapability(const AudioPlayerHandle handle, AudioCapability* pCapability)
 {
     return -EAGAIN;
 }
@@ -51,7 +51,7 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
     return -EAGAIN;
 }
 
-int audioPlayerGetFormat(const AudioPlayerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
+int audioPlayerGetFormat(const AudioPlayerHandle handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                          AudioBitDepth* pBitDepth)
 {
     return -EAGAIN;

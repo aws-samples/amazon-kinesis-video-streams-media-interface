@@ -399,7 +399,7 @@ VideoCapturerHandle videoCapturerCreate(void)
     return (VideoCapturerHandle) Handle;
 }
 
-VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle)
+VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle handle)
 {
     if (!handle) {
         return VID_CAP_STATUS_NOT_READY;
@@ -409,7 +409,7 @@ VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handl
     return Sv82xHandle->status;
 }
 
-int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapability* pCapability)
+int videoCapturerGetCapability(const VideoCapturerHandle handle, VideoCapability* pCapability)
 {
     EI_S32 s32Ret = EI_SUCCESS;
     SV82X_HANDLE_NULL_CHECK(handle);
@@ -517,7 +517,7 @@ int videoCapturerSetFormat(VideoCapturerHandle const handle, const VideoFormat f
     return 0;
 }
 
-int videoCapturerGetFormat(const VideoCapturerHandle const handle, VideoFormat* pFormat, VideoResolution* pResolution)
+int videoCapturerGetFormat(const VideoCapturerHandle handle, VideoFormat* pFormat, VideoResolution* pResolution)
 {
     SV82X_HANDLE_NULL_CHECK(handle);
     SV82X_HANDLE_GET(handle);

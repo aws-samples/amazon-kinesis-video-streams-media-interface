@@ -46,7 +46,7 @@ VideoCapturerHandle videoCapturerCreate(void);
  * @param[in] handle Handle of VideoCapturer.
  * @return VideoCapturerStatus Status of VideoCapturer.
  */
-VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handle);
+VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle handle);
 
 /**
  * @brief Get capturer capability.
@@ -55,7 +55,7 @@ VideoCapturerStatus videoCapturerGetStatus(const VideoCapturerHandle const handl
  * @param[out] pCapability Capturer capability.
  * @return int 0 or error code.
  */
-int videoCapturerGetCapability(const VideoCapturerHandle const handle, VideoCapability* pCapability);
+int videoCapturerGetCapability(const VideoCapturerHandle handle, VideoCapability* pCapability);
 
 /**
  * @brief Set capturer format and resolution.
@@ -75,7 +75,7 @@ int videoCapturerSetFormat(VideoCapturerHandle handle, const VideoFormat format,
  * @param[out] pResolution Frame resolution.
  * @return int 0 or error code.
  */
-int videoCapturerGetFormat(const VideoCapturerHandle const handle, VideoFormat* pFormat, VideoResolution* pResolution);
+int videoCapturerGetFormat(const VideoCapturerHandle handle, VideoFormat* pFormat, VideoResolution* pResolution);
 
 /**
  * @brief Acquire and turn on video stream.

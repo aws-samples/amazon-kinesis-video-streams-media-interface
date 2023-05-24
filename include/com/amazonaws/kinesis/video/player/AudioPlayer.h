@@ -46,7 +46,7 @@ AudioPlayerHandle audioPlayerCreate(void);
  * @param[in] handle Handle of AudioPlayer.
  * @return AudioPlayerStatus Status of AudioPlayer.
  */
-AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle);
+AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle handle);
 
 /**
  * @brief Get player capability.
@@ -55,7 +55,7 @@ AudioPlayerStatus audioPlayerGetStatus(const AudioPlayerHandle const handle);
  * @param[out] pCapability Player capability.
  * @return int 0 or error code.
  */
-int audioPlayerGetCapability(const AudioPlayerHandle const handle, AudioCapability* pCapability);
+int audioPlayerGetCapability(const AudioPlayerHandle handle, AudioCapability* pCapability);
 
 /**
  * @brief Set player format, channel number, bit depth and sample rate.
@@ -80,7 +80,7 @@ int audioPlayerSetFormat(AudioPlayerHandle handle, const AudioFormat format, con
  * @param[in] pBitDepth Frame bit depth.
  * @return int 0 or error code.
  */
-int audioPlayerGetFormat(const AudioPlayerHandle const handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
+int audioPlayerGetFormat(const AudioPlayerHandle handle, AudioFormat* pFormat, AudioChannel* pChannel, AudioSampleRate* pSampleRate,
                          AudioBitDepth* pBitDepth);
 
 /**
