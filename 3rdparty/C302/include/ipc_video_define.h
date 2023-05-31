@@ -99,8 +99,9 @@ int IPC_ISP_SetWBAttr(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 int IPC_ISP_SetMirrorAndFlip(int sChn, unsigned char uMirror, unsigned char uFlip);
 
 //=====================================ppu api=============================================
-int IPC_PPU_GetChnStatus(int sViId, int sPpuId);
-int IPC_PPU_GetChn(int sViId, int sPpuId);
+int IPC_PPU_GetChnStatus(int sPpuGrp, int sPpuChn);
+int IPC_PPU_SetLdcAttr(int sPpuGrp, IPC_IMAGE_CONFIG *pstImageCfg, IPC_STREAM_CONFIG *pstStreamCfg);
+
 
 //=====================================vi api=============================================
 int IPC_VI_GetViNum();
@@ -116,7 +117,7 @@ int IPC_IRCUT_SetCfg(int sChn, IPC_IMAGE_CONFIG *pstImageCfg);
 
 
 //=======================================base api=================================================
-int IPC_SYS_Init(IPC_VIDEO_CONFIG *pstVideoConfig, int sIsEncode);
+int IPC_SYS_Init(IPC_VIDEO_CONFIG *pstVideoConfig);
 void IPC_SYS_UnInit();
 
 int IPC_VI_Start();
@@ -126,13 +127,13 @@ void IPC_VI_UnInit();
 
 int IPC_ISP_RestartSns(int nViPipe, IPC_SNS_TYPE enSnsType);
 int IPC_ISP_StandbySns(int nViPipe, IPC_SNS_TYPE enSnsType);
-unsigned int IPC_ISP_CalcFrameSize(int sViId, int sPpuId);
+unsigned int IPC_ISP_CalcFrameSize(int sPpuGrp);
 int IPC_ISP_ChnStart();
 void IPC_ISP_ChnStop();
 int IPC_ISP_ChnInit(IPC_VIDEO_CONFIG *pstVideoCfg);
 void IPC_ISP_ChnUnInit();
 
-int IPC_PPU_GetFrame(int sViId, int sPpuId, void* pdata, unsigned int u32size,
+int IPC_PPU_GetFrame(int sPpuGrp, void* pdata, unsigned int u32size,
                              unsigned int *u32len, unsigned long long *u64pts);
 int IPC_PPU_Start();
 void IPC_PPU_Stop();
