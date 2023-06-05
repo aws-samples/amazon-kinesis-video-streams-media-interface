@@ -23,7 +23,7 @@
 
 #define C302_HANDLE_GET(x) C302AudioPlayer* audioHandle = (C302AudioPlayer*) ((x))
 
-#define DEFAULT_VOLUME 50
+#define DEFAULT_VOLUME 31
 
 typedef struct {
     AudioPlayerStatus status;

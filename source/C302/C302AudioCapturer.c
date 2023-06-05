@@ -21,7 +21,7 @@
 
 #define USING_HARD_STREAM_AUDIO
 
-#define DEFAULT_VOLUME 50
+#define DEFAULT_VOLUME 14
 
 #define C302_HANDLE_GET(x) C302AudioCapturer* audioHandle = (C302AudioCapturer*) ((x))
 
