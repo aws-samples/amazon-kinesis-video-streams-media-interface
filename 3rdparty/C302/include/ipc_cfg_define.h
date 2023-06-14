@@ -26,8 +26,11 @@ extern "C" {
 #define MAX_CFG_NUM         64
 #define MAX_CFG_AREA_NUM    4
 
+#define VIDEO_STREAM_ISP_ID 2
+#define VIDEO_STREAM_PPU_CHN 2
+
 #define EACH_VI_MAX_ISP_CHN 3
-#define CALU_ISP_CHN_BY_VI(vi, ppu) ((vi*EACH_VI_MAX_ISP_CHN)+ppu) // Each sensor has 3 physical channels
+#define CALU_ISP_CHN_BY_ID(viid, ispid) ((viid*EACH_VI_MAX_ISP_CHN)+ispid) // Each sensor has 3 physical channels
 
 typedef enum IPC_CFG_DATA_TYPE
 {
@@ -97,6 +100,7 @@ typedef enum IPC_RESOLUTION
 {
     PIC_CIF = 0,    // 352x288
     PIC_360P,       // 640x360
+    PIC_480P,       // 720*480
     PIC_D1,         // 704x576
     PIC_720P,       // 1280x720
     PIC_1080P,      // 1920x1080
@@ -106,6 +110,12 @@ typedef enum IPC_RESOLUTION
     PIC_3840x2160,
     PIC_BUTT
 } IPC_RESOLUTION;
+
+typedef enum IPC_VIDEO_STREAM
+{
+    VIDEO_STREAM_MAIN = 0,
+    VIDEO_STREAM_BUTT
+} IPC_VIDEO_STREAM;
 
 typedef enum IPC_VFORMAT_TYPE
 {
@@ -194,8 +204,7 @@ typedef struct IPC_VI_CONFIG
 /* video encode stream */
 typedef struct IPC_STREAM_CONFIG
 {
-    int                         s32ViId;
-    int                         s32PpuId;
+    int                         s32Channel;
     IPC_RESOLUTION              enResolution;                                       // resolution
     IPC_VFORMAT_TYPE            enFormat;                                           // stream format，0-need encode，1-not need encode，raw NV21
     IPC_VCODEC_TYPE             enCodec;                                            // encode type
@@ -236,10 +245,11 @@ typedef struct IPC_IMAGE_CONFIG
     unsigned char               u8LDC;                                              // distortion correction
     unsigned char               u8HLC;                                              // strong light suppression
     unsigned char               u8HLCLevel;                                         // strong light suppression level:0-close 1-low 2-mid 3-high
+    unsigned char               u8AntiFlickerMode;                                  // antiflicker mode: 0-disable 1-50hz 2-60hz 3-Auto
+    unsigned char               u8FullColor;                                        // is full color mode enabled, 0-disable, 1-enable
     IPC_IRCUT_TYPE              enIrcutType;                                        // IRCUT type
     unsigned int                u32DayToNight;                                      // day to night time, valid only in timed mode
     unsigned int                u32NightToDay;                                      // night to day time, valid only in timed mode
-    unsigned char               u8AntiFlickerMode;                                  // antiflicker mode: 0-disable 1-50hz 2-60hz 3-Auto
 } IPC_IMAGE_CONFIG;
 
 typedef struct IPC_VIDEO_CONFIG

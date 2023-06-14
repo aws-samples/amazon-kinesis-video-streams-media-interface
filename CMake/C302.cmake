@@ -13,13 +13,13 @@ if(BOARD STREQUAL "C302")
 
     set(BOARD_DESTINATION_PLATFORM arm-unknown-linux-gnu)
 
-    link_directories(${BOARD_SDK_DIR}/lib/static ${BOARD_SDK_DIR}/lib/dynamic)
+    link_directories(${BOARD_SDK_DIR}/lib)
 
     set(BOARD_LIBS_SHARED
         pthread dl m z fdk-aac
         sns_imx290 sns_imx307 sns_imx335 sns_gc4653 sns_imx415
         ae alg awb dewarp mbi mbi_dewarp mbi_isp mbi_venc ppu asp AudioSignalProcess
-        param video audio mbuffer
+        libparam.a libvideo.a libaudio.a libmbuffer.a
     )
     set(BOARD_LIBS_STATIC
         pthread dl m z fdk-aac
