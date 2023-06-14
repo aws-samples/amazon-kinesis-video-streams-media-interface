@@ -107,8 +107,6 @@ User need to put C302 board SDK under [3rdparty/C302](C302/), including `sysroot
 C302/
 ├── include
 ├── lib
-│  ├── dynamic
-│  └── static
 └── sysroot
 ```
 
