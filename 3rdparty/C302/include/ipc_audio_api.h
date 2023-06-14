@@ -47,6 +47,8 @@ int IPC_AUDIO_UpdateAttr(unsigned int uflag);
 int IPC_AUDIO_Init(unsigned int uflag);
 void IPC_AUDIO_UnInit(unsigned int uflag);
 
+int IPC_AUDIO_SYS_Init();
+void IPC_AUDIO_SYS_UnInit();
 
 #ifdef __cplusplus
 #if __cplusplus
