@@ -30,7 +30,7 @@
     1. [快速落地智能云存储摄像机解决方案](https://aws.amazon.com/cn/blogs/china/foundation-of-fast-landing-smart-camera-solution/)
     2. [基于Amazon Kinesis Video Streams实现 IP Camera云存项目](https://aws.amazon.com/cn/blogs/china/realize-ip-camera-cloud-storage-project-based-on-amazon-kinesis-video-streams/)
 
-6. (optional) 动手实验 : KVS Streams 图片识别功能 (低优先级)
+6. (optional) 动手实验 : KVS Streams 图片识别功能
     1. [基于KVS Images构建视频流检测方案的集成与分析](https://aws.amazon.com/cn/blogs/china/integration-and-analysis-of-video-stream-detection-scheme-based-on-amazon-kinesis-video-stream-images/)
 
 7. KVS WebRTC 的 [介绍](./Intro%20to%20KVS%20WebRTC.pdf)
@@ -45,7 +45,7 @@
     4. [迁移指南](./migration_guide.md)
 9. 动手实验: Media-Interface SDK
     1. [快速落地智能摄像机解决方案 云存储+WebRTC](https://aws.amazon.com/cn/blogs/china/fast-landing-smart-camera-solution-cloud-storage-webrtc/)
-10. KVS设备端集成的调试工具？
+10. KVS设备端集成的调试工具
     1. [producer SDK test page](https://github.com/aws-samples/amazon-kinesis-video-streams-media-viewer)
     2. [WebRTC test page](https://github.com/codingspirit/kvs-webrtc-test-page)
 11. [FAQ](https://w.amazon.com/bin/view/GCR_INFRA_SSA/Playbooks/IoTCenter)
