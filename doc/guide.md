@@ -1,4 +1,5 @@
-# Guide 中文
+# Guide 
+[中文](./guide_cn.md)
 
 1. Image,video and audio [concept](./Basic%20Video%20for%20KVS.pdf)
     1. Sensor
@@ -28,10 +29,8 @@
 5. workshop: 
     1. [快速落地智能云存储摄像机解决方案](https://aws.amazon.com/cn/blogs/china/foundation-of-fast-landing-smart-camera-solution/)
     2. [基于Amazon Kinesis Video Streams实现 IP Camera云存项目](https://aws.amazon.com/cn/blogs/china/realize-ip-camera-cloud-storage-project-based-on-amazon-kinesis-video-streams/)
-
 6. (optional) workshop: KVS Streams images detection
     1. [基于KVS Images构建视频流检测方案的集成与分析](https://aws.amazon.com/cn/blogs/china/integration-and-analysis-of-video-stream-detection-scheme-based-on-amazon-kinesis-video-stream-images/)
-
 7. KVS WebRTC 的 [Intro](./Intro%20to%20KVS%20WebRTC.pdf)
     1. Basic: Signaling channels, STUN, TURN, ICE, SDP, RTP, SCTP
     2. KVS WebRTC API

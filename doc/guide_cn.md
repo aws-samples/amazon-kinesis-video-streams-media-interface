@@ -1,4 +1,5 @@
-# Guide 中文
+# 指南
+[EN](./guide.md)
 
 1. 图像传感器及音视频编码 [概念](./Basic%20Video%20for%20KVS.pdf)
     1. 传感器
