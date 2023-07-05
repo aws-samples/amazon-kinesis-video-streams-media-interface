@@ -16,6 +16,7 @@
   - [Getting started with out-of-box save frame sample](#getting-started-with-out-of-box-save-frame-sample)
   - [Cross compile FILE board](#cross-compile-file-board)
   - [Platform Implementation Guide](#platform-implementation-guide)
+  - [Documentations](#documentations)
   - [Contributing](#contributing)
   - [Code Of Conduct](#code-of-conduct)
   - [License](#license)
@@ -214,6 +215,9 @@ endif()
 
 ```
 
+## Documentations
+
+[Documentations](doc/guide.md)
 ## Contributing
 
 [Contributing Guide](CONTRIBUTING.md)
