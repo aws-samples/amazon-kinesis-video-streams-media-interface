@@ -347,13 +347,13 @@ int main(int argc, char *argv[])
     else if (audioCapturerSetFormat(audioCapturerHandle, audioFormat, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16))
     {
         printf("Failed to set audio format\n");
-        audioCapturerDestory(audioCapturerHandle);
+        audioCapturerDestroy(audioCapturerHandle);
         audioCapturerHandle = NULL;
     }
     else if (pthread_create(&audioThreadTid, NULL, audioThread, kvsAppHandle))
     {
         printf("Failed to create audio thread\n");
-        audioCapturerDestory(audioCapturerHandle);
+        audioCapturerDestroy(audioCapturerHandle);
         audioCapturerHandle = NULL;
     }
     else
@@ -472,10 +472,10 @@ int main(int argc, char *argv[])
     pthread_join(audioThreadTid, NULL);
 #endif /* ENABLE_AUDIO_TRACK */
 
-    videoCapturerDestory(videoCapturerHandle);
+    videoCapturerDestroy(videoCapturerHandle);
     videoCapturerHandle = NULL;
 #if ENABLE_AUDIO_TRACK
-    audioCapturerDestory(audioCapturerHandle);
+    audioCapturerDestroy(audioCapturerHandle);
     audioCapturerHandle = NULL;
 #endif
 

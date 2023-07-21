@@ -273,7 +273,7 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
     return setStatus(handle, VID_CAP_STATUS_STREAM_OFF);
 }
 
-void videoCapturerDestory(VideoCapturerHandle handle)
+void videoCapturerDestroy(VideoCapturerHandle handle)
 {
     if (!handle) {
         return;

@@ -202,7 +202,7 @@ static int _Sv82xVideoBufPoolCreat(VideoCapturerHandle handle, VIDEO_FRAME_INFO_
     return 0;
 }
 
-static int _Sv82xVideoBufPoolDestory(VideoCapturerHandle handle)
+static int _Sv82xVideoBufPoolDestroy(VideoCapturerHandle handle)
 {
     EI_S32 s32Ret = EI_FAILURE;
     SV82X_HANDLE_NULL_CHECK(handle);
@@ -308,7 +308,7 @@ static int _Sv82xVideoCreat(VideoCapturerHandle handle, const VideoFormat format
     return 0;
 }
 
-static int _Sv82xVideoDestory(VideoCapturerHandle handle)
+static int _Sv82xVideoDestroy(VideoCapturerHandle handle)
 {
     EI_S32 s32Ret = 0;
 
@@ -649,7 +649,7 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
     return 0;
 }
 
-void videoCapturerDestory(VideoCapturerHandle handle)
+void videoCapturerDestroy(VideoCapturerHandle handle)
 {
     EI_S32 s32Ret = EI_FAILURE;
 
@@ -665,9 +665,9 @@ void videoCapturerDestory(VideoCapturerHandle handle)
     }
 
     if (Sv82xHandle->VideoCreatFlag) {
-        s32Ret = _Sv82xVideoDestory(handle);
+        s32Ret = _Sv82xVideoDestroy(handle);
         if (s32Ret != EI_SUCCESS) {
-            LOG("_Sv82xVideoDestory failed with %#x\n", s32Ret);
+            LOG("_Sv82xVideoDestroy failed with %#x\n", s32Ret);
             return;
         }
     }
@@ -679,9 +679,9 @@ void videoCapturerDestory(VideoCapturerHandle handle)
         }
     }
 
-    s32Ret = _Sv82xVideoBufPoolDestory(handle);
+    s32Ret = _Sv82xVideoBufPoolDestroy(handle);
     if (s32Ret != EI_SUCCESS) {
-        LOG("_Sv82xVideoBufPoolDestory failed with %#x\n", s32Ret);
+        LOG("_Sv82xVideoBufPoolDestroy failed with %#x\n", s32Ret);
         return;
     }
     VideoAttrs.VideoCreatHandleCnt--;

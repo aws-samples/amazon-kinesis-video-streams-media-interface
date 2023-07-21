@@ -151,7 +151,7 @@ int main(int argc, char** argv)
 
     // Clean up
     if (videoCapturerHandle) {
-        videoCapturerDestory(videoCapturerHandle);
+        videoCapturerDestroy(videoCapturerHandle);
     }
 
     return ret;
