@@ -64,7 +64,7 @@ VideoCapturerHandle videoCapturerCreate(void)
 
     if (!v4l2Handle->privHandle) {
         LOG("Failed to open /dev/video0");
-        videoCapturerDestory((VideoCapturerHandle) v4l2Handle);
+        videoCapturerDestroy((VideoCapturerHandle) v4l2Handle);
         return NULL;
     }
 
@@ -213,7 +213,7 @@ int videoCapturerReleaseStream(VideoCapturerHandle handle)
     return setStatus(handle, VID_CAP_STATUS_STREAM_OFF);
 }
 
-void videoCapturerDestory(VideoCapturerHandle handle)
+void videoCapturerDestroy(VideoCapturerHandle handle)
 {
     if (!handle) {
         return;

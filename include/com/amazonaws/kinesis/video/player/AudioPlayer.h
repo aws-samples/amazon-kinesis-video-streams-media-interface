@@ -114,7 +114,7 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle);
  *
  * @param[in] handle Handle of AudioPlayer.
  */
-void audioPlayerDestory(AudioPlayerHandle handle);
+void audioPlayerDestroy(AudioPlayerHandle handle);
 
 #ifdef __cplusplus
 }

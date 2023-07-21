@@ -341,7 +341,7 @@ int audioPlayerReleaseStream(AudioPlayerHandle handle)
     return setStatus(handle, AUD_PLY_STATUS_STREAM_OFF);
 }
 
-void audioPlayerDestory(AudioPlayerHandle handle)
+void audioPlayerDestroy(AudioPlayerHandle handle)
 {
     if (!handle)
         return;

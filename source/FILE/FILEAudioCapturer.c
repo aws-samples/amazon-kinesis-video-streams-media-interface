@@ -262,7 +262,7 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
     return setStatus(handle, AUD_CAP_STATUS_STREAM_OFF);
 }
 
-void audioCapturerDestory(AudioCapturerHandle handle)
+void audioCapturerDestroy(AudioCapturerHandle handle)
 {
     if (!handle) {
         return;

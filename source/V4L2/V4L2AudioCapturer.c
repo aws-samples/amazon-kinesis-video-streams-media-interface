@@ -74,6 +74,6 @@ int audioCapturerReleaseStream(AudioCapturerHandle handle)
     return -EAGAIN;
 }
 
-void audioCapturerDestory(AudioCapturerHandle handle)
+void audioCapturerDestroy(AudioCapturerHandle handle)
 {
 }

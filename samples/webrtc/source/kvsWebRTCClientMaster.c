@@ -117,7 +117,7 @@ INT32 main(INT32 argc, CHAR* argv[])
               audioCapability.channels, audioCapability.sampleRates, audioCapability.bitDepths);
         if (audioCapturerSetFormat(audioCapturerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16)) {
             DLOGE("Unable to set AudioCapturer format");
-            audioCapturerDestory(audioCapturerHandle);
+            audioCapturerDestroy(audioCapturerHandle);
             audioCapturerHandle = NULL;
         }
     }
@@ -133,7 +133,7 @@ INT32 main(INT32 argc, CHAR* argv[])
 
         if (audioPlayerSetFormat(audioPlayerHandle, AUD_FMT_G711A, AUD_CHN_MONO, AUD_SAM_8K, AUD_BIT_16)) {
             DLOGE("Unable to set AudioPlayer format");
-            audioPlayerDestory(audioPlayerHandle);
+            audioPlayerDestroy(audioPlayerHandle);
             audioPlayerHandle = NULL;
         }
     }
@@ -292,17 +292,17 @@ CleanUp:
 
     /* Media Interface Destruct */
     if (audioCapturerHandle) {
-        audioCapturerDestory(audioCapturerHandle);
+        audioCapturerDestroy(audioCapturerHandle);
         audioCapturerHandle = NULL;
     }
 
     if (audioPlayerHandle) {
-        audioPlayerDestory(audioPlayerHandle);
+        audioPlayerDestroy(audioPlayerHandle);
         audioPlayerHandle = NULL;
     }
 
     if (videoCapturerHandle) {
-        videoCapturerDestory(videoCapturerHandle);
+        videoCapturerDestroy(videoCapturerHandle);
         videoCapturerHandle = NULL;
     }
 
