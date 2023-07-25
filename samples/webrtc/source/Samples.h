@@ -66,6 +66,9 @@ extern "C" {
 /* Uncomment the following line in order to enable IoT credentials checks in the provided samples */
 // #define IOT_CORE_ENABLE_CREDENTIALS 1
 
+// Enable this macro to bypass turn server DNS resolve to improve the speed of connection establishment
+#define BYPASS_DNS_RESOLVE_TURN
+
 typedef enum {
     SAMPLE_STREAMING_VIDEO_ONLY,
     SAMPLE_STREAMING_AUDIO_VIDEO,
