@@ -27,13 +27,15 @@ elseif(BOARD STREQUAL "C302")
     message(STATUS "Selected board C302")
 elseif(BOARD STREQUAL "SV82x")
     message(STATUS "Selected board SV82x")
+elseif(BOARD STREQUAL "T41")
+    message(STATUS "Selected board T41")
 else()
     message(FATAL_ERROR "${BOARD} is not implemented yet.")
 endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/${BOARD}.cmake)
-# Board Specific Parts End
 
+# Board Specific Parts End
 option(BUILD_WEBRTC_SAMPLES "Build webrtc samples" ON)
 option(BUILD_KVS_SAMPLES "Build KVS Producer samples" OFF)
 option(BUILD_SAVE_FRAME_SAMPLES "Build save frame samples" OFF)

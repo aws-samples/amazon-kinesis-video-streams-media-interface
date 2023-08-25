@@ -1,4 +1,4 @@
-if(BOARD STREQUAL "T31")
+if(BOARD STREQUAL "T41")
     set(BOARD_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/${BOARD})
     set(BOARD_SRCS
         ${BOARD_SDK_DIR}/samples/libimp-samples/sample-common.c
