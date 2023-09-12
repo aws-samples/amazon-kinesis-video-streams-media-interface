@@ -76,6 +76,13 @@ target_include_directories(kvswebrtcmaster-static PRIVATE ${AWS_DEPENDENCIES_DIR
 target_link_directories(kvswebrtcmaster-static PRIVATE ${AWS_DEPENDENCIES_DIR}/webrtc/lib/ ${EMBEDDED_MEDIA_LINK_DIR})
 target_link_libraries(kvswebrtcmaster-static embedded-media-static ${WEBRTC_SDK_LIBS_STATIC} ${BOARD_LIBS_STATIC})
 
+include(CheckLibraryExists)
+CHECK_LIBRARY_EXISTS(cap cap_set_flag "" LWS_HAVE_LIBCAP)
+if (LWS_HAVE_LIBCAP)
+    target_link_libraries(kvswebrtcmaster-shared cap)
+    target_link_libraries(kvswebrtcmaster-static cap)
+endif()
+
 include(GNUInstallDirs)
 
 install(TARGETS kvswebrtcmaster-shared
