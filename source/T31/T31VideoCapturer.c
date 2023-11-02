@@ -401,7 +401,7 @@ void videoCapturerDestroy(VideoCapturerHandle handle)
     if (chn[t31Handle->channelNum].enable) {
         if (t31Handle->format != VID_FMT_RAW) {
             if (IMP_System_UnBind(&chn[t31Handle->channelNum].framesource_chn, &chn[t31Handle->channelNum].imp_encoder)) {
-                LOG("UnBind FrameSource channel%d and Encoder failed");
+                LOG("UnBind FrameSource channel%d and Encoder failed", t31Handle->channelNum);
             }
             sample_encoder_exit();
         }

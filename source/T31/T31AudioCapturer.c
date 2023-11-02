@@ -277,7 +277,7 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
             ret = -EAGAIN;
         } else if (IMP_AENC_GetStream(T31_MIC_ENC_CHN_ID, &encodeStream, BLOCK)) {
             LOG("IMP_AENC_GetStream failed");
-            ret - EAGAIN;
+            ret = - EAGAIN;
         } else if (frameDataBufferSize < encodeStream.len) {
             LOG("FrameDataBufferSize(%d) < frameSize(%d), frame dropped", frameDataBufferSize, encodeStream.len);
             *pFrameSize = 0;
