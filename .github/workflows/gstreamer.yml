@@ -1,0 +1,29 @@
+name: gstreamer
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  BOARD: GSTREAMER
+  CC: gcc-10
+  CXX: g++-10
+
+jobs:
+  x64-gstreamer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install libgstreamer
+        run: sudo apt install libunwind-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev -y
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Configure CMake
+        run: cmake -B ${{ github.workspace }}/build -DBOARD=${{ env.BOARD }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_WEBRTC_SAMPLES=ON -DBUILD_KVS_SAMPLES=ON -DBUILD_SAVE_FRAME_SAMPLES=ON
+
+      - name: Build
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel 4
+
+      - name: Test
+        run: ctest -C ${{ env.BUILD_TYPE }}
