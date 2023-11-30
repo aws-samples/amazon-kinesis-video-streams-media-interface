@@ -51,6 +51,12 @@
 static char pMemPool[POOL_ALLOCATOR_SIZE];
 #endif
 
+#define SAFE_MEMORYFREE(p)     if (p)   \
+{                                       \
+    free(p);                            \
+    p = NULL;                           \
+}                                       \
+
 static VideoCapturerHandle videoCapturerHandle = NULL;
 static pthread_t videoThreadTid;
 
@@ -227,36 +233,115 @@ static void *audioThread(void *arg)
 }
 #endif /* ENABLE_AUDIO_TRACK */
 
+#if ENABLE_IOT_CREDENTIAL
+static int readFile(char* pFileName, char** ppData)
+{
+    FILE* fp = NULL;
+    char* pData = NULL;
+
+    if (ppData == NULL || pFileName == NULL)
+    {
+        printf("intput parameter is NULL\n");
+        return -1;
+    }
+
+    fp = fopen(pFileName, "r");
+    if (fp)
+    {
+        fseek(fp, 0, SEEK_END);
+        long lSize = ftell(fp);
+        rewind(fp);
+        pData = (char *) malloc(lSize);
+        if (pData)
+        {
+            fread(pData, 1, lSize, fp);
+        }
+        else
+        {
+            fclose(fp);
+            return -1;
+        }
+        fclose(fp);
+    }
+    else
+    {
+        printf("open file:%s failed\n", pFileName);
+        return -1;
+    }
+
+    *ppData = pData;
+    return 0;
+}
+#endif /* ENABLE_IOT_CREDENTIAL */
+
 static int setKvsAppOptions(KvsAppHandle kvsAppHandle)
 {
     int res = ERRNO_NONE;
 
     /* Setup credentials, it should be either using IoT credentials or AWS access key. */
 #if ENABLE_IOT_CREDENTIAL
-    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_CREDENTIAL_HOST, (const char *)CREDENTIALS_HOST) != 0)
+    char *pThingName, *pRootCa, *pCredentialEndPoint, *pCoreCert, *pPrivateKey, *pRoleAlias;
+    char *pRootCaContext, *pCoreCertContext, *pPrivateKeyContext;
+
+    if ((pThingName = getenv(IOT_CORE_THING_NAME)) == NULL)
+    {
+        printf("AWS_IOT_CORE_THING_NAME must be set\n");
+    }
+    if ((pCoreCert = getenv(IOT_CORE_CERT)) == NULL)
+    {
+        printf("AWS_IOT_CORE_CERT must be set\n");
+    }
+    if ((pPrivateKey = getenv(IOT_CORE_PRIVATE_KEY)) == NULL)
+    {
+        printf("AWS_IOT_CORE_PRIVATE_KEY must be set\n");
+    }
+    if ((pRoleAlias = getenv(IOT_CORE_ROLE_ALIAS)) == NULL)
+    {
+        printf("AWS_IOT_CORE_ROLE_ALIAS must be set\n");
+    }
+    if ((pRootCa = getenv(IOT_CORE_CACERT_PATH)) == NULL)
+    {
+        printf("AWS_KVS_CACERT_PATH must be set\n");
+    }
+    if ((pCredentialEndPoint = getenv(IOT_CORE_CREDENTIAL_ENDPOINT)) == NULL)
+    {
+        printf("AWS_IOT_CORE_CREDENTIAL_ENDPOINT  must be set\n");
+    }
+
+    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_CREDENTIAL_HOST, (const char *)pCredentialEndPoint) != 0)
     {
         printf("Failed to set credential host\n");
     }
-    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_ROLE_ALIAS, (const char *)ROLE_ALIAS) != 0)
+    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_ROLE_ALIAS, (const char *)pRoleAlias) != 0)
     {
         printf("Failed to set role alias\n");
     }
-    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_THING_NAME, (const char *)THING_NAME) != 0)
+    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_THING_NAME, (const char *)pThingName) != 0)
     {
         printf("Failed to set thing name\n");
     }
-    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_X509_ROOTCA, (const char *)ROOT_CA) != 0)
+
+    res = readFile(pRootCa, &pRootCaContext);
+    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_X509_ROOTCA, (const char*) pRootCaContext) != 0)
     {
         printf("Failed to set root CA\n");
     }
-    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_X509_CERT, (const char *)CERTIFICATE) != 0)
+
+    res = readFile(pCoreCert, &pCoreCertContext);
+    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_X509_CERT, (const char *)pCoreCertContext) != 0)
     {
         printf("Failed to set certificate\n");
     }
-    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_X509_KEY, (const char *)PRIVATE_KEY) != 0)
+
+    res = readFile(pPrivateKey, &pPrivateKeyContext);
+    if (KvsApp_setoption(kvsAppHandle, OPTION_IOT_X509_KEY, (const char *)pPrivateKeyContext) != 0)
     {
         printf("Failed to set private key\n");
     }
+
+    SAFE_MEMORYFREE(pRootCaContext);
+    SAFE_MEMORYFREE(pCoreCertContext);
+    SAFE_MEMORYFREE(pPrivateKeyContext);
 #else
     if (KvsApp_setoption(kvsAppHandle, OPTION_AWS_ACCESS_KEY_ID, OptCfg_getAwsAccessKey()) != 0)
     {

@@ -110,28 +110,19 @@ make
   export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   export AWS_DEFAULT_REGION=us-east-1
   ```
-  - Alternatively if you want to use AWS IoT Certificate, add IoT Certificate into [samples/kvsproducer/source/sample_config.h](samples/kvsproducer/source/sample_config.h):
+  - Alternatively if you want to use AWS IoT Certificate, turn on `ENABLE_IOT_CREDENTIAL` in [samples/kvsproducer/source/sample_config.h](samples/kvsproducer/source/sample_config.h) and using following commands to setup environment variables:
   ```c
   #define ENABLE_IOT_CREDENTIAL           1
-  #if ENABLE_IOT_CREDENTIAL
-  #define CREDENTIALS_HOST                "xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com"
-  #define ROLE_ALIAS                      "KvsCameraIoTRoleAlias"
-  #define THING_NAME                      KVS_STREAM_NAME
-  #define ROOT_CA \
-  "-----BEGIN CERTIFICATE-----\n" \
-  "......\n" \
-  "-----END CERTIFICATE-----\n"
-
-  #define CERTIFICATE \
-  "-----BEGIN CERTIFICATE-----\n" \
-  "......\n" \
-  "-----END CERTIFICATE-----\n"
-
-  #define PRIVATE_KEY \
-  "-----BEGIN RSA PRIVATE KEY-----\n" \
-  "......\n" \
-  "-----END RSA PRIVATE KEY-----\n"
-  #endif /* ENABLE_IOT_CREDENTIAL */
+  ```
+  ```bash
+  export AWS_KVS_LOG_LEVEL=2
+  export AWS_DEFAULT_REGION=us-east-1
+  export AWS_KVS_CACERT_PATH=rootca.pem
+  export AWS_IOT_CORE_THING_NAME=your_camera_name
+  export AWS_IOT_CORE_CREDENTIAL_ENDPOINT=xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com
+  export AWS_IOT_CORE_CERT=your_camera_certificate.pem
+  export AWS_IOT_CORE_PRIVATE_KEY=your_camera_private.key
+  export AWS_IOT_CORE_ROLE_ALIAS=your_camera_role_alias
   ```
 6. Make sure your the system time on your board has been synchronized. You may set it manually or use ntp client.
 7. Execute sample on your board: `./kvsproducer-static $YOUR_STREAM_NAME`

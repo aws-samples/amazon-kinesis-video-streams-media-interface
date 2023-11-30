@@ -65,24 +65,12 @@
 
 /* IoT credential configuration */
 #if ENABLE_IOT_CREDENTIAL
-#define CREDENTIALS_HOST                "xxxxxxxxxxxxxx.credentials.iot.us-east-1.amazonaws.com"
-#define ROLE_ALIAS                      "KvsCameraIoTRoleAlias"
-#define THING_NAME                      KVS_STREAM_NAME
-
-#define ROOT_CA \
-"-----BEGIN CERTIFICATE-----\n" \
-"......\n" \
-"-----END CERTIFICATE-----\n"
-
-#define CERTIFICATE \
-"-----BEGIN CERTIFICATE-----\n" \
-"......\n" \
-"-----END CERTIFICATE-----\n"
-
-#define PRIVATE_KEY \
-"-----BEGIN RSA PRIVATE KEY-----\n" \
-"......\n" \
-"-----END RSA PRIVATE KEY-----\n"
+#define IOT_CORE_CREDENTIAL_ENDPOINT ((char *) "AWS_IOT_CORE_CREDENTIAL_ENDPOINT")
+#define IOT_CORE_CERT                ((char *) "AWS_IOT_CORE_CERT")
+#define IOT_CORE_PRIVATE_KEY         ((char *) "AWS_IOT_CORE_PRIVATE_KEY")
+#define IOT_CORE_ROLE_ALIAS          ((char *) "AWS_IOT_CORE_ROLE_ALIAS")
+#define IOT_CORE_THING_NAME          ((char *) "AWS_IOT_CORE_THING_NAME")
+#define IOT_CORE_CACERT_PATH         ((char *) "AWS_KVS_CACERT_PATH")
 #endif /* ENABLE_IOT_CREDENTIAL */
 
 #if ENABLE_RING_BUFFER_MEM_LIMIT
