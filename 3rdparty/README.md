@@ -4,6 +4,8 @@ This documents provides guidelines to install board SDK required by this library
 
 - [Board SDK Install Guide](#board-sdk-install-guide)
 	- [FILE](#file)
+	- [QCS610](#qcs610)
+	- [GSTREAMER](#gstreamer)
 	- [V4L2](#v4l2)
 	- [T31](#t31)
 	- [FH8626V100](#fh8626v100)
@@ -15,6 +17,27 @@ This documents provides guidelines to install board SDK required by this library
 
 FILE capturer is a dummy capturer that read sample frames from [resources/frames/]. It doesn't require user to manually install any 3rdparty SDK.
 
+## QCS610
+
+QCS610 receive and retrieve audio and video from the device through the Gstreamer pipeline. It doesn't require user to manually install any 3rdparty SDK.
+Please configure the Qualcomm build environment first.
+Replacing CMake configuration file.
+```
+export OE_CMAKE_TOOLCHAIN_FILE=3rdparty/QCS610/OEToolchainConfig.cmake
+```
+
+## Gstreamer
+
+Gstreamer capturer receive and retrieve audio and video from the device through the Gstreamer pipeline. It require user to manually install Gstreamer library. You may install it via:
+```
+sudo apt install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tools
+```
+You should provide H264 video frames and g711a audio frames to the pipeline by Tcp. The pipeline used in the code is defined as the following macro.
+```
+GST_LAUNCH_VIDEO_PIPELINE_CMD
+GST_LAUNCH_AUDIO_PIPELINE_CMD
+GST_LAUNCH_AUDIO_PLAYER_PIPELINE_CMD
+```
 ## V4L2
 
 V4L2 request libv4l2 on your build device. You may install it via:
