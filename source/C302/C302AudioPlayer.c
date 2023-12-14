@@ -242,6 +242,11 @@ int audioPlayerWriteFrame(AudioPlayerHandle handle, void* pData, const size_t si
 #ifdef USING_HARD_STREAM_AUDIO
     int ret = 0;
 
+    if (size > audioHandle->aframe.u32len) {
+        KVS_LOG("AO device buffer too small");
+        return -EAGAIN;
+    }
+
     memcpy(audioHandle->aframe.u8data, pData, size);
     ret = IPC_AUDIO_SendFrame(&audioHandle->aframe);
     if (ret < 0) {

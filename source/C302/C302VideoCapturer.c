@@ -233,6 +233,10 @@ int videoCapturerGetFrame(VideoCapturerHandle handle, void* pFrameDataBuffer, co
         ret = IPC_VIDEO_GetFrame(&videoHandle->vframe, DEFAULT_STREAM_CHN, 0);
         if (ret > 0) {
             // KVS_LOG("IPC_VIDEO_GetFrame:%u\n", videoHandle->vframe.u32len);
+            if (videoHandle->vframe.u32len > frameDataBufferSize) {
+                KVS_LOG("Video buffer is too small\n");
+                return -EAGAIN;
+            }
             memcpy(pFrameDataBuffer, videoHandle->vframe.u8data, videoHandle->vframe.u32len);
             *pFrameSize = videoHandle->vframe.u32len;
             *pTimestamp = videoHandle->vframe.u64pts;
