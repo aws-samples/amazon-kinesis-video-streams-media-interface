@@ -250,6 +250,10 @@ int audioCapturerGetFrame(AudioCapturerHandle handle, void* pFrameDataBuffer, co
         // KVS_LOG("IPC_AUDIO_GetFrame failed");
         return -EAGAIN;
     }
+    if (audioHandle->aframe->u32len > frameDataBufferSize) {
+        KVS_LOG("Audio buffer is too small\n");
+        return -EAGAIN;
+    }
     memcpy(pFrameDataBuffer, (void*) audioHandle->aframe->u8data, audioHandle->aframe->u32len);
     *pFrameSize = audioHandle->aframe->u32len;
     *pTimestamp = audioHandle->aframe->u64pts;
