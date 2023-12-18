@@ -15,10 +15,10 @@
 #pragma once
 
 // video:
-// gst-launch-1.0 -e rtspsrc location=rtsp://192.168.0.60:554/stream0 latency=500 ! rtph264depay ! queue ! h264parse config-interval=1 ! mpegtsmux name=muxer !  tcpserversink host=127.0.0.1 port=8501 &
-// "tcpclientsrc host=127.0.0.1 port=8502 ! tsdemux name=muxer ! h264parse ! appsink name=sink"
+// gst-launch-1.0 -e rtspsrc location=rtsp://192.168.0.60:554/stream0 latency=500 ! rtph264depay ! queue ! h264parse config-interval=1 ! capsfilter caps=video/x-h264,stream-format=(string)byte-stream,alignment=(string)au ! mpegtsmux !  tcpserversink host=127.0.0.1 port=8501 &
+// gst-launch-1.0 -e tcpclientsrc host=127.0.0.1 port=8501 ! tsdemux ! h264parse ! capsfilter caps="video/x-h264,stream-format=(string)byte-stream,alignment=(string)au" ! appsink name=sink
 #define GST_LAUNCH_VIDEO_PIPELINE_CMD                                                                  \
-    "tcpclientsrc host=%s port=%s ! tsdemux name=muxer ! h264parse ! appsink name=%s"
+    "tcpclientsrc host=%s port=%s ! tsdemux ! h264parse ! capsfilter caps=video/x-h264,stream-format=(string)byte-stream,alignment=(string)au ! appsink name=%s"
 
 // audio:
 // gst-launch-1.0 -e rtspsrc location=rtsp://192.168.0.60:554/stream0 latency=500 ! rtppcmadepay ! queue ! tcpserversink host=127.0.0.1 port=8503 &
