@@ -13,6 +13,10 @@ env:
   BUILD_TYPE: Release
   BOARD: SV82x
 
+permissions:
+  contents: read
+  secrets: write
+
 jobs:
   ecr-prepare:
     runs-on: ubuntu-latest
