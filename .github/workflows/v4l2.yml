@@ -9,6 +9,9 @@ env:
   CC: gcc-10
   CXX: g++-10
 
+permissions:
+  contents: read
+
 jobs:
   x64-v4l2:
     runs-on: ubuntu-latest
